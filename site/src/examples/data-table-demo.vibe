@@ -1,0 +1,56 @@
+<script setup lang="ts">
+import { computed, ref, watch } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import DropdownMenu from '@/components/ui/DropdownMenu.vibe';
+import DropdownMenuCheckboxItem from '@/components/ui/DropdownMenuCheckboxItem.vibe';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vibe';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Table from '@/components/ui/Table.vibe';
+import TableBody from '@/components/ui/TableBody.vibe';
+import TableCaption from '@/components/ui/TableCaption.vibe';
+import TableCell from '@/components/ui/TableCell.vibe';
+import TableHead from '@/components/ui/TableHead.vibe';
+import TableHeader from '@/components/ui/TableHeader.vibe';
+import TableRow from '@/components/ui/TableRow.vibe';
+
+const rows = [
+  { id: 'p1', email: 'alex@example.com', status: 'Success', amount: 316 },
+  { id: 'p2', email: 'blair@example.com', status: 'Success', amount: 242 },
+  { id: 'p3', email: 'casey@example.com', status: 'Processing', amount: 837 },
+  { id: 'p4', email: 'drew@example.com', status: 'Success', amount: 874 },
+  { id: 'p5', email: 'ellis@example.com', status: 'Failed', amount: 721 },
+  { id: 'p6', email: 'frankie@example.com', status: 'Processing', amount: 150 },
+  { id: 'p7', email: 'gray@example.com', status: 'Success', amount: 529 },
+];
+const filter = ref('');
+const ascending = ref(true);
+const page = ref(0);
+const selected = ref<string[]>([]);
+const showStatus = ref(true);
+const showAmount = ref(true);
+const pageSize = 3;
+const filtered = computed(() => rows.filter((row) => row.email.toLowerCase().includes(filter.value.toLowerCase())).sort((a, b) => (ascending.value ? 1 : -1) * a.email.localeCompare(b.email)));
+const pageCount = computed(() => Math.max(1, Math.ceil(filtered.value.length / pageSize)));
+const visible = computed(() => filtered.value.slice(page.value * pageSize, (page.value + 1) * pageSize));
+const allChecked = computed(() => visible.value.length > 0 && visible.value.every((row) => selected.value.includes(row.id)));
+const someChecked = computed(() => visible.value.some((row) => selected.value.includes(row.id)) && !allChecked.value);
+const selectedCount = computed(() => filtered.value.filter((row) => selected.value.includes(row.id)).length);
+watch(filter, () => { page.value = 0; });
+watch(ascending, () => { page.value = 0; });
+function selectRow(id: string, checked: boolean): void { selected.value = checked ? [...new Set([...selected.value, id])] : selected.value.filter((value) => value !== id); }
+function selectPage(checked: boolean): void { for (const row of visible.value) selectRow(row.id, checked); }
+const money = (value: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+</script>
+<template>
+  <div class="w-full min-w-0 space-y-4">
+    <div class="flex gap-2"><Input v-model="filter" aria-label="Filter emails" placeholder="Filter emails..." class="max-w-sm" /><DropdownMenu><DropdownMenuTrigger variant="outline">Columns</DropdownMenuTrigger><DropdownMenuContent align="end" aria-label="Visible columns"><DropdownMenuCheckboxItem v-model:checked="showStatus" @select="$event.preventDefault()">Status</DropdownMenuCheckboxItem><DropdownMenuCheckboxItem v-model:checked="showAmount" @select="$event.preventDefault()">Amount</DropdownMenuCheckboxItem></DropdownMenuContent></DropdownMenu></div>
+    <div class="rounded-md border"><Table>
+      <TableCaption class="sr-only">Payments</TableCaption>
+      <TableHeader><TableRow><TableHead><Checkbox :model-value="allChecked" :indeterminate="someChecked" :disabled="!visible.length" aria-label="Select all rows on this page" @update:model-value="selectPage" /></TableHead><TableHead v-if="showStatus" scope="col">Status</TableHead><TableHead scope="col" :aria-sort="ascending ? 'ascending' : 'descending'"><Button variant="ghost" class="-ml-3" @click="ascending = !ascending">Email {{ ascending ? '↑' : '↓' }}</Button></TableHead><TableHead v-if="showAmount" scope="col" class="text-right">Amount</TableHead></TableRow></TableHeader>
+      <TableBody><TableRow v-for="row in visible" :key="row.id" :data-state="selected.includes(row.id) ? 'selected' : undefined"><TableCell><Checkbox :model-value="selected.includes(row.id)" :aria-label="'Select ' + row.email" @update:model-value="selectRow(row.id, $event)" /></TableCell><TableCell v-if="showStatus">{{ row.status }}</TableCell><TableCell>{{ row.email }}</TableCell><TableCell v-if="showAmount" class="text-right font-medium">{{ money(row.amount) }}</TableCell></TableRow><TableRow v-if="!visible.length"><TableCell :colspan="2 + Number(showStatus) + Number(showAmount)" class="h-24 text-center">No results.</TableCell></TableRow></TableBody>
+    </Table></div>
+    <div class="flex flex-wrap items-center justify-between gap-3 text-sm"><p aria-live="polite" class="text-muted-foreground">{{ selectedCount }} of {{ filtered.length }} row(s) selected.</p><div class="flex items-center gap-2"><span>Page {{ page + 1 }} of {{ pageCount }}</span><Button variant="outline" size="sm" :disabled="page === 0" @click="page--">Previous</Button><Button variant="outline" size="sm" :disabled="page + 1 >= pageCount" @click="page++">Next</Button></div></div>
+  </div>
+</template>

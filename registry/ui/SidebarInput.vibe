@@ -1,0 +1,10 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Input from './Input.vibe';
+defineOptions({ inheritAttrs: false });
+const { class: className, placeholder, disabled, name } = defineProps<{ class?: ClassValue; placeholder?: string; disabled?: boolean; name?: string }>();
+const model = defineModel<string>({ default: () => '' });
+</script>
+<template><Input data-slot="sidebar-input" data-sidebar="input" v-model="model" :placeholder="placeholder" :disabled="disabled" :name="name" v-bind="$attrs" :class="cn('h-8 w-full bg-background shadow-none', className)" /></template>

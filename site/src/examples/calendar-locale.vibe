@@ -1,0 +1,5 @@
+<script setup lang="ts">
+import Calendar from '@/components/ui/Calendar.vibe';
+const weekend = (date: string): boolean => [0, 6].includes(new Date(date + 'T12:00:00').getDay());
+</script>
+<template><Calendar locale="en-GB" default-month="2026-10" min="2026-10-05" max="2026-11-20" :disabled="weekend" label="Choose a working day" class="rounded-md border shadow-sm" /></template>

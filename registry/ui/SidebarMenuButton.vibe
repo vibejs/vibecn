@@ -1,0 +1,19 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+defineOptions({ inheritAttrs: false });
+const { class: className, isActive = false, variant = 'default', size = 'default', tooltip, disabled = false } = defineProps<{
+  class?: ClassValue;
+  isActive?: boolean;
+  variant?: 'default' | 'outline';
+  size?: 'default' | 'sm' | 'lg';
+  tooltip?: string;
+  disabled?: boolean; type?: "button" | "submit" | "reset"; name?: string; value?: string;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const base = 'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0';
+const variants = { default: 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground', outline: 'bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]' };
+const sizes = { default: 'h-8 text-sm', sm: 'h-7 text-xs', lg: 'h-12 text-sm group-data-[collapsible=icon]:p-0!' };
+</script>
+<template><button data-slot="sidebar-menu-button" data-sidebar="menu-button" :data-size="size" :data-active="isActive" :type="$props.type ?? 'button'" :disabled="disabled" :name="$props.name" :value="$props.value" :title="tooltip" v-bind="$attrs" :class="cn(base, variants[variant], sizes[size], className)"><slot /></button></template>

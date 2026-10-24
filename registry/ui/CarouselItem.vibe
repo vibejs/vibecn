@@ -1,0 +1,15 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const carousel = inject<{ orientation: Ref<string> }>(Symbol.for('vibecn.carousel'))!;
+</script>
+
+<template>
+  <div role="group" aria-roledescription="slide" data-slot="carousel-item" v-bind="$attrs" :class="cn('min-w-0 shrink-0 grow-0 basis-full snap-start', carousel.orientation.value === 'horizontal' ? 'pl-4' : 'pt-4', className)"><slot /></div>
+</template>

@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Chart from '@/components/ui/Chart.vibe';
+import NativeSelect from '@/components/ui/NativeSelect.vibe';
+import NativeSelectOption from '@/components/ui/NativeSelectOption.vibe';
+const type = ref('line');
+const data = [{ label: 'Jan', value: 186 }, { label: 'Feb', value: 305 }, { label: 'Mar', value: 237 }, { label: 'Apr', value: 273 }, { label: 'May', value: 209 }];
+</script>
+<template><div class="grid w-full max-w-lg gap-4"><NativeSelect v-model="type" aria-label="Chart type"><NativeSelectOption value="bar">Bar</NativeSelectOption><NativeSelectOption value="line">Line</NativeSelectOption><NativeSelectOption value="area">Area</NativeSelectOption><NativeSelectOption value="pie">Pie</NativeSelectOption></NativeSelect><Chart :type="type as 'bar' | 'line' | 'area' | 'pie'" label="Monthly visitors" :data="data" /></div></template>

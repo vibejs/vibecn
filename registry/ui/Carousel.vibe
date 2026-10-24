@@ -1,0 +1,89 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { nextTick, onMounted, onUnmounted, provide, ref, toRef, watch } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+const { class: className, orientation = 'horizontal', label = 'Slides' } = defineProps<{
+  class?: ClassValue;
+  orientation?: 'horizontal' | 'vertical';
+  label?: string;
+}>();
+const index = defineModel<number>('index', { default: () => 0 });
+const viewport = ref<HTMLElement>();
+const count = ref(0);
+const canPrevious = ref(false);
+const canNext = ref(false);
+defineSlots<{ default?: (props: { index: number; count: number }) => unknown }>();
+const slides = (): HTMLElement[] => Array.from(viewport.value?.querySelectorAll<HTMLElement>(':scope > [data-slot="carousel-item"]') ?? []);
+function availability(): void {
+  const element = viewport.value;
+  const horizontal = orientation === 'horizontal';
+  const size = element ? horizontal ? element.clientWidth : element.clientHeight : 0;
+  const position = element ? horizontal ? element.scrollLeft : element.scrollTop : 0;
+  const extent = element ? horizontal ? element.scrollWidth : element.scrollHeight : 0;
+  // A hidden or not-yet-laid-out viewport has no measurable scroll range.
+  canPrevious.value = size ? position > 1 : index.value > 0;
+  canNext.value = size ? position + size < extent - 1 : index.value < count.value - 1;
+}
+function refresh(): void {
+  const items = slides();
+  count.value = items.length;
+  items.forEach((item, position) => item.setAttribute('aria-label', `${position + 1} of ${items.length}`));
+  index.value = Math.max(0, Math.min(index.value, items.length - 1));
+  availability();
+}
+function go(value: number): void {
+  index.value = Math.max(0, Math.min(Number.isFinite(value) ? Math.trunc(value) : 0, count.value - 1));
+  slides()[index.value]?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: orientation === 'vertical' ? 'start' : 'nearest', inline: orientation === 'horizontal' ? 'start' : 'nearest' });
+  availability();
+}
+function onScroll(): void {
+  const items = slides();
+  if (!viewport.value || !items.length) return;
+  const bounds = viewport.value.getBoundingClientRect();
+  const positions = items.map((item) => Math.abs(orientation === 'horizontal' ? item.getBoundingClientRect().left - bounds.left : item.getBoundingClientRect().top - bounds.top));
+  index.value = positions.indexOf(Math.min(...positions));
+  availability();
+}
+function onKeydown(event: KeyboardEvent): void {
+  const target = event.target as HTMLElement;
+  if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
+  const previous = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp';
+  const next = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown';
+  if (event.key !== previous && event.key !== next) return;
+  event.preventDefault();
+  if (event.key === previous ? !canPrevious.value : !canNext.value) return;
+  go(index.value + (event.key === previous ? -1 : 1));
+}
+provide(Symbol.for('vibecn.carousel'), { orientation: toRef(() => orientation), viewport, index, count, canPrevious, canNext, go });
+let resize: ResizeObserver;
+let mutations: MutationObserver;
+onMounted(async () => {
+  await nextTick();
+  refresh();
+  if (!viewport.value) return;
+  resize = new ResizeObserver(refresh);
+  mutations = new MutationObserver(refresh);
+  resize.observe(viewport.value);
+  mutations.observe(viewport.value, { childList: true });
+  if (index.value) go(index.value);
+});
+watch(() => orientation, async () => { await nextTick(); go(index.value); });
+// External model updates scroll too. Pointer scrolling updates the index without starting
+// another smooth scroll: only synchronize after the browser's scroll event has settled.
+let scrolling = false;
+watch(index, (value) => { if (!scrolling) go(value); });
+const syncScroll = (): void => { scrolling = true; onScroll(); void nextTick(() => { scrolling = false; }); };
+provide(Symbol.for('vibecn.carousel.scroll'), syncScroll);
+onUnmounted(() => { resize?.disconnect(); mutations?.disconnect(); });
+defineExpose({ previous: () => go(index.value - 1), next: () => go(index.value + 1) });
+</script>
+
+<template>
+  <div role="region" aria-roledescription="carousel" :aria-label="label" data-slot="carousel" :data-orientation="orientation" v-bind="$attrs" :class="cn('relative', className)" @keydown="onKeydown">
+    <slot :index="index" :count="count" />
+    <p class="sr-only" aria-live="polite" aria-atomic="true">{{ count ? `Slide ${index + 1} of ${count}` : 'No slides' }}</p>
+  </div>
+</template>

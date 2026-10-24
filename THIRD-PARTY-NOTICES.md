@@ -6,9 +6,11 @@ vibecn is an independent port of shadcn/ui for vibe.js. It is not affiliated wit
 
 Source: https://github.com/shadcn-ui/ui
 Revision: ffd225775bbb7955a673f08bb9be4a63600d9dfb
-Adapted files: apps/v4/registry/new-york-v4/ui/{button,badge,card,input,textarea,skeleton,label,separator}.tsx and theme tokens.
+Adapted files include apps/v4/registry/new-york-v4/ui/{button,badge,card,input,textarea,skeleton,label,separator,calendar,carousel,chart,sidebar}.tsx and theme tokens. Other adapted component sources carry the same notice in their .vibe files.
 
 The React rendering layer was replaced with vibe.js templates, models and attribute forwarding. Button and Badge do not implement asChild. CardTitle uses h3. Label and Separator use native elements. Skeleton respects reduced motion. The neutral theme retains the shadcn token vocabulary.
+
+Calendar implements its own Gregorian date grid instead of react-day-picker. Carousel uses native scroll snapping instead of Embla. Chart uses native SVG instead of Recharts. Sidebar uses native elements, localStorage and the existing Sheet; it does not use Radix Slot. These dependencies' source code is not bundled.
 
 MIT License
 

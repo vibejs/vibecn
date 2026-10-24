@@ -1,0 +1,38 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { provideOverlay } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+import SheetContent from './SheetContent.vibe';
+import SheetHeader from './SheetHeader.vibe';
+import SheetTitle from './SheetTitle.vibe';
+import SheetDescription from './SheetDescription.vibe';
+
+defineOptions({ inheritAttrs: false });
+const { class: className, side = 'left', variant = 'sidebar', collapsible = 'offcanvas', label = 'Sidebar' } = defineProps<{
+  class?: ClassValue;
+  side?: 'left' | 'right';
+  variant?: 'sidebar' | 'floating' | 'inset';
+  collapsible?: 'offcanvas' | 'icon' | 'none';
+  label?: string;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const sidebar = inject<{ open: Ref<boolean>; openMobile: Ref<boolean>; mobile: Ref<boolean>; id: string }>(Symbol.for('vibecn.sidebar'))!;
+// Provide on the component that renders the forwarded slot, as Sheet itself does.
+provideOverlay('Dialog', sidebar.openMobile);
+</script>
+
+<template>
+  <aside v-if="collapsible === 'none'" data-slot="sidebar" :id="sidebar.id" :aria-label="label" v-bind="$attrs" :class="cn('flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground', className)"><slot /></aside>
+  <SheetContent v-else-if="sidebar.mobile.value" data-slot="sidebar" data-sidebar="sidebar" data-mobile="true" :id="sidebar.id" :side="side" v-bind="$attrs" :class="cn('w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [--sidebar-width:18rem]', className)">
+    <SheetHeader class="sr-only"><SheetTitle>{{ label }}</SheetTitle><SheetDescription>Displays the mobile sidebar.</SheetDescription></SheetHeader>
+    <div class="flex h-full w-full flex-col"><slot /></div>
+  </SheetContent>
+  <div v-else data-slot="sidebar" :data-state="sidebar.open.value ? 'expanded' : 'collapsed'" :data-collapsible="sidebar.open.value ? '' : collapsible" :data-variant="variant" :data-side="side" class="group peer text-sidebar-foreground">
+    <div data-slot="sidebar-gap" :class="cn('relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[collapsible=offcanvas]:w-0 group-data-[side=right]:rotate-180 motion-reduce:transition-none', variant === 'floating' || variant === 'inset' ? 'group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]' : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)')" />
+    <aside :id="sidebar.id" :aria-label="label" :inert="!sidebar.open.value && collapsible === 'offcanvas'" data-slot="sidebar-container" v-bind="$attrs" :class="cn('fixed inset-y-0 z-10 flex h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear motion-reduce:transition-none', side === 'left' ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]' : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]', variant === 'floating' || variant === 'inset' ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]' : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l', className)">
+      <div data-sidebar="sidebar" data-slot="sidebar-inner" class="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow-sm"><slot /></div>
+    </aside>
+  </div>
+</template>

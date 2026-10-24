@@ -1,0 +1,9 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Skeleton from './Skeleton.vibe';
+defineOptions({ inheritAttrs: false });
+const { class: className, showIcon = false } = defineProps<{ class?: ClassValue; showIcon?: boolean }>();
+</script>
+<template><div data-slot="sidebar-menu-skeleton" data-sidebar="menu-skeleton" v-bind="$attrs" :class="cn('flex h-8 items-center gap-2 rounded-md px-2', className)"><Skeleton v-if="showIcon" class="size-4 rounded-md" data-sidebar="menu-skeleton-icon" /><Skeleton class="h-4 max-w-[70%] flex-1" data-sidebar="menu-skeleton-text" /></div></template>

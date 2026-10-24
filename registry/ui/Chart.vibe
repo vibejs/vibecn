@@ -1,0 +1,67 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+const { class: className, type = 'bar', data = [], label = 'Chart', description, valueLabel = 'Value' } = defineProps<{
+  class?: ClassValue;
+  type?: 'bar' | 'line' | 'area' | 'pie';
+  data?: { label: string; value: number; color?: string }[];
+  label?: string;
+  description?: string;
+  valueLabel?: string;
+}>();
+const id = useId();
+// Ignore non-finite numbers before generating SVG coordinates. Negative pie values have
+// no meaningful angular size and are represented as zero; Cartesian charts retain them.
+const series = computed(() => data.map((item, index) => ({ ...item, value: Number.isFinite(item.value) ? item.value : 0, color: item.color ?? `var(--chart-${index % 5 + 1})` })));
+const bounds = computed(() => ({ min: Math.min(0, ...series.value.map((item) => item.value)), max: Math.max(0, ...series.value.map((item) => item.value)) }));
+const y = (value: number): number => 220 - ((value - bounds.value.min) / (bounds.value.max - bounds.value.min || 1)) * 200;
+const x = (index: number): number => 40 + (index + 0.5) * 400 / Math.max(1, series.value.length);
+const points = computed(() => series.value.map((item, index) => `${x(index)},${y(item.value)}`).join(' '));
+const area = computed(() => series.value.length ? `M ${x(0)},${y(0)} L ${points.value.replaceAll(' ', ' L ')} L ${x(series.value.length - 1)},${y(0)} Z` : '');
+const total = computed(() => series.value.reduce((sum, item) => sum + Math.max(0, item.value), 0));
+const slices = computed(() => {
+  let angle = -Math.PI / 2;
+  return series.value.map((item) => {
+    const fraction = Math.max(0, item.value) / (total.value || 1);
+    const start = angle;
+    angle += fraction * Math.PI * 2;
+    return { ...item, fraction, path: `M 240,125 L ${240 + Math.cos(start) * 100},${125 + Math.sin(start) * 100} A 100,100 0 ${fraction > 0.5 ? 1 : 0},1 ${240 + Math.cos(angle) * 100},${125 + Math.sin(angle) * 100} Z` };
+  });
+});
+</script>
+
+<template>
+  <figure data-slot="chart" v-bind="$attrs" :class="cn('flex w-full flex-col justify-center gap-3 text-xs', className)">
+    <figcaption :id="id + '-label'" class="font-medium">{{ label }}</figcaption>
+    <p v-if="description" :id="id + '-description'" class="text-muted-foreground">{{ description }}</p>
+    <svg viewBox="0 0 480 260" role="img" :aria-labelledby="id + '-label'" :aria-describedby="description ? id + '-description' : undefined" class="aspect-video w-full overflow-visible">
+      <template v-if="type !== 'pie'">
+        <line x1="40" :y1="y(0)" x2="440" :y2="y(0)" stroke="currentColor" class="text-border" />
+        <text x="34" y="24" text-anchor="end" fill="currentColor" class="text-muted-foreground">{{ bounds.max }}</text>
+        <text x="34" y="220" text-anchor="end" fill="currentColor" class="text-muted-foreground">{{ bounds.min }}</text>
+        <path v-if="type === 'area'" :d="area" fill="var(--chart-1)" opacity="0.25" />
+        <polyline v-if="type === 'line' || type === 'area'" :points="points" fill="none" stroke="var(--chart-1)" stroke-width="2" />
+        <g v-for="(item, index) in series" :key="index">
+          <rect v-if="type === 'bar'" :x="x(index) - 140 / series.length" :y="Math.min(y(0), y(item.value))" :width="280 / series.length" :height="Math.abs(y(item.value) - y(0))" rx="3" :fill="item.color"><title>{{ item.label }}: {{ item.value }}</title></rect>
+          <circle v-else :cx="x(index)" :cy="y(item.value)" r="3" fill="var(--chart-1)"><title>{{ item.label }}: {{ item.value }}</title></circle>
+          <text :x="x(index)" y="246" text-anchor="middle" fill="currentColor" class="text-muted-foreground">{{ item.label }}</text>
+        </g>
+      </template>
+      <template v-else>
+        <g v-for="(slice, index) in slices" :key="index">
+          <circle v-if="slice.fraction === 1" cx="240" cy="125" r="100" :fill="slice.color"><title>{{ slice.label }}: {{ slice.value }}</title></circle>
+          <path v-else-if="slice.fraction > 0" :d="slice.path" :fill="slice.color"><title>{{ slice.label }}: {{ slice.value }}</title></path>
+        </g>
+      </template>
+      <text v-if="!series.length || (type === 'pie' && !total)" x="240" y="125" text-anchor="middle" fill="currentColor">No data</text>
+    </svg>
+    <ul aria-hidden="true" class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+      <li v-for="(item, index) in series" :key="index" class="flex items-center gap-1.5"><span class="size-2 rounded-xs" :style="{ backgroundColor: type === 'line' || type === 'area' ? 'var(--chart-1)' : item.color }" />{{ item.label }}</li>
+    </ul>
+    <table class="sr-only"><caption>{{ label }} data</caption><thead><tr><th scope="col">Label</th><th scope="col">{{ valueLabel }}</th></tr></thead><tbody><tr v-for="(item, index) in series" :key="index"><th scope="row">{{ item.label }}</th><td>{{ item.value }}</td></tr></tbody></table>
+  </figure>
+</template>

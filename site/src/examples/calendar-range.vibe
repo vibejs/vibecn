@@ -1,0 +1,6 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Calendar from '@/components/ui/Calendar.vibe';
+const dates = ref<{ from?: string; to?: string }>({ from: '2026-10-12', to: '2026-10-16' });
+</script>
+<template><Calendar v-model:range="dates" mode="range" default-month="2026-10" class="rounded-md border shadow-sm" /></template>

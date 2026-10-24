@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import { ref, watch } from '@usevibejs/ui';
+import Calendar from '@/components/ui/Calendar.vibe';
+import Popover from '@/components/ui/Popover.vibe';
+import PopoverContent from '@/components/ui/PopoverContent.vibe';
+import PopoverTrigger from '@/components/ui/PopoverTrigger.vibe';
+
+const date = ref<string | null>(null);
+const open = ref(false);
+watch(date, () => { open.value = false; });
+const display = (value: string): string => new Intl.DateTimeFormat('en-US', { dateStyle: 'long' }).format(new Date(value + 'T12:00:00'));
+</script>
+<template>
+  <Popover v-model:open="open">
+    <PopoverTrigger variant="outline" class="w-64 justify-start font-normal">{{ date ? display(date) : 'Pick a date' }}</PopoverTrigger>
+    <PopoverContent aria-label="Choose a date" class="w-auto p-0" align="start">
+      <Calendar :autofocus="open" v-model="date" />
+    </PopoverContent>
+  </Popover>
+</template>
