@@ -13,6 +13,7 @@ import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
 import { themes } from '../home/themes.ts';
 import '../home/themes.css';
 import { views } from '../home/views.ts';
+import vibejsLogo from '../assets/vibejs-logo.webp';
 import CopyButton from '../site/CopyButton.vibe';
 import { componentCount, sections } from '../site/nav.ts';
 
@@ -84,6 +85,24 @@ const components = sections.find((section) => section.title === 'Components')!.i
             <RouterLink :to="item.href" class="text-muted-foreground transition-colors hover:text-foreground">{{ item.title }}</RouterLink>
           </li>
         </ul>
+      </div>
+    </section>
+
+    <section class="border-t" aria-labelledby="home-vibejs">
+      <div class="mx-auto w-full max-w-screen-2xl px-4 py-20 md:px-6">
+        <div class="relative flex flex-col gap-6 overflow-hidden rounded-2xl border bg-card p-6 sm:p-10 md:flex-row md:items-center md:gap-10">
+          <img :src="vibejsLogo" alt="" width="64" height="64" class="size-16 shrink-0 rounded-2xl shadow-sm" />
+          <div class="flex flex-1 flex-col gap-2">
+            <h2 id="home-vibejs" class="text-2xl font-semibold tracking-tight">Made for vibe.js</h2>
+            <p class="max-w-2xl text-muted-foreground">
+              vibe.js types the UI and the server from one contract, in one TypeScript package. vibecn gives its .vibe components the shadcn/ui look, as source you own.
+            </p>
+          </div>
+          <div class="flex shrink-0 flex-wrap gap-2">
+            <a href="https://vibejs.org" class="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">Explore vibe.js</a>
+            <a href="https://vibejs.org/tutorial" class="inline-flex h-9 items-center rounded-md border bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent">Try the tutorial</a>
+          </div>
+        </div>
       </div>
     </section>
 

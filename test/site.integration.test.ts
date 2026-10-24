@@ -37,6 +37,9 @@ it('renders the home page with a neutral theme and a copyable install command', 
   );
   const [, a, b] = primary.match(/[\d.e-]+/g)!.map(Number);
   expect(Math.abs(a) + Math.abs(b)).toBeLessThan(0.01);
+  expect(await page.getByRole('link', { name: 'Explore vibe.js' }).getAttribute('href')).toBe(
+    'https://vibejs.org',
+  );
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: 'Copy install command' }).click();
   await page.getByRole('button', { name: 'Copied' }).first().waitFor();
