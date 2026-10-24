@@ -1,0 +1,99 @@
+// Theme names from shadcn/ui. The values live in themes.css.
+export const themes = [
+  {
+    name: 'neutral',
+    title: 'Neutral',
+  },
+  {
+    name: 'stone',
+    title: 'Stone',
+  },
+  {
+    name: 'zinc',
+    title: 'Zinc',
+  },
+  {
+    name: 'mauve',
+    title: 'Mauve',
+  },
+  {
+    name: 'olive',
+    title: 'Olive',
+  },
+  {
+    name: 'mist',
+    title: 'Mist',
+  },
+  {
+    name: 'taupe',
+    title: 'Taupe',
+  },
+  {
+    name: 'amber',
+    title: 'Amber',
+  },
+  {
+    name: 'blue',
+    title: 'Blue',
+  },
+  {
+    name: 'cyan',
+    title: 'Cyan',
+  },
+  {
+    name: 'emerald',
+    title: 'Emerald',
+  },
+  {
+    name: 'fuchsia',
+    title: 'Fuchsia',
+  },
+  {
+    name: 'green',
+    title: 'Green',
+  },
+  {
+    name: 'indigo',
+    title: 'Indigo',
+  },
+  {
+    name: 'lime',
+    title: 'Lime',
+  },
+  {
+    name: 'orange',
+    title: 'Orange',
+  },
+  {
+    name: 'pink',
+    title: 'Pink',
+  },
+  {
+    name: 'purple',
+    title: 'Purple',
+  },
+  {
+    name: 'red',
+    title: 'Red',
+  },
+  {
+    name: 'rose',
+    title: 'Rose',
+  },
+  {
+    name: 'sky',
+    title: 'Sky',
+  },
+  {
+    name: 'teal',
+    title: 'Teal',
+  },
+  {
+    name: 'violet',
+    title: 'Violet',
+  },
+  {
+    name: 'yellow',
+    title: 'Yellow',
+  },
+];
