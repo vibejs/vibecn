@@ -402,6 +402,11 @@ it('fits a phone screen and opens the navigation in a modal dialog', async () =>
   }
   await page.getByRole('button', { name: 'Open menu' }).click();
   const menu = page.getByRole('dialog', { name: 'Menu' });
+  for (const name of ['Home', 'Docs', 'Components', 'Examples'])
+    await menu
+      .getByRole('navigation', { name: 'Site' })
+      .getByRole('link', { name, exact: true })
+      .waitFor();
   await menu.getByRole('link', { name: 'Textarea' }).click();
   await page.getByRole('heading', { level: 1, name: 'Textarea' }).waitFor();
   expect(await menu.isVisible()).toBe(false);
