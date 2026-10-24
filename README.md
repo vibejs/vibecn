@@ -8,6 +8,8 @@ The CLI copies `.vibe` component source into your application. You own the files
 
 ## Try the playground
 
+The playground is live at https://vibecn.monsterorigin.workers.dev. To run it locally:
+
 Use Node `^24.15.0 || >=26` and pnpm 12.14.0.
 
 ```sh
@@ -112,7 +114,7 @@ Components forward native attributes and event listeners. `class` accepts string
 
 - `dist/`: the Node CLI and installer API, with TypeScript declarations.
 - `public/r/`: registry JSON with embedded source and license notices.
-- `playground/dist/`: the static playground, including `/r/` payloads.
+- `playground/dist/`: the static playground, including `/r/` payloads. `npx wrangler deploy` publishes it as the `vibecn` Cloudflare Worker configured in `wrangler.jsonc`.
 
 The registry payloads use shadcn's registry schema. The bundled CLI is the supported installer; compatibility with shadcn's CLI or arbitrary remote registries has not been established.
 
