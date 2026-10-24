@@ -1,0 +1,13 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import { provideMenu } from '__VIBECN_LIB__/menu.ts';
+
+const open = defineModel<boolean>('open', { default: () => false });
+defineSlots<{ default?: (props: {}) => unknown }>();
+provideMenu(open, { point: ref(null) });
+</script>
+
+<template>
+  <slot />
+</template>

@@ -1,0 +1,22 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const command = inject<{
+  id: string;
+  search: Ref<string>;
+  active: Ref<string>;
+  activate: (option: HTMLElement) => void;
+  onKeydown: (event: KeyboardEvent) => boolean;
+}>(Symbol.for('vibecn.command'))!;
+</script>
+
+<template>
+  <div role="listbox" data-slot="command-list" :id="command.id + '-list'" v-bind="$attrs" :class="cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', className)"><slot /></div>
+</template>

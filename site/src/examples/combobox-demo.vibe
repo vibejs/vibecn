@@ -1,0 +1,34 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Combobox from '@/components/ui/Combobox.vibe';
+import ComboboxContent from '@/components/ui/ComboboxContent.vibe';
+import ComboboxEmpty from '@/components/ui/ComboboxEmpty.vibe';
+import ComboboxInput from '@/components/ui/ComboboxInput.vibe';
+import ComboboxItem from '@/components/ui/ComboboxItem.vibe';
+import ComboboxList from '@/components/ui/ComboboxList.vibe';
+
+const framework = ref('');
+const frameworks = [
+  { value: 'vibejs', label: 'vibe.js' },
+  { value: 'next', label: 'Next.js' },
+  { value: 'sveltekit', label: 'SvelteKit' },
+  { value: 'nuxt', label: 'Nuxt' },
+  { value: 'remix', label: 'Remix' },
+  { value: 'astro', label: 'Astro' },
+];
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-3">
+    <Combobox v-model="framework">
+      <ComboboxInput placeholder="Select framework..." aria-label="Framework" class="w-[220px]" show-clear />
+      <ComboboxContent>
+        <ComboboxEmpty>No framework found.</ComboboxEmpty>
+        <ComboboxList>
+          <ComboboxItem v-for="item in frameworks" :key="item.value" :value="item.value">{{ item.label }}</ComboboxItem>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+    <p class="text-sm text-muted-foreground" role="status">Selected: {{ framework || 'none' }}</p>
+  </div>
+</template>

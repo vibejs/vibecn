@@ -1,0 +1,20 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { reactive } from '@usevibejs/ui';
+import { provideOverlay } from '__VIBECN_LIB__/overlay.ts';
+
+const { name } = defineProps<{
+  /** Submits the value with a form under this name. */
+  name?: string;
+}>();
+const model = defineModel<string>({ default: () => '' });
+const open = defineModel<boolean>('open', { default: () => false });
+defineSlots<{ default?: (props: {}) => unknown }>();
+// Items report their labels, so the trigger can show the selected one while the list is closed.
+provideOverlay('Select', open, { model, labels: reactive(new Map<string, string>()) });
+</script>
+
+<template>
+  <slot />
+  <input v-if="name" type="hidden" :name="name" :value="model" />
+</template>

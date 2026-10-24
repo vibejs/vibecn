@@ -1,0 +1,35 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Select from '@/components/ui/Select.vibe';
+import SelectContent from '@/components/ui/SelectContent.vibe';
+import SelectGroup from '@/components/ui/SelectGroup.vibe';
+import SelectItem from '@/components/ui/SelectItem.vibe';
+import SelectLabel from '@/components/ui/SelectLabel.vibe';
+import SelectSeparator from '@/components/ui/SelectSeparator.vibe';
+import SelectTrigger from '@/components/ui/SelectTrigger.vibe';
+import SelectValue from '@/components/ui/SelectValue.vibe';
+
+const zone = ref('');
+const regions = [
+  { label: 'North America', zones: [['est', 'Eastern Standard Time (EST)'], ['cst', 'Central Standard Time (CST)'], ['mst', 'Mountain Standard Time (MST)'], ['pst', 'Pacific Standard Time (PST)']] },
+  { label: 'Europe & Africa', zones: [['gmt', 'Greenwich Mean Time (GMT)'], ['cet', 'Central European Time (CET)'], ['eet', 'Eastern European Time (EET)'], ['trt', 'Turkey Time (TRT)']] },
+  { label: 'Asia', zones: [['ist', 'India Standard Time (IST)'], ['cst_china', 'China Standard Time (CST)'], ['jst', 'Japan Standard Time (JST)'], ['kst', 'Korea Standard Time (KST)']] },
+];
+</script>
+
+<template>
+  <Select v-model="zone" name="timezone">
+    <SelectTrigger class="w-[280px]" aria-label="Timezone">
+      <SelectValue placeholder="Select a timezone" />
+    </SelectTrigger>
+    <SelectContent>
+      <template v-for="(region, index) in regions" :key="region.label">
+        <SelectSeparator v-if="index > 0" />
+        <SelectGroup>
+          <SelectLabel>{{ region.label }}</SelectLabel>
+          <SelectItem v-for="[value, label] in region.zones" :key="value" :value="value">{{ label }}</SelectItem>
+        </SelectGroup>
+      </template>
+    </SelectContent>
+  </Select>
+</template>

@@ -1,0 +1,17 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, value } = defineProps<{ class?: ClassValue; value?: string }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const id = useId();
+provide(Symbol.for('vibecn.navigation-menu-item'), { value: value ?? id, id });
+</script>
+
+<template>
+  <li data-slot="navigation-menu-item" v-bind="$attrs" :class="cn('relative', className)"><slot /></li>
+</template>

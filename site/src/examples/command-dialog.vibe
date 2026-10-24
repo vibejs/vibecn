@@ -1,0 +1,47 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from '@usevibejs/ui';
+import CommandDialog from '@/components/ui/CommandDialog.vibe';
+import CommandEmpty from '@/components/ui/CommandEmpty.vibe';
+import CommandGroup from '@/components/ui/CommandGroup.vibe';
+import CommandInput from '@/components/ui/CommandInput.vibe';
+import CommandItem from '@/components/ui/CommandItem.vibe';
+import CommandList from '@/components/ui/CommandList.vibe';
+import Kbd from '@/components/ui/Kbd.vibe';
+import { toast } from '@/lib/toast.ts';
+
+const open = ref(false);
+const onKeydown = (event: KeyboardEvent): void => {
+  if (event.key === 'j' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault();
+    open.value = !open.value;
+  }
+};
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onUnmounted(() => document.removeEventListener('keydown', onKeydown));
+const run = (value: string): void => {
+  open.value = false;
+  toast(`Ran ${value}`);
+};
+</script>
+
+<template>
+  <p class="text-sm text-muted-foreground">
+    Press <Kbd>⌘J</Kbd> or <button type="button" class="font-medium text-foreground underline underline-offset-4" @click="open = true">open the palette</button>
+  </p>
+  <CommandDialog v-model:open="open">
+    <CommandInput placeholder="Type a command or search..." aria-label="Command" />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup heading="Suggestions">
+        <CommandItem @select="run">Calendar</CommandItem>
+        <CommandItem @select="run">Search Emoji</CommandItem>
+        <CommandItem @select="run">Calculator</CommandItem>
+      </CommandGroup>
+      <CommandGroup heading="Settings">
+        <CommandItem @select="run">Profile</CommandItem>
+        <CommandItem @select="run">Billing</CommandItem>
+        <CommandItem @select="run">Settings</CommandItem>
+      </CommandGroup>
+    </CommandList>
+  </CommandDialog>
+</template>

@@ -193,7 +193,8 @@ export function place(
  * scrolling and resizing. Returns the side it was placed on, for `data-side` styles.
  */
 export function useFloating(
-  anchor: () => Element | null,
+  /** An element, or a fixed box such as the point where a context menu opens. */
+  anchor: () => Element | { top: number; left: number; width: number; height: number } | null,
   floating: Readonly<ShallowRef<HTMLElement | null>>,
   open: () => boolean,
   placement: () => Placement,
@@ -204,7 +205,7 @@ export function useFloating(
     const element = floating.value;
     if (!target || !element) return;
     const result = place(
-      target.getBoundingClientRect(),
+      target instanceof Element ? target.getBoundingClientRect() : target,
       { width: element.offsetWidth, height: element.offsetHeight },
       { width: window.innerWidth, height: window.innerHeight },
       placement(),

@@ -1,0 +1,23 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onUnmounted, watch } from '@usevibejs/ui';
+import type { Ref } from '@usevibejs/ui';
+import { provideMenu, type Menubar } from '__VIBECN_LIB__/menu.ts';
+
+const open = defineModel<boolean>('open', { default: () => false });
+defineSlots<{ default?: (props: {}) => unknown }>();
+const bar = inject<Menubar & { menus: Map<string, { open: Ref<boolean>; focusOnOpen: Ref<'first' | 'last' | 'content'> }> }>(
+  Symbol.for('vibecn.menubar'),
+)!;
+const menu = provideMenu(open, { menubar: bar });
+bar.menus.set(menu.id, menu);
+onUnmounted(() => bar.menus.delete(menu.id));
+// One menu of the bar is open at a time.
+watch(open, (value) => {
+  if (value) for (const [id, other] of bar.menus) if (id !== menu.id) other.open.value = false;
+});
+</script>
+
+<template>
+  <slot />
+</template>

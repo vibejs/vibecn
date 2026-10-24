@@ -1,0 +1,48 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, nextTick } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, disabled = false } = defineProps<{ class?: ClassValue; disabled?: boolean }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const nav = inject<{
+  model: Ref<string>;
+  show: (value: string) => void;
+  hide: () => void;
+  toggle: (value: string) => void;
+}>(Symbol.for('vibecn.navigation-menu'))!;
+const item = inject<{ value: string; id: string }>(Symbol.for('vibecn.navigation-menu-item'))!;
+
+async function onKeydown(event: KeyboardEvent): Promise<void> {
+  if (event.key !== 'ArrowDown') return;
+  event.preventDefault();
+  nav.model.value = item.value;
+  await nextTick();
+  document.getElementById(item.id + '-content')?.querySelector<HTMLElement>('a, button, [tabindex]')?.focus();
+}
+const base =
+  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground data-[state=open]:hover:bg-accent data-[state=open]:focus:bg-accent";
+</script>
+
+<template>
+  <button
+    type="button"
+    data-slot="navigation-menu-trigger"
+    :aria-expanded="nav.model.value === item.value"
+    :aria-controls="item.id + '-content'"
+    :data-state="nav.model.value === item.value ? 'open' : 'closed'"
+    :disabled="disabled"
+    v-bind="$attrs"
+    :class="cn(base, className)"
+    @click="nav.toggle(item.value)"
+    @pointerenter="nav.show(item.value)"
+    @pointerleave="nav.hide"
+    @keydown="onKeydown"
+  >
+    <slot />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"><path d="m6 9 6 6 6-6" /></svg>
+  </button>
+</template>

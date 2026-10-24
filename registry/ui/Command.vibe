@@ -1,0 +1,26 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { provideCommand } from '__VIBECN_LIB__/collection.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+/** The text in the input. Items that do not contain it are hidden. */
+const search = defineModel<string>('search', { default: () => '' });
+defineSlots<{ default?: (props: {}) => unknown }>();
+const root = useTemplateRef<HTMLElement>('root');
+provideCommand(root, search);
+</script>
+
+<template>
+  <div
+    ref="root"
+    data-slot="command"
+    :data-searching="!!search || undefined"
+    v-bind="$attrs"
+    :class="cn('flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground', className)"
+  ><slot /></div>
+</template>

@@ -30,3 +30,11 @@ globalThis.ResizeObserver ??= class {
   unobserve(): void {}
   disconnect(): void {}
 };
+Element.prototype.scrollIntoView ??= function scrollIntoView() {};
+// jsdom hides closed popovers, which makes their items unfocusable; the stand-ins above track
+// the open state instead.
+document.head.append(
+  Object.assign(document.createElement('style'), {
+    textContent: '[popover] { display: block !important; }',
+  }),
+);

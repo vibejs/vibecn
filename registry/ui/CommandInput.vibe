@@ -1,0 +1,47 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, placeholder, disabled = false } = defineProps<{
+  class?: ClassValue;
+  placeholder?: string;
+  disabled?: boolean;
+}>();
+const command = inject<{
+  id: string;
+  search: Ref<string>;
+  active: Ref<string>;
+  activate: (option: HTMLElement) => void;
+  onKeydown: (event: KeyboardEvent) => boolean;
+}>(Symbol.for('vibecn.command'))!;
+const input = useTemplateRef<HTMLInputElement>('input');
+defineExpose({ focus: () => input.value?.focus() });
+</script>
+
+<template>
+  <div data-slot="command-input-wrapper" class="flex h-9 items-center gap-2 border-b px-3">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="size-4 shrink-0 opacity-50"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+    <input
+      ref="input"
+      v-model="command.search.value"
+      type="text"
+      role="combobox"
+      aria-autocomplete="list"
+      aria-expanded="true"
+      autocomplete="off"
+      spellcheck="false"
+      data-slot="command-input"
+      :aria-controls="command.id + '-list'"
+      :aria-activedescendant="command.active.value || undefined"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      v-bind="$attrs"
+      :class="cn('flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50', className)"
+      @keydown="command.onKeydown"
+    />
+  </div>
+</template>

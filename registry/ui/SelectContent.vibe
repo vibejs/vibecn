@@ -1,0 +1,74 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useTemplateRef, watch } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { createTypeahead, nextItem } from '__VIBECN_LIB__/collection.ts';
+import { anchorOf, injectOverlay, useFloating, usePopover } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, side = 'bottom', align = 'start', sideOffset = 4 } = defineProps<{
+  class?: ClassValue;
+  side?: 'top' | 'bottom';
+  align?: 'start' | 'center' | 'end';
+  sideOffset?: number;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const select = injectOverlay<{
+  model: Ref<string>;
+  labels: Map<string, string>;
+}>('Select');
+const content = useTemplateRef<HTMLElement>('content');
+const onToggle = usePopover(content, select.open);
+const placed = useFloating(
+  () => anchorOf(select.id),
+  content,
+  () => select.open.value,
+  () => ({ side, align, sideOffset, alignOffset: 0 }),
+);
+const options = (): HTMLElement[] =>
+  [...content.value!.querySelectorAll<HTMLElement>('[role="option"]')].filter((option) => !option.hasAttribute('data-disabled'));
+const typeahead = createTypeahead();
+const trigger = (): HTMLElement => anchorOf(select.id) as HTMLElement;
+
+// The list is at least as wide as the trigger and opens on the selected option.
+watch(
+  select.open,
+  (open) => {
+    if (!open) return;
+    content.value!.style.minWidth = `${trigger().offsetWidth}px`;
+    const list = options();
+    (list.find((option) => option.getAttribute('aria-selected') === 'true') ?? list[0] ?? content.value)!.focus();
+  },
+  { flush: 'post' },
+);
+function onKeydown(event: KeyboardEvent): void {
+  const list = options();
+  const next = nextItem(list, document.activeElement, event.key, 'vertical', false) ?? typeahead(event.key, list, document.activeElement);
+  if (next) {
+    event.preventDefault();
+    next.focus();
+  } else if (event.key === 'Escape' || event.key === 'Tab') {
+    if (event.key === 'Escape') event.preventDefault();
+    select.open.value = false;
+    trigger().focus();
+  }
+}
+</script>
+
+<template>
+  <div
+    ref="content"
+    role="listbox"
+    tabindex="-1"
+    data-slot="select-content"
+    :id="select.id + '-content'"
+    :data-state="select.open.value ? 'open' : 'closed'"
+    :data-side="placed"
+    v-bind="{ popover: 'auto', ...$attrs }"
+    :class="cn('max-h-80 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md outline-none fixed inset-auto m-0 transition-[opacity,scale,translate,overlay,display] transition-discrete duration-150 opacity-0 scale-95 open:opacity-100 open:scale-100 starting:open:opacity-0 starting:open:scale-95 data-[side=bottom]:starting:open:-translate-y-2 data-[side=top]:starting:open:translate-y-2 motion-reduce:transition-none', className)"
+    @beforetoggle="onToggle"
+    @keydown="onKeydown"
+  ><slot /></div>
+</template>

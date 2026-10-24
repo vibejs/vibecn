@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import DropdownMenu from '@/components/ui/DropdownMenu.vibe';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vibe';
+import DropdownMenuGroup from '@/components/ui/DropdownMenuGroup.vibe';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vibe';
+import DropdownMenuLabel from '@/components/ui/DropdownMenuLabel.vibe';
+import DropdownMenuSeparator from '@/components/ui/DropdownMenuSeparator.vibe';
+import DropdownMenuShortcut from '@/components/ui/DropdownMenuShortcut.vibe';
+import DropdownMenuSub from '@/components/ui/DropdownMenuSub.vibe';
+import DropdownMenuSubContent from '@/components/ui/DropdownMenuSubContent.vibe';
+import DropdownMenuSubTrigger from '@/components/ui/DropdownMenuSubTrigger.vibe';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vibe';
+import { toast } from '@/lib/toast.ts';
+</script>
+
+<template>
+  <DropdownMenu>
+    <DropdownMenuTrigger variant="outline">Open</DropdownMenuTrigger>
+    <DropdownMenuContent class="w-56" align="start">
+      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuGroup>
+        <DropdownMenuItem @select="toast('Profile')">Profile<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut></DropdownMenuItem>
+        <DropdownMenuItem @select="toast('Billing')">Billing<DropdownMenuShortcut>⌘B</DropdownMenuShortcut></DropdownMenuItem>
+        <DropdownMenuItem @select="toast('Settings')">Settings<DropdownMenuShortcut>⌘S</DropdownMenuShortcut></DropdownMenuItem>
+        <DropdownMenuItem @select="toast('Keyboard shortcuts')">Keyboard shortcuts<DropdownMenuShortcut>⌘K</DropdownMenuShortcut></DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuItem>Team</DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem @select="toast('Invite sent by email')">Email</DropdownMenuItem>
+            <DropdownMenuItem @select="toast('Invite sent by message')">Message</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>More...</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuItem>New Team<DropdownMenuShortcut>⌘+T</DropdownMenuShortcut></DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>GitHub</DropdownMenuItem>
+      <DropdownMenuItem>Support</DropdownMenuItem>
+      <DropdownMenuItem disabled>API</DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem variant="destructive" @select="toast('Logged out')">Log out<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut></DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</template>

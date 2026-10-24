@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import DropdownMenu from '@/components/ui/DropdownMenu.vibe';
+import DropdownMenuCheckboxItem from '@/components/ui/DropdownMenuCheckboxItem.vibe';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vibe';
+import DropdownMenuLabel from '@/components/ui/DropdownMenuLabel.vibe';
+import DropdownMenuRadioGroup from '@/components/ui/DropdownMenuRadioGroup.vibe';
+import DropdownMenuRadioItem from '@/components/ui/DropdownMenuRadioItem.vibe';
+import DropdownMenuSeparator from '@/components/ui/DropdownMenuSeparator.vibe';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vibe';
+
+const statusBar = ref(true);
+const activityBar = ref(false);
+const panel = ref(false);
+const position = ref('bottom');
+// Keep the menu open while toggling several options.
+const stay = (event: Event): void => event.preventDefault();
+</script>
+
+<template>
+  <DropdownMenu>
+    <DropdownMenuTrigger variant="outline">View</DropdownMenuTrigger>
+    <DropdownMenuContent class="w-56">
+      <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuCheckboxItem v-model:checked="statusBar" @select="stay">Status Bar</DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem v-model:checked="activityBar" disabled>Activity Bar</DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem v-model:checked="panel" @select="stay">Panel</DropdownMenuCheckboxItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuLabel>Panel Position</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuRadioGroup v-model="position">
+        <DropdownMenuRadioItem value="top">Top</DropdownMenuRadioItem>
+        <DropdownMenuRadioItem value="bottom">Bottom</DropdownMenuRadioItem>
+        <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
+      </DropdownMenuRadioGroup>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</template>
