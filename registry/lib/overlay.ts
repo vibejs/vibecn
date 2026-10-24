@@ -231,6 +231,9 @@ export function useFloating(
       stop();
       if (!value) return;
       update();
+      // A popovertarget click opens the state from beforetoggle, before the browser shows the
+      // popover, so the first measure can see no size. Measure again before the first paint.
+      requestAnimationFrame(update);
       window.addEventListener('scroll', update, true);
       window.addEventListener('resize', update);
     },

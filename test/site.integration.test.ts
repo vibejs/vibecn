@@ -58,7 +58,19 @@ it('switches the homepage showcase screens and previews other themes', async () 
   await showcase.getByText('A new idea for the homepage', { exact: true }).waitFor();
   await showcase.getByRole('tab', { name: 'Sign in' }).click();
   await showcase.getByRole('heading', { name: 'Sign in to Acme' }).waitFor();
-  await showcase.getByRole('combobox', { name: 'Preview theme' }).click();
+  const picker = showcase.getByRole('combobox', { name: 'Preview theme' });
+  await picker.click();
+  // The first opening is sized to the trigger before it is placed, so it ends with it.
+  const list = page
+    .getByRole('listbox')
+    .filter({ has: page.getByRole('option', { name: 'Green' }) });
+  await list.waitFor();
+  await list.evaluate((element) =>
+    Promise.all(element.getAnimations().map((animation) => animation.finished)),
+  );
+  const [box, anchor] = await Promise.all([list.boundingBox(), picker.boundingBox()]);
+  expect(Math.abs(box!.x + box!.width - (anchor!.x + anchor!.width))).toBeLessThan(1);
+  expect(box!.y).toBeGreaterThan(anchor!.y);
   await page.getByRole('option', { name: 'Green' }).click();
   expect(
     await showcase
