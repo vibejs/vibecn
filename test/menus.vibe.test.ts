@@ -259,6 +259,20 @@ describe('Combobox', () => {
 });
 
 describe('Command', () => {
+  it('keeps the page still on mount and scrolls active items only while its input is focused', async () => {
+    const scroll = vi.spyOn(Element.prototype, 'scrollIntoView');
+    await setup();
+    expect(scroll).not.toHaveBeenCalled();
+    const input = wrapper.get('[data-slot="command-input"]');
+    (input.element as HTMLInputElement).focus();
+    await key(input.element, 'ArrowDown');
+    expect(scroll).toHaveBeenCalledWith({ block: 'nearest' });
+    await input.setValue('nothing');
+    await flushPromises();
+    expect(input.attributes('aria-activedescendant')).toBeUndefined();
+    scroll.mockRestore();
+  });
+
   it('filters by text and keywords, skips disabled items and selects with Enter', async () => {
     await setup();
     const input = wrapper.get('[data-slot="command-input"]');

@@ -150,7 +150,8 @@ export function useActiveDescendant(
     );
   const activate = (option: HTMLElement | undefined): void => {
     active.value = option?.id ?? '';
-    option?.scrollIntoView({ block: 'nearest' });
+    // Initial selection must not pull an embedded command menu into view on page load.
+    if (list().contains(document.activeElement)) option?.scrollIntoView({ block: 'nearest' });
   };
   return {
     active,

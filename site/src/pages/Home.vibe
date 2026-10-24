@@ -1,85 +1,48 @@
 <script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
 import { RouterLink } from '@usevibejs/ui/router';
-import Badge from '@/components/ui/Badge.vibe';
-import Card from '@/components/ui/Card.vibe';
-import CardContent from '@/components/ui/CardContent.vibe';
-import BadgeDemo from '../examples/badge-demo.vibe';
-import ButtonDemo from '../examples/button-demo.vibe';
-import CardDemo from '../examples/card-demo.vibe';
-import CardStats from '../examples/card-stats.vibe';
-import InputWithButton from '../examples/input-with-button.vibe';
-import SkeletonDemo from '../examples/skeleton-demo.vibe';
-import TextareaWithLabel from '../examples/textarea-with-label.vibe';
+import Playground from '../home/Playground.vibe';
+import Workspace from '../home/Workspace.vibe';
 import CopyButton from '../site/CopyButton.vibe';
 import Icon from '../site/Icon.vibe';
 import { componentCount } from '../site/nav.ts';
+import logo from '../assets/vibecn-logo.webp';
+import '../home.css';
 
-document.title = 'vibecn · Components for vibe.js';
+document.title = 'vibecn · A whole new vibe for your interface';
 const command = 'pnpm dlx @usevibejs/vibecn@latest init';
-const features = [
-  {
-    title: 'Own the code',
-    text: 'Components are copied into your app as .vibe files. Read them, change them and keep them. No wrapper, no override API.',
-  },
-  {
-    title: 'Native first',
-    text: 'Buttons are buttons and inputs are inputs. Overlays use <dialog> and the popover attribute, so focus and keyboard behavior come from the platform.',
-  },
-  {
-    title: 'Themed with variables',
-    text: 'Every color and radius is a CSS variable, with a dark theme included. Change one value and every component follows.',
-  },
-  {
-    title: 'Compiled by your app',
-    text: 'vibe.js compiles the components with the rest of your code. vibecn adds no runtime and nothing to your bundle you did not copy.',
-  },
+const accent = ref('cobalt');
+const colors = [ { name: 'cobalt', label: 'Cobalt', color: '#3c55e8' }, { name: 'forest', label: 'Forest', color: '#187a65' }, { name: 'rose', label: 'Rose', color: '#b74768' }, { name: 'ink', label: 'Ink', color: '#30343d' } ];
+const palettes: Record<string, Record<string, string>> = {
+  cobalt: { '--primary': '#3c55e8', '--primary-foreground': '#ffffff', '--ring': '#8191eb', '--chart-1': '#3c55e8', '--chart-2': '#6d83e8', '--chart-3': '#79bda7', '--chart-4': '#d7a866', '--chart-5': '#ba9de5' },
+  forest: { '--primary': '#187a65', '--primary-foreground': '#ffffff', '--ring': '#76b9a9', '--chart-1': '#187a65', '--chart-2': '#479d88', '--chart-3': '#89c6af', '--chart-4': '#d7b96b', '--chart-5': '#769da8' },
+  rose: { '--primary': '#b74768', '--primary-foreground': '#ffffff', '--ring': '#d593a5', '--chart-1': '#b74768', '--chart-2': '#ce7c94', '--chart-3': '#dfabba', '--chart-4': '#e5b989', '--chart-5': '#aa92c1' },
+  ink: { '--primary': '#30343d', '--primary-foreground': '#ffffff', '--ring': '#90959e', '--chart-1': '#30343d', '--chart-2': '#656b76', '--chart-3': '#939aa6', '--chart-4': '#b5bac3', '--chart-5': '#d2d6dd' },
+};
+const palette = computed(() => palettes[accent.value]);
+const principles = [
+  { symbol: '</>', title: 'Your code. Your call.', text: 'Copy the .vibe source into your app. Read it, change it, and make it feel like you.' },
+  { symbol: '⌘', title: 'Feels right by default.', text: 'Native controls, thoughtful focus behavior, and keyboard support built into the details.' },
+  { symbol: '◐', title: 'A theme of your own.', text: 'A few CSS variables set the tone. Light and dark modes are ready when you are.' },
 ];
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <section class="mx-auto flex w-full max-w-screen-xl flex-col items-center gap-6 px-4 pt-16 pb-12 text-center md:pt-24">
-      <RouterLink to="/docs/components/button">
-        <Badge variant="secondary" class="gap-1.5 rounded-full px-3 py-1 text-xs">
-          <span class="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-          {{ componentCount }} components, more every release
-        </Badge>
-      </RouterLink>
-      <h1 class="max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tighter text-balance sm:text-5xl md:text-6xl">The shadcn/ui you know, made for vibe.js</h1>
-      <p class="max-w-2xl text-base text-balance text-muted-foreground sm:text-lg">Accessible, beautifully designed components that you copy into your app as source. Start from good defaults, then make them yours.</p>
-      <div class="flex flex-wrap items-center justify-center gap-2">
-        <RouterLink to="/docs/installation" class="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Get started <Icon name="arrow-right" /></RouterLink>
-        <RouterLink to="/docs/components/button" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-5 text-sm font-medium shadow-xs transition-colors hover:bg-accent">Browse components</RouterLink>
+  <div class="homepage" :style="palette">
+    <section class="home-hero home-container" aria-labelledby="home-heading">
+      <div class="home-hero-copy">
+        <RouterLink to="/docs" class="home-intro-pill"><span class="home-pill-dot" aria-hidden="true" />Open source. Open to possibility.<Icon name="arrow-right" /></RouterLink>
+        <h1 id="home-heading">Familiar pieces.<br />A whole new <span>vibe.</span></h1>
+        <p class="home-hero-description">The shadcn/ui you love, made for <a href="https://vibejs.org">vibe.js</a>.<br class="hidden sm:block" /> Beautiful, accessible components you can copy,<br class="hidden xl:block" /> shape, and make entirely your own.</p>
+        <div class="home-hero-actions"><RouterLink to="/docs/installation" class="home-button home-button-primary">Start building<Icon name="arrow-right" /></RouterLink><a href="#playground" class="home-button home-button-secondary">Explore the playground<span aria-hidden="true">↓</span></a></div>
+        <div class="home-install"><span class="home-install-prompt" aria-hidden="true">$</span><code>{{ command }}</code><CopyButton :value="command" label="Copy install command" /></div>
+        <div class="home-hero-footnote"><span>{{ componentCount }} component pages</span><i aria-hidden="true" /><span>MIT licensed</span><i aria-hidden="true" /><span>Yours to build with</span></div>
       </div>
-      <div class="flex max-w-full items-center gap-2 rounded-lg border border-border bg-muted/40 py-1 pr-1 pl-4 font-mono text-sm">
-        <span class="text-muted-foreground select-none" aria-hidden="true">$</span>
-        <code class="truncate">{{ command }}</code>
-        <CopyButton :value="command" label="Copy install command" />
-      </div>
+      <Workspace />
     </section>
-
-    <section aria-label="Component showcase" class="mx-auto w-full max-w-screen-xl px-4 pb-20">
-      <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3 [&>*]:min-w-0">
-        <div class="flex flex-col gap-4">
-          <CardStats class="max-w-none" />
-          <Card><CardContent class="flex flex-col gap-5"><ButtonDemo /><BadgeDemo /></CardContent></Card>
-          <Card><CardContent><SkeletonDemo /></CardContent></Card>
-        </div>
-        <CardDemo class="max-w-none" />
-        <div class="flex flex-col gap-4 md:col-span-2 lg:col-span-1">
-          <Card><CardContent><TextareaWithLabel /></CardContent></Card>
-          <Card><CardContent><InputWithButton /></CardContent></Card>
-        </div>
-      </div>
-    </section>
-
-    <section class="border-t border-border/60 bg-muted/30">
-      <div class="mx-auto grid w-full max-w-screen-xl gap-10 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4">
-        <div v-for="feature in features" :key="feature.title" class="flex flex-col gap-2">
-          <h2 class="font-semibold tracking-tight">{{ feature.title }}</h2>
-          <p class="text-sm leading-6 text-muted-foreground">{{ feature.text }}</p>
-        </div>
-      </div>
-    </section>
+    <section class="home-materials home-container" aria-label="Built from familiar foundations"><span>A familiar foundation.<br /><strong>A fresh way to build.</strong></span><div><span class="home-material-wordmark">shadcn/ui</span><span class="home-material-plus" aria-hidden="true">+</span><span class="home-material-wordmark home-vibe-wordmark">vibe<span>.js</span></span><span class="home-material-plus" aria-hidden="true">=</span><span class="home-material-wordmark home-material-brand"><img class="dark:invert" :src="logo" alt="" width="32" height="32" decoding="async" />vibecn</span></div><a href="https://github.com/vibejs/vibecn" class="home-source-link">The source is yours<Icon name="arrow-right" /></a></section>
+    <div class="home-container"><div class="home-accent-bar"><span><span aria-hidden="true">◒</span> A different color. A different feeling.</span><div role="group" aria-label="Preview accent color"><button v-for="color in colors" :key="color.name" type="button" :aria-label="color.label + ' accent'" :aria-pressed="accent === color.name" :style="{ '--swatch': color.color }" @click="accent = color.name"><span aria-hidden="true" />{{ color.label }}</button></div></div><Playground /></div>
+    <section class="home-principles"><div class="home-container home-principles-grid"><div v-for="principle in principles" :key="principle.title"><span class="home-principle-symbol" aria-hidden="true">{{ principle.symbol }}</span><h2>{{ principle.title }}</h2><p>{{ principle.text }}</p></div></div></section>
+    <section class="home-outro home-container"><p class="home-eyebrow">FROM A SMALL IDEA TO SOMETHING REAL</p><h2>Your next interface<br />is already taking shape.</h2><p>Take the pieces you need. Leave room for your own ideas.</p><div class="home-hero-actions"><RouterLink to="/docs/installation" class="home-button home-button-primary">Make a start<Icon name="arrow-right" /></RouterLink><a href="https://github.com/vibejs/vibecn" class="home-button home-button-secondary"><Icon name="github" />Explore the source</a></div><span class="home-outro-signature">Good things are made of little things.</span></section>
   </div>
 </template>

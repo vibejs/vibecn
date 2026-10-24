@@ -24,7 +24,11 @@ afterAll(async () => {
 
 it('renders the home page with live components and a copyable install command', async () => {
   await page.goto(origin);
-  await page.getByRole('heading', { level: 1, name: /made for vibe\.js/ }).waitFor();
+  await page
+    .getByRole('heading', { level: 1, name: /Familiar pieces.*A whole new vibe/ })
+    .waitFor();
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
   await page.getByLabel('Your message').fill('Hello');
   expect(await page.getByLabel('Your message').inputValue()).toBe('Hello');
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -33,6 +37,77 @@ it('renders the home page with live components and a copyable install command', 
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
     'pnpm dlx @usevibejs/vibecn@latest init',
   );
+});
+
+it('filters the homepage playground, changes its accent and preserves example state', async () => {
+  await page.goto(origin);
+  expect(await page.locator('[data-home-example]').count()).toBe(24);
+  const filters = page.getByRole('group', { name: 'Filter examples' });
+  await filters.getByRole('button', { name: /Chat/ }).click();
+  expect(await page.locator('[data-home-example]:visible').count()).toBe(2);
+  const conversation = page.locator('[data-home-example="conversation"]');
+  await conversation
+    .getByRole('textbox', { name: 'Your message' })
+    .fill('A new idea for the homepage');
+  await conversation.getByRole('button', { name: 'Send message' }).click();
+  await conversation.getByText('A new idea for the homepage', { exact: true }).waitFor();
+  expect(await conversation.getByRole('textbox').inputValue()).toBe('');
+  await filters.getByRole('button', { name: /Forms & inputs/ }).click();
+  expect(await page.locator('[data-home-example]:visible').count()).toBe(7);
+  await page.getByRole('button', { name: 'Forest accent' }).click();
+  expect(
+    await page
+      .locator('.homepage')
+      .evaluate((element) => getComputedStyle(element).getPropertyValue('--primary').trim()),
+  ).toBe('#187a65');
+  await filters.getByRole('button', { name: /Everything/ }).click();
+  expect(await page.locator('[data-home-example]:visible').count()).toBe(24);
+  await conversation.getByText('A new idea for the homepage', { exact: true }).waitFor();
+});
+
+it('makes the homepage workspace interactive and serves optimized WebP brand assets', async () => {
+  await page.goto(origin);
+  const workspace = page.locator('[data-home-workspace]');
+  await workspace.getByRole('tab', { name: 'Team', exact: true }).click();
+  await workspace.getByText('Alex Morgan', { exact: true }).waitFor();
+  await workspace.getByRole('tab', { name: 'Settings', exact: true }).click();
+  const notifications = workspace.getByRole('switch', { name: 'Project notifications' });
+  expect(await notifications.isChecked()).toBe(true);
+  await notifications.uncheck();
+  expect(await notifications.isChecked()).toBe(false);
+  await workspace.getByRole('button', { name: 'Save preferences' }).click();
+  await page.getByText('Workspace preferences saved', { exact: true }).waitFor();
+  await workspace.getByRole('button', { name: /Share project/ }).click();
+  const dialog = page.getByRole('dialog', { name: 'Invite a teammate' });
+  await dialog.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
+  await dialog.getByRole('button', { name: 'Send invitation' }).click();
+  await page.getByText('Invitation sent to reader@example.com', { exact: true }).waitFor();
+  await dialog.waitFor({ state: 'hidden' });
+  expect(await dialog.isVisible()).toBe(false);
+  for (const image of await page.locator('img').all()) {
+    const asset = await image.evaluate(async (element: HTMLImageElement) => {
+      const response = await fetch(element.src);
+      await element.decode();
+      return {
+        type: response.headers.get('content-type'),
+        size: (await response.arrayBuffer()).byteLength,
+      };
+    });
+    expect(asset.type).toContain('image/webp');
+    expect(asset.size).toBeLessThan(25_000);
+    expect(
+      await image.evaluate(
+        (element: HTMLImageElement) => element.complete && element.naturalWidth > 0,
+      ),
+    ).toBe(true);
+  }
+  for (const width of [375, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      width,
+    );
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
 });
 
 it('documents every registry component on its own page', async () => {
