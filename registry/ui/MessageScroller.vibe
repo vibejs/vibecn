@@ -1,0 +1,32 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, ref, shallowRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const viewport = shallowRef<HTMLElement | null>(null);
+const atStart = ref(true);
+const atEnd = ref(true);
+/** Whether new content keeps the view at the end, as in a chat that is read live. */
+const stick = ref(true);
+
+provide(Symbol.for('vibecn.message-scroller'), {
+  viewport,
+  atStart,
+  atEnd,
+  stick,
+  scrollTo(direction: 'start' | 'end', behavior: ScrollBehavior = 'smooth') {
+    const element = viewport.value!;
+    stick.value = direction === 'end';
+    element.scrollTo({ top: direction === 'end' ? element.scrollHeight : 0, behavior });
+  },
+});
+</script>
+
+<template>
+  <div data-slot="message-scroller" v-bind="$attrs" :class="cn('group/message-scroller relative flex size-full min-h-0 flex-col overflow-hidden', className)"><slot /></div>
+</template>

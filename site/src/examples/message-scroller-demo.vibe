@@ -1,0 +1,83 @@
+<script setup lang="ts">
+import { onUnmounted, ref } from '@usevibejs/ui';
+import Bubble from '@/components/ui/Bubble.vibe';
+import BubbleContent from '@/components/ui/BubbleContent.vibe';
+import InputGroup from '@/components/ui/InputGroup.vibe';
+import InputGroupAddon from '@/components/ui/InputGroupAddon.vibe';
+import InputGroupButton from '@/components/ui/InputGroupButton.vibe';
+import InputGroupInput from '@/components/ui/InputGroupInput.vibe';
+import Marker from '@/components/ui/Marker.vibe';
+import MarkerContent from '@/components/ui/MarkerContent.vibe';
+import Message from '@/components/ui/Message.vibe';
+import MessageContent from '@/components/ui/MessageContent.vibe';
+import MessageScroller from '@/components/ui/MessageScroller.vibe';
+import MessageScrollerButton from '@/components/ui/MessageScrollerButton.vibe';
+import MessageScrollerContent from '@/components/ui/MessageScrollerContent.vibe';
+import MessageScrollerItem from '@/components/ui/MessageScrollerItem.vibe';
+import MessageScrollerViewport from '@/components/ui/MessageScrollerViewport.vibe';
+
+interface Entry {
+  id: number;
+  from: 'user' | 'assistant';
+  text: string;
+}
+const reply =
+  'vibecn copies each component into your app as a .vibe file. Overlays use the native dialog and popover features, so focus, Escape and light dismiss come from the browser, and you can change any of it in your own source.';
+const messages = ref<Entry[]>(
+  Array.from({ length: 6 }, (_, index) => ({
+    id: index,
+    from: index % 2 ? 'assistant' : 'user',
+    text: index % 2 ? 'Sure, here is an answer to message ' + index + '.' : 'Question number ' + (index + 1) + '?',
+  })),
+);
+const draft = ref('');
+let timer: ReturnType<typeof setInterval> | undefined;
+onUnmounted(() => clearInterval(timer));
+
+// Streams a reply word by word, as an assistant would.
+function send(): void {
+  const text = draft.value.trim();
+  if (!text) return;
+  draft.value = '';
+  messages.value = [...messages.value, { id: Date.now(), from: 'user', text }];
+  const answer: Entry = { id: Date.now() + 1, from: 'assistant', text: '' };
+  messages.value = [...messages.value, answer];
+  const words = reply.split(' ');
+  let index = 0;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    messages.value = messages.value.map((entry) => (entry.id === answer.id ? { ...entry, text: words.slice(0, ++index).join(' ') } : entry));
+    if (index >= words.length) clearInterval(timer);
+  }, 60);
+}
+</script>
+
+<template>
+  <div class="flex h-[26rem] w-full max-w-md flex-col overflow-hidden rounded-xl border">
+    <MessageScroller class="flex-1">
+      <MessageScrollerViewport aria-label="Conversation">
+        <MessageScrollerContent class="gap-4 p-4">
+          <Marker variant="separator"><MarkerContent>Today</MarkerContent></Marker>
+          <MessageScrollerItem v-for="entry in messages" :key="entry.id" :scroll-anchor="entry.from === 'user' && entry.id > 10">
+            <Message :align="entry.from === 'user' ? 'end' : 'start'">
+              <MessageContent>
+                <Bubble :variant="entry.from === 'user' ? 'default' : 'muted'"><BubbleContent>{{ entry.text || '…' }}</BubbleContent></Bubble>
+              </MessageContent>
+            </Message>
+          </MessageScrollerItem>
+        </MessageScrollerContent>
+      </MessageScrollerViewport>
+      <MessageScrollerButton />
+    </MessageScroller>
+    <form class="border-t p-3" @submit.prevent="send">
+      <InputGroup>
+        <InputGroupInput v-model="draft" placeholder="Ask anything..." aria-label="Message" />
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton type="submit" variant="default" size="icon-xs" class="rounded-full" aria-label="Send" :disabled="!draft.trim()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+    </form>
+  </div>
+</template>

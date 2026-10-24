@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Attachment from '@/components/ui/Attachment.vibe';
+import AttachmentAction from '@/components/ui/AttachmentAction.vibe';
+import AttachmentActions from '@/components/ui/AttachmentActions.vibe';
+import AttachmentContent from '@/components/ui/AttachmentContent.vibe';
+import AttachmentDescription from '@/components/ui/AttachmentDescription.vibe';
+import AttachmentMedia from '@/components/ui/AttachmentMedia.vibe';
+import AttachmentTitle from '@/components/ui/AttachmentTitle.vibe';
+import Spinner from '@/components/ui/Spinner.vibe';
+
+const files = ref([
+  { name: 'quarterly-report.pdf', detail: '2.4 MB', state: 'done' as const },
+  { name: 'design-review.fig', detail: 'Uploading 64%', state: 'uploading' as const },
+  { name: 'customer-list.csv', detail: 'Upload failed', state: 'error' as const },
+]);
+const remove = (name: string): void => {
+  files.value = files.value.filter((file) => file.name !== name);
+};
+</script>
+
+<template>
+  <div class="flex w-full max-w-sm flex-col gap-3">
+    <Attachment v-for="file in files" :key="file.name" :state="file.state" class="w-full">
+      <AttachmentMedia>
+        <Spinner v-if="file.state === 'uploading'" />
+        <template v-else><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg></template>
+      </AttachmentMedia>
+      <AttachmentContent>
+        <AttachmentTitle>{{ file.name }}</AttachmentTitle>
+        <AttachmentDescription>{{ file.detail }}</AttachmentDescription>
+      </AttachmentContent>
+      <AttachmentActions>
+        <AttachmentAction :aria-label="'Remove ' + file.name" @click="remove(file.name)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg></AttachmentAction>
+      </AttachmentActions>
+    </Attachment>
+    <p v-if="!files.length" class="text-sm text-muted-foreground">No attachments.</p>
+  </div>
+</template>

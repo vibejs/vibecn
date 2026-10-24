@@ -1,0 +1,26 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, side = 'bottom', align = 'end' } = defineProps<{
+  class?: ClassValue;
+  side?: 'top' | 'bottom';
+  align?: 'start' | 'end';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const sides = {
+  top: 'top-0 -translate-y-3/4',
+  bottom: 'bottom-0 translate-y-3/4',
+};
+const aligns = {
+  start: 'left-3',
+  end: 'right-3',
+};
+</script>
+
+<template>
+  <div data-slot="bubble-reactions" :data-side="side" :data-align="align" v-bind="$attrs" :class="cn('absolute z-10 flex w-fit shrink-0 items-center justify-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-sm ring-3 ring-card has-[button]:p-0', sides[side], aligns[align], className)"><slot /></div>
+</template>

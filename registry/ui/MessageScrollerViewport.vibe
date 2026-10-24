@@ -1,0 +1,54 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onMounted, onUnmounted, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref, ShallowRef } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const scroller = inject<{
+  viewport: ShallowRef<HTMLElement | null>;
+  atStart: Ref<boolean>;
+  atEnd: Ref<boolean>;
+  stick: Ref<boolean>;
+  scrollTo: (direction: 'start' | 'end', behavior?: ScrollBehavior) => void;
+}>(Symbol.for('vibecn.message-scroller'))!;
+const element = useTemplateRef<HTMLElement>('element');
+const threshold = 8;
+
+function measure(): void {
+  const view = element.value!;
+  scroller.atStart.value = view.scrollTop <= threshold;
+  scroller.atEnd.value = view.scrollHeight - view.scrollTop - view.clientHeight <= threshold;
+}
+// Scrolling by the reader decides whether new content should keep the view at the end.
+function onScroll(): void {
+  measure();
+  scroller.stick.value = scroller.atEnd.value;
+}
+// Content that grows, such as a streamed reply, keeps the view at the end while it sticks there.
+const observer = new ResizeObserver(() => {
+  if (scroller.stick.value) element.value!.scrollTop = element.value!.scrollHeight;
+  measure();
+});
+onMounted(() => {
+  scroller.viewport.value = element.value;
+  element.value!.scrollTop = element.value!.scrollHeight;
+  measure();
+  for (const child of element.value!.children) observer.observe(child);
+});
+onUnmounted(() => observer.disconnect());
+</script>
+
+<template>
+  <div
+    ref="element"
+    tabindex="0"
+    data-slot="message-scroller-viewport"
+    v-bind="$attrs"
+    :class="cn('size-full min-h-0 min-w-0 scroll-fade-b scrollbar-thin scrollbar-gutter-stable overflow-y-auto overscroll-contain contain-content outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50', className)"
+    @scroll="onScroll"
+  ><slot /></div>
+</template>

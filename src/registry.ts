@@ -554,6 +554,60 @@ export const registry: readonly RegistryItem[] = [
     ],
     ['collection', 'overlay'],
   ),
+  component(
+    'attachment',
+    'Attachment',
+    'Displays a file or image attached to a message, with its upload state and actions.',
+    [
+      'Attachment',
+      'AttachmentGroup',
+      'AttachmentMedia',
+      'AttachmentContent',
+      'AttachmentTitle',
+      'AttachmentDescription',
+      'AttachmentActions',
+      'AttachmentAction',
+      'AttachmentTrigger',
+    ],
+    ['button'],
+  ),
+  component('bubble', 'Bubble', 'A chat bubble that holds the content of a message.', [
+    'BubbleGroup',
+    'Bubble',
+    'BubbleContent',
+    'BubbleReactions',
+  ]),
+  component('marker', 'Marker', 'A line of status or context in a conversation, such as a date.', [
+    'Marker',
+    'MarkerIcon',
+    'MarkerContent',
+  ]),
+  component(
+    'message',
+    'Message',
+    'Lays out a message with its avatar, header, content and footer.',
+    [
+      'MessageGroup',
+      'Message',
+      'MessageAvatar',
+      'MessageContent',
+      'MessageHeader',
+      'MessageFooter',
+    ],
+  ),
+  component(
+    'message-scroller',
+    'Message Scroller',
+    'A scrolling conversation that stays at the newest message while it is read live.',
+    [
+      'MessageScroller',
+      'MessageScrollerViewport',
+      'MessageScrollerContent',
+      'MessageScrollerItem',
+      'MessageScrollerButton',
+    ],
+    ['button'],
+  ),
 ];
 
 /** Library items, such as the class utility, are installed as dependencies but not listed. */

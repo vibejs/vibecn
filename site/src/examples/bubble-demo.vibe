@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import Bubble from '@/components/ui/Bubble.vibe';
+import BubbleContent from '@/components/ui/BubbleContent.vibe';
+import BubbleGroup from '@/components/ui/BubbleGroup.vibe';
+import BubbleReactions from '@/components/ui/BubbleReactions.vibe';
+
+const variants = ['default', 'secondary', 'muted', 'tinted', 'outline', 'destructive'] as const;
+</script>
+
+<template>
+  <BubbleGroup class="w-full max-w-md">
+    <Bubble v-for="(variant, index) in variants" :key="variant" :variant="variant" :align="index % 2 ? 'end' : 'start'">
+      <BubbleContent>This is a {{ variant }} bubble.</BubbleContent>
+      <BubbleReactions v-if="variant === 'tinted'" aria-label="Reactions: thumbs up, 2">👍 2</BubbleReactions>
+    </Bubble>
+  </BubbleGroup>
+</template>

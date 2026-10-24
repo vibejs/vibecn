@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import Marker from '@/components/ui/Marker.vibe';
+import MarkerContent from '@/components/ui/MarkerContent.vibe';
+import MarkerIcon from '@/components/ui/MarkerIcon.vibe';
+</script>
+
+<template>
+  <div class="flex w-full max-w-md flex-col gap-6">
+    <Marker variant="separator"><MarkerContent>Today</MarkerContent></Marker>
+    <Marker>
+      <MarkerIcon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg></MarkerIcon>
+      <MarkerContent>Thought for 12 seconds</MarkerContent>
+    </Marker>
+    <Marker variant="border"><MarkerContent>Ada joined the conversation. <a href="#">View profile</a></MarkerContent></Marker>
+  </div>
+</template>
