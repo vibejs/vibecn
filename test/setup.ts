@@ -25,3 +25,8 @@ HTMLElement.prototype.hidePopover = function hidePopover(this: HTMLElement) {
   toggle(this, 'closed');
 };
 Element.prototype.setPointerCapture ??= function setPointerCapture() {};
+globalThis.ResizeObserver ??= class {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+};

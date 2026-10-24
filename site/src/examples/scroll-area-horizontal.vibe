@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import ScrollArea from '@/components/ui/ScrollArea.vibe';
+import ScrollBar from '@/components/ui/ScrollBar.vibe';
+
+const artworks = ['Ornella Binni', 'Tom Byrom', 'Vladimir Malyavko', 'Jonas Kakaroto', 'Ana Silva'];
+const colors = ['from-rose-400 to-orange-300', 'from-sky-400 to-indigo-400', 'from-emerald-400 to-teal-300', 'from-violet-400 to-fuchsia-300', 'from-amber-300 to-lime-300'];
+</script>
+
+<template>
+  <ScrollArea class="w-96 max-w-full rounded-md border whitespace-nowrap" aria-label="Artworks">
+    <div class="flex w-max gap-4 p-4">
+      <figure v-for="(artist, index) in artworks" :key="artist" class="shrink-0">
+        <div :class="['h-[200px] w-[150px] rounded-md bg-gradient-to-br', colors[index]]" />
+        <figcaption class="pt-2 text-xs text-muted-foreground">Photo by <span class="font-semibold text-foreground">{{ artist }}</span></figcaption>
+      </figure>
+    </div>
+    <ScrollBar orientation="horizontal" />
+  </ScrollArea>
+</template>

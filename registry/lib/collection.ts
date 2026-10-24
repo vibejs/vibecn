@@ -1,0 +1,105 @@
+// Keyboard navigation for groups of items: tabs, toggle groups, menus and listboxes.
+import { onMounted, type ShallowRef } from '@usevibejs/ui';
+
+export type Orientation = 'horizontal' | 'vertical';
+
+/**
+ * Returns the item a navigation key moves to from `current`: arrow keys along `orientation`
+ * (both axes for `both`), Home and End. Returns undefined for any other key.
+ */
+export function nextItem(
+  items: readonly HTMLElement[],
+  current: Element | null,
+  key: string,
+  orientation: Orientation | 'both',
+  loop = true,
+): HTMLElement | undefined {
+  if (!items.length) return;
+  if (key === 'Home') return items[0];
+  if (key === 'End') return items[items.length - 1];
+  const vertical = orientation !== 'horizontal';
+  const horizontal = orientation !== 'vertical';
+  const forward = (vertical && key === 'ArrowDown') || (horizontal && key === 'ArrowRight');
+  const back = (vertical && key === 'ArrowUp') || (horizontal && key === 'ArrowLeft');
+  if (!forward && !back) return;
+  const index = items.indexOf(current as HTMLElement);
+  if (index === -1) return forward ? items[0] : items[items.length - 1];
+  const next = index + (forward ? 1 : -1);
+  if (next >= 0 && next < items.length) return items[next];
+  return loop ? items[(next + items.length) % items.length] : items[index];
+}
+
+/**
+ * Matches typed characters against the items' labels (`data-label`, else their text). Typing the
+ * same letter again cycles through the items that start with it. Returns the match, if any.
+ */
+export function createTypeahead(
+  timeout = 500,
+): (
+  key: string,
+  items: readonly HTMLElement[],
+  current: Element | null,
+) => HTMLElement | undefined {
+  let buffer = '';
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return (key, items, current) => {
+    if (key.length !== 1 || (key === ' ' && !buffer)) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => (buffer = ''), timeout);
+    buffer += key.toLowerCase();
+    const repeated = [...buffer].every((character) => character === buffer[0]);
+    const search = repeated ? buffer[0] : buffer;
+    const index = items.indexOf(current as HTMLElement);
+    const start = index === -1 ? 0 : index + (repeated ? 1 : 0);
+    const label = (item: HTMLElement): string =>
+      String(item.dataset.label ?? item.textContent)
+        .trim()
+        .toLowerCase();
+    return [...items.slice(start), ...items.slice(0, start)].find((item) =>
+      label(item).startsWith(search),
+    );
+  };
+}
+
+const disabled = ':disabled, [aria-disabled="true"], [data-disabled]';
+const selected = '[aria-selected="true"], [aria-pressed="true"], [aria-checked="true"]';
+
+/**
+ * Keeps one item of `root` in the tab order: the focused one, else the selected one, else the
+ * first. Arrow keys, Home and End move focus between the enabled items matching `selector`.
+ */
+export function useRovingFocus(
+  root: Readonly<ShallowRef<HTMLElement | null>>,
+  selector: string,
+  options: () => { orientation: Orientation | 'both' },
+): {
+  onKeydown: (event: KeyboardEvent) => HTMLElement | undefined;
+  onFocusin: (event: FocusEvent) => void;
+  sync: () => void;
+} {
+  const items = (): HTMLElement[] =>
+    [...root.value!.querySelectorAll<HTMLElement>(selector)].filter(
+      (item) => !item.matches(disabled),
+    );
+  const focus = (active: Element | null | undefined): void => {
+    const list = items();
+    const current =
+      list.find((item) => item === active) ??
+      list.find((item) => item.matches(selected)) ??
+      list[0];
+    for (const item of list) item.tabIndex = item === current ? 0 : -1;
+  };
+  onMounted(() => focus(null));
+  return {
+    onKeydown: (event) => {
+      const next = nextItem(items(), document.activeElement, event.key, options().orientation);
+      if (!next) return;
+      event.preventDefault();
+      next.focus();
+      focus(next);
+      return next;
+    },
+    onFocusin: (event) => focus(event.target as Element),
+    sync: () => focus(null),
+  };
+}

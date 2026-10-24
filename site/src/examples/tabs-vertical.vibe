@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Tabs from '@/components/ui/Tabs.vibe';
+import TabsContent from '@/components/ui/TabsContent.vibe';
+import TabsList from '@/components/ui/TabsList.vibe';
+import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
+
+const tab = ref('general');
+</script>
+
+<template>
+  <Tabs v-model="tab" orientation="vertical" class="w-full max-w-md">
+    <TabsList>
+      <TabsTrigger value="general">General</TabsTrigger>
+      <TabsTrigger value="security">Security</TabsTrigger>
+      <TabsTrigger value="billing">Billing</TabsTrigger>
+    </TabsList>
+    <TabsContent value="general" class="text-sm text-muted-foreground">Name, language and time zone.</TabsContent>
+    <TabsContent value="security" class="text-sm text-muted-foreground">Passwords, passkeys and sessions.</TabsContent>
+    <TabsContent value="billing" class="text-sm text-muted-foreground">Plan, invoices and payment methods.</TabsContent>
+  </Tabs>
+</template>

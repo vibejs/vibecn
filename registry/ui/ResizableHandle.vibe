@@ -1,0 +1,86 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, inject, onMounted, ref, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, withHandle = false } = defineProps<{ class?: ClassValue; withHandle?: boolean }>();
+const group = inject<{
+  direction: Ref<'horizontal' | 'vertical'>;
+  sizes: Map<string, { size: number; min: number; max: number }>;
+  resize: (before: string, after: string, delta: number) => void;
+}>(Symbol.for('vibecn.resizable'))!;
+const handle = useTemplateRef<HTMLElement>('handle');
+// The panels on each side of this handle, found in the document order.
+const sides = (): [string, string] | undefined => {
+  const before = handle.value?.previousElementSibling as HTMLElement | null;
+  const after = handle.value?.nextElementSibling as HTMLElement | null;
+  const ids = [before?.dataset.panelId, after?.dataset.panelId];
+  return ids[0] && ids[1] ? [ids[0], ids[1]] : undefined;
+};
+// The siblings exist once mounted; reading `mounted` and the map size recomputes the value then.
+const mounted = ref(false);
+onMounted(() => (mounted.value = true));
+const value = computed(() => {
+  void group.sizes.size;
+  const pair = mounted.value ? sides() : undefined;
+  return pair ? Math.round(group.sizes.get(pair[0])!.size) : undefined;
+});
+const horizontal = computed(() => group.direction.value === 'horizontal');
+
+let start: { position: number; length: number } | undefined;
+function onPointerDown(event: PointerEvent): void {
+  const parent = handle.value!.parentElement!;
+  start = {
+    position: horizontal.value ? event.clientX : event.clientY,
+    length: horizontal.value ? parent.offsetWidth : parent.offsetHeight,
+  };
+  handle.value!.setPointerCapture(event.pointerId);
+}
+function onPointerMove(event: PointerEvent): void {
+  const pair = sides();
+  if (!start || !pair || !start.length) return;
+  const position = horizontal.value ? event.clientX : event.clientY;
+  group.resize(pair[0], pair[1], ((position - start.position) / start.length) * 100);
+  start.position = position;
+}
+function onPointerUp(): void {
+  start = undefined;
+}
+function onKeydown(event: KeyboardEvent): void {
+  const pair = sides();
+  if (!pair) return;
+  const keys: Record<string, number> = horizontal.value
+    ? { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 }
+    : { ArrowUp: -5, ArrowDown: 5, Home: -100, End: 100 };
+  if (!(event.key in keys)) return;
+  event.preventDefault();
+  group.resize(pair[0], pair[1], keys[event.key]);
+}
+</script>
+
+<template>
+  <div
+    ref="handle"
+    role="separator"
+    tabindex="0"
+    data-slot="resizable-handle"
+    :aria-orientation="horizontal ? 'vertical' : 'horizontal'"
+    :aria-valuenow="value"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    v-bind="$attrs"
+    :class="cn('relative flex w-px shrink-0 cursor-col-resize touch-none items-center justify-center bg-border select-none after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:outline-hidden aria-[orientation=horizontal]:h-px aria-[orientation=horizontal]:w-full aria-[orientation=horizontal]:cursor-row-resize aria-[orientation=horizontal]:after:left-0 aria-[orientation=horizontal]:after:h-1 aria-[orientation=horizontal]:after:w-full aria-[orientation=horizontal]:after:translate-x-0 aria-[orientation=horizontal]:after:-translate-y-1/2 [&[aria-orientation=horizontal]>div]:rotate-90', className)"
+    @pointerdown="onPointerDown"
+    @pointermove="onPointerMove"
+    @pointerup="onPointerUp"
+    @pointercancel="onPointerUp"
+    @keydown="onKeydown"
+  >
+    <div v-if="withHandle" class="z-10 flex h-4 w-3 items-center justify-center rounded-xs border bg-border">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-2.5"><circle cx="9" cy="5" r="1.5" /><circle cx="9" cy="12" r="1.5" /><circle cx="9" cy="19" r="1.5" /><circle cx="15" cy="5" r="1.5" /><circle cx="15" cy="12" r="1.5" /><circle cx="15" cy="19" r="1.5" /></svg>
+    </div>
+  </div>
+</template>

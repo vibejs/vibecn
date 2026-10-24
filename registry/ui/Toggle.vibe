@@ -31,6 +31,8 @@ const sizes = {
   <button
     type="button"
     data-slot="toggle"
+    :data-variant="variant"
+    :data-size="size"
     :data-state="pressed ? 'on' : 'off'"
     :aria-pressed="pressed"
     :disabled="disabled"

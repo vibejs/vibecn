@@ -1,0 +1,68 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, toRef, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { useRovingFocus } from '__VIBECN_LIB__/collection.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  type = 'single',
+  variant = 'default',
+  size = 'default',
+  spacing = 0,
+  orientation = 'horizontal',
+  disabled = false,
+} = defineProps<{
+  class?: ClassValue;
+  /** `single` presses one item at a time; `multiple` lets any number stay pressed. */
+  type?: 'single' | 'multiple';
+  variant?: 'default' | 'outline';
+  size?: 'default' | 'sm' | 'lg';
+  /** The gap between items, in spacing units. 0 joins them into one control. */
+  spacing?: number;
+  orientation?: 'horizontal' | 'vertical';
+  disabled?: boolean;
+}>();
+/** The pressed item's value, with `type="single"`. */
+const model = defineModel<string>({ default: () => '' });
+/** The pressed items' values, with `type="multiple"`. */
+const values = defineModel<string[]>('values', { default: () => [] });
+defineSlots<{ default?: (props: {}) => unknown }>();
+const group = useTemplateRef<HTMLElement>('group');
+const roving = useRovingFocus(group, '[data-slot="toggle-group-item"]', () => ({ orientation }));
+
+provide(Symbol.for('vibecn.toggle-group'), {
+  variant: toRef(() => variant),
+  size: toRef(() => size),
+  spacing: toRef(() => spacing),
+  disabled: toRef(() => disabled),
+  isPressed: (value: string) => (type === 'multiple' ? values.value.includes(value) : model.value === value),
+  toggle: (value: string) => {
+    if (type === 'multiple')
+      values.value = values.value.includes(value)
+        ? values.value.filter((item) => item !== value)
+        : [...values.value, value];
+    else model.value = model.value === value ? '' : value;
+  },
+});
+</script>
+
+<template>
+  <div
+    ref="group"
+    role="group"
+    data-slot="toggle-group"
+    :data-variant="variant"
+    :data-size="size"
+    :data-spacing="spacing"
+    :data-orientation="orientation"
+    :style="{ '--gap': spacing }"
+    v-bind="$attrs"
+    :class="cn('group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-md data-[orientation=vertical]:flex-col data-[spacing=default]:data-[variant=outline]:shadow-xs', className)"
+    @keydown="roving.onKeydown"
+    @focusin="roving.onFocusin"
+  ><slot /></div>
+</template>

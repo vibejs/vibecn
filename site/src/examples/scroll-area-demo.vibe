@@ -1,0 +1,18 @@
+<script setup lang="ts">
+import ScrollArea from '@/components/ui/ScrollArea.vibe';
+import Separator from '@/components/ui/Separator.vibe';
+
+const tags = Array.from({ length: 50 }, (_, index) => `v1.2.0-beta.${50 - index}`);
+</script>
+
+<template>
+  <ScrollArea class="h-72 w-48 rounded-md border" aria-label="Tags">
+    <div class="p-4">
+      <h4 class="mb-4 text-sm leading-none font-medium">Tags</h4>
+      <template v-for="(tag, index) in tags" :key="tag">
+        <div class="text-sm">{{ tag }}</div>
+        <Separator v-if="index < tags.length - 1" class="my-2" />
+      </template>
+    </div>
+  </ScrollArea>
+</template>

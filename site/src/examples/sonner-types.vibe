@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+import { toast } from '@/lib/toast.ts';
+
+const save = (): Promise<{ name: string }> =>
+  new Promise((resolve) => setTimeout(() => resolve({ name: 'Sonner' }), 1500));
+</script>
+
+<template>
+  <div class="flex flex-wrap justify-center gap-2">
+    <Button variant="outline" @click="toast('Event has been created')">Default</Button>
+    <Button variant="outline" @click="toast.success('Event has been created')">Success</Button>
+    <Button variant="outline" @click="toast.info('Be at the area 10 minutes before the event time')">Info</Button>
+    <Button variant="outline" @click="toast.warning('Event start time cannot be earlier than 8am')">Warning</Button>
+    <Button variant="outline" @click="toast.error('Event has not been created')">Error</Button>
+    <Button
+      variant="outline"
+      @click="toast.promise(save(), { loading: 'Saving...', success: (data) => `${data.name} has been saved`, error: 'Could not save' })"
+    >Promise</Button>
+  </div>
+</template>

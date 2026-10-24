@@ -57,6 +57,22 @@ export const registry: readonly RegistryItem[] = [
     'A decorative loading placeholder that respects reduced motion.',
   ),
   {
+    name: 'collection',
+    title: 'Collection utilities',
+    description: 'Keyboard navigation and typeahead for groups of items.',
+    files: ['lib/collection.ts'],
+    registryDependencies: [],
+    dependencies: [],
+  },
+  {
+    name: 'toast',
+    title: 'Toast store',
+    description: 'The toast() function and the list of toasts that Sonner renders.',
+    files: ['lib/toast.ts'],
+    registryDependencies: [],
+    dependencies: [],
+  },
+  {
     name: 'overlay',
     title: 'Overlay utilities',
     description: 'Shared state, modal and positioning helpers for dialogs, popovers and tooltips.',
@@ -313,6 +329,36 @@ export const registry: readonly RegistryItem[] = [
     'A popup that displays information related to an element on hover or keyboard focus.',
     ['Tooltip', 'TooltipTrigger', 'TooltipContent'],
     ['overlay', 'button'],
+  ),
+  component(
+    'input-otp',
+    'Input OTP',
+    'Accessible one-time password input with copy paste and autofill.',
+    ['InputOTP', 'InputOTPGroup', 'InputOTPSlot', 'InputOTPSeparator'],
+  ),
+  component('resizable', 'Resizable', 'Resizable panel groups and layouts with keyboard support.', [
+    'ResizablePanelGroup',
+    'ResizablePanel',
+    'ResizableHandle',
+  ]),
+  component('scroll-area', 'Scroll Area', 'A scrollable region with slim, themed scrollbars.', [
+    'ScrollArea',
+    'ScrollBar',
+  ]),
+  component('sonner', 'Sonner', 'An opinionated toast component.', ['Toaster'], ['toast']),
+  component(
+    'tabs',
+    'Tabs',
+    'A set of layered sections of content, known as tab panels, displayed one at a time.',
+    ['Tabs', 'TabsList', 'TabsTrigger', 'TabsContent'],
+    ['collection'],
+  ),
+  component(
+    'toggle-group',
+    'Toggle Group',
+    'A set of two-state buttons that can be toggled on or off.',
+    ['ToggleGroup', 'ToggleGroupItem'],
+    ['collection', 'toggle'],
   ),
 ];
 

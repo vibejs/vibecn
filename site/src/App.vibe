@@ -2,6 +2,7 @@
 import { RouterView } from '@usevibejs/ui/router';
 import SiteFooter from './site/SiteFooter.vibe';
 import SiteHeader from './site/SiteHeader.vibe';
+import Toaster from '@/components/ui/Toaster.vibe';
 </script>
 
 <template>
@@ -10,5 +11,6 @@ import SiteHeader from './site/SiteHeader.vibe';
     <SiteHeader />
     <main id="main" class="flex flex-1 flex-col"><RouterView /></main>
     <SiteFooter />
+    <Toaster />
   </div>
 </template>

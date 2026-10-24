@@ -1,0 +1,193 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted, reactive, ref, useTemplateRef, watch } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { toast, toasts, type Toast } from '__VIBECN_LIB__/toast.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  position = 'bottom-right',
+  duration = 4000,
+  visibleToasts = 3,
+  expand = false,
+  closeButton = false,
+} = defineProps<{
+  class?: ClassValue;
+  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
+  /** Milliseconds a toast stays, unless the toast sets its own duration. */
+  duration?: number;
+  visibleToasts?: number;
+  /** Shows every toast in full instead of a stack. */
+  expand?: boolean;
+  closeButton?: boolean;
+}>();
+
+const region = useTemplateRef<HTMLElement>('region');
+const hovered = ref(false);
+const expanded = computed(() => expand || hovered.value);
+const top = computed(() => position.startsWith('top'));
+// Newest first: the front of the stack.
+const ordered = computed(() => [...toasts.value].reverse());
+const heights = reactive(new Map<string, number>());
+const gap = 14;
+
+const offset = (index: number): number => {
+  if (!expanded.value) return index * gap;
+  return ordered.value.slice(0, index).reduce((sum, item) => sum + (heights.get(item.id) ?? 0) + gap, 0);
+};
+const frontHeight = computed(() => heights.get(ordered.value[0]?.id ?? '') ?? 0);
+
+// Each toast closes after its duration; hovering or focusing the region pauses every timer.
+const timers = new Map<string, { remaining: number; started: number; handle?: ReturnType<typeof setTimeout> }>();
+const run = (id: string): void => {
+  const timer = timers.get(id)!;
+  timer.started = Date.now();
+  timer.handle = setTimeout(() => toast.dismiss(id), timer.remaining);
+};
+const pause = (): void => {
+  for (const timer of timers.values()) {
+    clearTimeout(timer.handle);
+    timer.remaining -= Date.now() - timer.started;
+  }
+};
+const resume = (): void => {
+  for (const id of timers.keys()) run(id);
+};
+const schedule = (item: Toast): void => {
+  clearTimeout(timers.get(item.id)?.handle);
+  timers.delete(item.id);
+  const length = item.duration ?? duration;
+  if (item.type === 'loading' || !Number.isFinite(length)) return;
+  timers.set(item.id, { remaining: length, started: Date.now() });
+  if (!hovered.value) run(item.id);
+};
+const seen = new Map<string, Toast>();
+watch(
+  toasts,
+  (list) => {
+    for (const item of list) if (seen.get(item.id) !== item) schedule(item);
+    for (const id of seen.keys())
+      if (!list.some((item) => item.id === id)) {
+        clearTimeout(timers.get(id)?.handle);
+        timers.delete(id);
+        heights.delete(id);
+      }
+    seen.clear();
+    for (const item of list) seen.set(item.id, item);
+    // Showing the region again moves it above dialogs opened since.
+    if (list.length && region.value?.isConnected) {
+      region.value.hidePopover();
+      region.value.showPopover();
+    }
+  },
+  { immediate: true, flush: 'post' },
+);
+
+const observer = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    const id = (entry.target as HTMLElement).dataset.id!;
+    heights.set(id, (entry.target as HTMLElement).offsetHeight);
+  }
+});
+const measure = (element: unknown): void => {
+  if (element instanceof Element) observer.observe(element);
+};
+onMounted(() => region.value?.showPopover());
+onUnmounted(() => {
+  observer.disconnect();
+  for (const timer of timers.values()) clearTimeout(timer.handle);
+});
+
+function leave(event: FocusEvent | PointerEvent): void {
+  if (event.type === 'focusout' && region.value?.contains((event as FocusEvent).relatedTarget as Node)) return;
+  hovered.value = false;
+  resume();
+}
+function enter(): void {
+  if (hovered.value) return;
+  hovered.value = true;
+  pause();
+}
+function act(item: Toast, event: MouseEvent): void {
+  item.action!.onClick(event);
+  toast.dismiss(item.id);
+}
+const positions = {
+  'top-left': 'top-4 left-4',
+  'top-center': 'top-4 left-1/2 -translate-x-1/2',
+  'top-right': 'top-4 right-4',
+  'bottom-left': 'bottom-4 left-4',
+  'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
+  'bottom-right': 'right-4 bottom-4',
+};
+</script>
+
+<template>
+  <section
+    ref="region"
+    aria-label="Notifications"
+    data-slot="toaster"
+    :data-position="position"
+    v-bind="{ popover: 'manual', ...$attrs }"
+    :class="cn('fixed inset-auto m-0 w-[calc(100%-2rem)] overflow-visible border-0 bg-transparent p-0 sm:w-[356px]', positions[position], className)"
+    @pointerenter="enter"
+    @pointerleave="leave"
+    @focusin="enter"
+    @focusout="leave"
+  >
+    <ol class="relative m-0 list-none p-0" :style="{ height: frontHeight + 'px' }">
+      <li
+        v-for="(item, index) in ordered"
+        :key="item.id"
+        :ref="measure"
+        :data-id="item.id"
+        :data-type="item.type"
+        :data-front="index === 0"
+        :data-visible="index < visibleToasts"
+        :role="item.type === 'error' ? 'alert' : 'status'"
+        :aria-live="item.type === 'error' ? 'assertive' : 'polite'"
+        aria-atomic="true"
+        :style="{
+          transform: `translateY(${(top ? 1 : -1) * offset(index)}px) scale(${expanded ? 1 : 1 - index * 0.05})`,
+          zIndex: ordered.length - index,
+          height: !expanded && index > 0 ? frontHeight + 'px' : undefined,
+        }"
+        :class="[
+          'absolute inset-x-0 flex items-center gap-3 overflow-hidden rounded-[var(--radius)] border bg-popover p-4 text-sm text-popover-foreground shadow-lg transition-[transform,opacity,height] duration-300 starting:opacity-0 data-[visible=false]:pointer-events-none data-[visible=false]:opacity-0 motion-reduce:transition-none',
+          top ? 'top-0 origin-bottom starting:-translate-y-full' : 'bottom-0 origin-top starting:translate-y-full',
+        ]"
+      >
+        <span v-if="item.type !== 'default'" aria-hidden="true" class="shrink-0 [&_svg]:size-4">
+          <svg v-if="item.type === 'loading'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="animate-spin"><path d="M21 12a9 9 0 1 1-6.2-8.56" /></svg>
+          <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle v-if="item.type !== 'warning'" cx="12" cy="12" r="10" />
+            <path v-if="item.type === 'success'" d="m9 12 2 2 4-4" />
+            <path v-else-if="item.type === 'info'" d="M12 16v-4M12 8h.01" />
+            <path v-else-if="item.type === 'error'" d="m15 9-6 6M9 9l6 6" />
+            <path v-else d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3ZM12 9v4M12 17h.01" />
+          </svg>
+        </span>
+        <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+          <p class="font-medium">{{ item.title }}</p>
+          <p v-if="item.description" class="text-muted-foreground">{{ item.description }}</p>
+        </div>
+        <button
+          v-if="item.action"
+          type="button"
+          class="h-6 shrink-0 rounded-md bg-primary px-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+          @click="act(item, $event)"
+        >{{ item.action.label }}</button>
+        <button
+          v-if="closeButton"
+          type="button"
+          aria-label="Close notification"
+          class="absolute top-1.5 right-1.5 rounded-md p-0.5 text-muted-foreground opacity-70 hover:opacity-100 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none"
+          @click="toast.dismiss(item.id)"
+        ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="size-3.5"><path d="M18 6 6 18M6 6l12 12" /></svg></button>
+      </li>
+    </ol>
+  </section>
+</template>
