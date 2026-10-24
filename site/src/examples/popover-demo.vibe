@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+import Popover from '@/components/ui/Popover.vibe';
+import PopoverContent from '@/components/ui/PopoverContent.vibe';
+import PopoverDescription from '@/components/ui/PopoverDescription.vibe';
+import PopoverHeader from '@/components/ui/PopoverHeader.vibe';
+import PopoverTitle from '@/components/ui/PopoverTitle.vibe';
+import PopoverTrigger from '@/components/ui/PopoverTrigger.vibe';
+
+const size = ref({ width: '100%', maxWidth: '300px', height: '25px', maxHeight: 'none' });
+</script>
+
+<template>
+  <Popover>
+    <PopoverTrigger variant="outline">Open popover</PopoverTrigger>
+    <PopoverContent class="w-80">
+      <div class="grid gap-4">
+        <PopoverHeader>
+          <PopoverTitle>Dimensions</PopoverTitle>
+          <PopoverDescription>Set the dimensions for the layer.</PopoverDescription>
+        </PopoverHeader>
+        <div class="grid gap-2">
+          <div class="grid grid-cols-3 items-center gap-4"><Label for="popover-width">Width</Label><Input id="popover-width" v-model="size.width" class="col-span-2 h-8" /></div>
+          <div class="grid grid-cols-3 items-center gap-4"><Label for="popover-max-width">Max. width</Label><Input id="popover-max-width" v-model="size.maxWidth" class="col-span-2 h-8" /></div>
+          <div class="grid grid-cols-3 items-center gap-4"><Label for="popover-height">Height</Label><Input id="popover-height" v-model="size.height" class="col-span-2 h-8" /></div>
+          <div class="grid grid-cols-3 items-center gap-4"><Label for="popover-max-height">Max. height</Label><Input id="popover-max-height" v-model="size.maxHeight" class="col-span-2 h-8" /></div>
+        </div>
+      </div>
+    </PopoverContent>
+  </Popover>
+</template>

@@ -6,6 +6,10 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* The page behind a modal dialog, sheet or drawer does not scroll. */
+  html:has(dialog:modal) {
+    overflow: hidden;
+  }
 }
 
 @theme inline {

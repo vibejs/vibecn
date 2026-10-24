@@ -1,0 +1,27 @@
+<script setup lang="ts">
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import AvatarImage from '@/components/ui/AvatarImage.vibe';
+import HoverCard from '@/components/ui/HoverCard.vibe';
+import HoverCardContent from '@/components/ui/HoverCardContent.vibe';
+import HoverCardTrigger from '@/components/ui/HoverCardTrigger.vibe';
+</script>
+
+<template>
+  <HoverCard>
+    <HoverCardTrigger href="https://github.com/vibejs">@vibejs</HoverCardTrigger>
+    <HoverCardContent class="w-80">
+      <div class="flex justify-between gap-4">
+        <Avatar>
+          <AvatarImage src="https://github.com/vibejs.png" alt="" />
+          <AvatarFallback>VJ</AvatarFallback>
+        </Avatar>
+        <div class="space-y-1">
+          <h4 class="text-sm font-semibold">@vibejs</h4>
+          <p class="text-sm">The TypeScript framework where the client and the server agree at compile time.</p>
+          <div class="text-xs text-muted-foreground">Joined October 2026</div>
+        </div>
+      </div>
+    </HoverCardContent>
+  </HoverCard>
+</template>

@@ -1,0 +1,24 @@
+<script setup lang="ts">
+import Sheet from '@/components/ui/Sheet.vibe';
+import SheetContent from '@/components/ui/SheetContent.vibe';
+import SheetDescription from '@/components/ui/SheetDescription.vibe';
+import SheetHeader from '@/components/ui/SheetHeader.vibe';
+import SheetTitle from '@/components/ui/SheetTitle.vibe';
+import SheetTrigger from '@/components/ui/SheetTrigger.vibe';
+
+const sides = ['top', 'right', 'bottom', 'left'] as const;
+</script>
+
+<template>
+  <div class="grid grid-cols-2 gap-2">
+    <Sheet v-for="side in sides" :key="side">
+      <SheetTrigger variant="outline" class="capitalize">{{ side }}</SheetTrigger>
+      <SheetContent :side="side">
+        <SheetHeader>
+          <SheetTitle class="capitalize">{{ side }} sheet</SheetTitle>
+          <SheetDescription>This sheet slides in from the {{ side }} edge of the screen.</SheetDescription>
+        </SheetHeader>
+      </SheetContent>
+    </Sheet>
+  </div>
+</template>

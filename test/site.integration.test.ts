@@ -1,7 +1,7 @@
 import { chromium, type Browser, type Page } from 'playwright';
 import { preview, type PreviewServer } from 'vite';
 import { afterAll, beforeAll, expect, it } from 'vitest';
-import { registry } from '../src/registry.ts';
+import { isComponent, registry } from '../src/registry.ts';
 
 let server: PreviewServer;
 let browser: Browser;
@@ -36,7 +36,7 @@ it('renders the home page with live components and a copyable install command', 
 });
 
 it('documents every registry component on its own page', async () => {
-  const components = registry.filter((item) => item.name !== 'utils');
+  const components = registry.filter(isComponent);
   await page.goto(`${origin}/docs`);
   const nav = page.getByRole('navigation', { name: 'Documentation' }).first();
   for (const item of components)

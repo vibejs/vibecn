@@ -1,0 +1,44 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+import Sheet from '@/components/ui/Sheet.vibe';
+import SheetClose from '@/components/ui/SheetClose.vibe';
+import SheetContent from '@/components/ui/SheetContent.vibe';
+import SheetDescription from '@/components/ui/SheetDescription.vibe';
+import SheetFooter from '@/components/ui/SheetFooter.vibe';
+import SheetHeader from '@/components/ui/SheetHeader.vibe';
+import SheetTitle from '@/components/ui/SheetTitle.vibe';
+import SheetTrigger from '@/components/ui/SheetTrigger.vibe';
+
+const open = ref(false);
+const name = ref('Pedro Duarte');
+const username = ref('@peduarte');
+</script>
+
+<template>
+  <Sheet v-model:open="open">
+    <SheetTrigger variant="outline">Open</SheetTrigger>
+    <SheetContent>
+      <SheetHeader>
+        <SheetTitle>Edit profile</SheetTitle>
+        <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription>
+      </SheetHeader>
+      <div class="grid flex-1 auto-rows-min gap-6 px-4">
+        <div class="grid gap-3">
+          <Label for="sheet-name">Name</Label>
+          <Input id="sheet-name" v-model="name" />
+        </div>
+        <div class="grid gap-3">
+          <Label for="sheet-username">Username</Label>
+          <Input id="sheet-username" v-model="username" />
+        </div>
+      </div>
+      <SheetFooter>
+        <Button @click="open = false">Save changes</Button>
+        <SheetClose>Close</SheetClose>
+      </SheetFooter>
+    </SheetContent>
+  </Sheet>
+</template>

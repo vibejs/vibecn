@@ -1,0 +1,16 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { injectOverlay } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const overlay = injectOverlay('Dialog');
+</script>
+
+<template>
+  <p data-slot="alert-dialog-description" :id="overlay.id + '-description'" v-bind="$attrs" :class="cn('text-sm text-muted-foreground', className)"><slot /></p>
+</template>

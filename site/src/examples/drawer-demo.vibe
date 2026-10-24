@@ -1,0 +1,48 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Drawer from '@/components/ui/Drawer.vibe';
+import DrawerClose from '@/components/ui/DrawerClose.vibe';
+import DrawerContent from '@/components/ui/DrawerContent.vibe';
+import DrawerDescription from '@/components/ui/DrawerDescription.vibe';
+import DrawerFooter from '@/components/ui/DrawerFooter.vibe';
+import DrawerHeader from '@/components/ui/DrawerHeader.vibe';
+import DrawerTitle from '@/components/ui/DrawerTitle.vibe';
+import DrawerTrigger from '@/components/ui/DrawerTrigger.vibe';
+
+const open = ref(false);
+const goal = ref(350);
+const change = (amount: number): void => {
+  goal.value = Math.max(200, Math.min(400, goal.value + amount));
+};
+</script>
+
+<template>
+  <Drawer v-model:open="open">
+    <DrawerTrigger variant="outline">Open Drawer</DrawerTrigger>
+    <DrawerContent>
+      <div class="mx-auto w-full max-w-sm">
+        <DrawerHeader>
+          <DrawerTitle>Move Goal</DrawerTitle>
+          <DrawerDescription>Set your daily activity goal.</DrawerDescription>
+        </DrawerHeader>
+        <div class="flex items-center justify-center gap-2 p-4 pb-0">
+          <Button variant="outline" size="icon" class="size-8 shrink-0 rounded-full" :disabled="goal <= 200" aria-label="Decrease" @click="change(-10)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+          </Button>
+          <div class="flex-1 text-center">
+            <div class="text-7xl font-bold tracking-tighter tabular-nums">{{ goal }}</div>
+            <div class="text-[0.70rem] text-muted-foreground uppercase">Calories/day</div>
+          </div>
+          <Button variant="outline" size="icon" class="size-8 shrink-0 rounded-full" :disabled="goal >= 400" aria-label="Increase" @click="change(10)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          </Button>
+        </div>
+        <DrawerFooter>
+          <Button @click="open = false">Submit</Button>
+          <DrawerClose>Cancel</DrawerClose>
+        </DrawerFooter>
+      </div>
+    </DrawerContent>
+  </Drawer>
+</template>

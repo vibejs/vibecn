@@ -1,0 +1,78 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { injectOverlay, useModal } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, direction = 'bottom' } = defineProps<{
+  class?: ClassValue;
+  direction?: 'top' | 'right' | 'bottom' | 'left';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const overlay = injectOverlay('Dialog');
+const dialog = useTemplateRef<HTMLDialogElement>('dialog');
+const { onClose, onClick } = useModal(dialog, overlay.open, () => true);
+const directions = {
+  top: 'inset-x-0 top-0 bottom-auto max-h-[80vh] w-full max-w-none rounded-b-lg border-b -translate-y-full open:translate-y-0 starting:open:-translate-y-full',
+  bottom: 'inset-x-0 top-auto bottom-0 max-h-[80vh] w-full max-w-none rounded-t-lg border-t translate-y-full open:translate-y-0 starting:open:translate-y-full',
+  right: 'inset-y-0 right-0 left-auto h-full max-h-none w-3/4 border-l sm:max-w-sm translate-x-full open:translate-x-0 starting:open:translate-x-full',
+  left: 'inset-y-0 right-auto left-0 h-full max-h-none w-3/4 border-r sm:max-w-sm -translate-x-full open:translate-x-0 starting:open:-translate-x-full',
+};
+
+// Dragging the handle toward the edge by more than a quarter of the drawer's height closes it.
+let start: { x: number; y: number } | undefined;
+const axis = (event: PointerEvent): number => {
+  const delta = { x: event.clientX - start!.x, y: event.clientY - start!.y };
+  return { top: -delta.y, bottom: delta.y, left: -delta.x, right: delta.x }[direction];
+};
+function onPointerDown(event: PointerEvent): void {
+  start = { x: event.clientX, y: event.clientY };
+  (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+}
+function onPointerMove(event: PointerEvent): void {
+  if (!start || !dialog.value) return;
+  const distance = Math.max(0, axis(event));
+  const vertical = direction === 'top' || direction === 'bottom';
+  const sign = direction === 'top' || direction === 'left' ? -1 : 1;
+  dialog.value.style.translate = vertical ? `0 ${sign * distance}px` : `${sign * distance}px 0`;
+}
+function onPointerUp(event: PointerEvent): void {
+  if (!start || !dialog.value) return;
+  const vertical = direction === 'top' || direction === 'bottom';
+  const size = vertical ? dialog.value.offsetHeight : dialog.value.offsetWidth;
+  const distance = axis(event);
+  start = undefined;
+  dialog.value.style.translate = '';
+  if (distance > size / 4) overlay.open.value = false;
+}
+</script>
+
+<template>
+  <dialog
+    ref="dialog"
+    data-slot="drawer-content"
+    :data-direction="direction"
+    :id="overlay.id + '-content'"
+    :aria-labelledby="overlay.id + '-title'"
+    :aria-describedby="overlay.id + '-description'"
+    :data-state="overlay.open.value ? 'open' : 'closed'"
+    v-bind="$attrs"
+    :class="cn('group/drawer-content m-0 h-auto bg-background p-0 text-foreground outline-none open:flex open:flex-col backdrop:bg-black/50 transition-[translate,overlay,display] transition-discrete duration-300 ease-out backdrop:transition-[opacity,overlay,display] backdrop:transition-discrete backdrop:duration-300 backdrop:opacity-0 open:backdrop:opacity-100 starting:open:backdrop:opacity-0 motion-reduce:transition-none motion-reduce:backdrop:transition-none', directions[direction], className)"
+    @close="onClose"
+    @click="onClick"
+  >
+    <div
+      aria-hidden="true"
+      data-slot="drawer-handle"
+      class="hidden shrink-0 cursor-grab touch-none py-4 group-data-[direction=bottom]/drawer-content:block active:cursor-grabbing"
+      @pointerdown="onPointerDown"
+      @pointermove="onPointerMove"
+      @pointerup="onPointerUp"
+      @pointercancel="onPointerUp"
+    ><div class="mx-auto h-2 w-[100px] rounded-full bg-muted" /></div>
+    <slot />
+  </dialog>
+</template>

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { applyPlan, planAdd, planInit, type InstallPlan } from './install.ts';
-import { registry } from './registry.ts';
+import { isComponent, registry } from './registry.ts';
 
 const { version } = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
@@ -66,7 +66,7 @@ export function run(
     if (command === 'list') {
       if (names.length || all || dryRun || overwrite)
         throw new Error('Usage: vibecn list [--json]');
-      const components = registry.filter((item) => item.name !== 'utils');
+      const components = registry.filter(isComponent);
       output(
         json
           ? JSON.stringify({ ok: true, components })

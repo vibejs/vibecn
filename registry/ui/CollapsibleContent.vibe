@@ -1,0 +1,32 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { onMounted, onUnmounted, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { injectOverlay } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const overlay = injectOverlay('Collapsible');
+const content = useTemplateRef<HTMLElement>('content');
+// Find in page reveals \`hidden="until-found"\` content and fires beforematch first.
+const reveal = (): void => {
+  overlay.open.value = true;
+};
+onMounted(() => content.value?.addEventListener('beforematch', reveal));
+onUnmounted(() => content.value?.removeEventListener('beforematch', reveal));
+</script>
+
+<template>
+  <div
+    ref="content"
+    data-slot="collapsible-content"
+    :id="overlay.id + '-content'"
+    :data-state="overlay.open.value ? 'open' : 'closed'"
+    :hidden="overlay.open.value ? undefined : 'until-found'"
+    v-bind="$attrs"
+    :class="cn(className)"
+  ><slot /></div>
+</template>
