@@ -4,7 +4,7 @@ An independent port of [shadcn/ui](https://ui.shadcn.com) components for [vibe.j
 
 The CLI copies `.vibe` component source into your application. You own the files and compile them with your application's vibe.js compiler. No React runtime or compiled component package is required.
 
-**Development preview.** The npm package is not published. The working package name is `@usevibejs/vibecn`; availability and release metadata still need review. This project is not affiliated with or endorsed by shadcn/ui.
+**Preview.** Published on npm as `@usevibejs/vibecn`. This project is not affiliated with or endorsed by shadcn/ui.
 
 ## Try the playground
 
@@ -19,21 +19,15 @@ The playground uses components installed by the same CLI as a consumer app. It i
 
 ## Add components to a vibe.js application
 
-Build this repository first:
+From your application's root:
 
 ```sh
-pnpm build
+pnpm dlx @usevibejs/vibecn init
+pnpm dlx @usevibejs/vibecn list
+pnpm dlx @usevibejs/vibecn add button card input label textarea
 ```
 
-From your application's root, run the built CLI by its location on your machine:
-
-```sh
-node <vibecn-checkout>/dist/bin.js init
-node <vibecn-checkout>/dist/bin.js list
-node <vibecn-checkout>/dist/bin.js add button card input label textarea
-```
-
-The path above is a placeholder for your checkout. You can also pass `--cwd <application-directory>` from another directory.
+`npx @usevibejs/vibecn` works the same way. You can also pass `--cwd <application-directory>` from another directory.
 
 Install the shared utility dependencies with your application's package manager. In a catalog-managed workspace, add their versions to your catalog and use `catalog:` in the app manifest.
 
@@ -86,7 +80,7 @@ vibecn add --all
 vibecn add button --overwrite
 ```
 
-These short commands assume the local executable is on your PATH. Until publication, use `node <vibecn-checkout>/dist/bin.js` as above.
+These short commands assume the CLI is installed, for example as a dev dependency. Otherwise prefix them with `pnpm dlx @usevibejs/vibecn`.
 
 - `init` writes configuration, theme tokens and full license notices.
 - `list` shows the eight available component groups.
@@ -122,7 +116,7 @@ Components forward native attributes and event listeners. `class` accepts string
 
 The registry payloads use shadcn's registry schema. The bundled CLI is the supported installer; compatibility with shadcn's CLI or arbitrary remote registries has not been established.
 
-The npm artifact contains the CLI, source registry and license texts. It intentionally remains `private: true`. No release or remote repository has been created.
+The npm artifact contains the CLI, source registry and license texts. Releases are versioned with changesets and published by `.github/workflows/release.yml` through npm trusted publishing with provenance.
 
 ## Development
 
@@ -137,7 +131,7 @@ The CLI uses TypeScript 7.0.2. The playground uses the pinned 7.1 nightly and `-
 
 ## Next
 
-Dialog, Dropdown Menu, Select, Combobox and other composite widgets need a native vibe.js behavior layer, with focus management, keyboard navigation, dismissal and assistive technology verification. They are not included in this preview. SSR and hydration follow vibe.js's future support. A compiled npm component library depends on a supported framework packaging contract.
+Dialog, Dropdown Menu, Select, Combobox and other composite widgets need a native vibe.js behavior layer, with focus management, keyboard navigation, dismissal and assistive technology verification. They are not included yet. SSR and hydration follow vibe.js's future support. A compiled npm component library depends on a supported framework packaging contract.
 
 ## License
 

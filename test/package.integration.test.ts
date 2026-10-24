@@ -22,7 +22,8 @@ it('installs from a packed artifact outside the checkout with full license notic
   const bin = join(pkg, 'dist/bin.js');
   const execute = (args: string[]): string =>
     execFileSync(process.execPath, [bin, ...args], { cwd: root, encoding: 'utf8' });
-  expect(execute(['--version']).trim()).toBe('0.0.0');
+  const manifest = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8'));
+  expect(execute(['--version']).trim()).toBe(manifest.version);
   expect(JSON.parse(execute(['list', '--json'])).components).toHaveLength(8);
   expect(JSON.parse(execute(['init', '--dry-run', '--json'])).dryRun).toBe(true);
   expect(existsSync(join(root, 'vibecn.json'))).toBe(false);
@@ -40,8 +41,8 @@ it('installs from a packed artifact outside the checkout with full license notic
   expect(readFileSync(join(root, 'src/components/ui/Button.vibe'), 'utf8')).toBe(
     'user customization',
   );
-  const manifest = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8'));
-  expect(manifest.private).toBe(true);
+  expect(manifest.private).toBeUndefined();
+  expect(manifest.publishConfig.access).toBe('public');
   expect(manifest.bin.vibecn).toBe('./dist/bin.js');
 });
 

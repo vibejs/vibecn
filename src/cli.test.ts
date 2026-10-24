@@ -4,6 +4,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { project } from '../test/project.ts';
 import { help, run } from './cli.ts';
 
+const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+
 function invoke(args: string[], root = project()): { code: number; output: string; root: string } {
   const output = vi.fn<(message: string) => void>();
   const code = run(args, root, output);
@@ -18,7 +20,7 @@ describe('CLI commands', () => {
     },
   );
   it('prints its version and component catalog in text or JSON', () => {
-    expect(invoke(['--version']).output).toBe('0.0.0');
+    expect(invoke(['--version']).output).toBe(manifest.version);
     expect(invoke(['list']).output).toContain('button');
     const result = JSON.parse(invoke(['list', '--json']).output);
     expect(result.ok).toBe(true);

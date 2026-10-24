@@ -1,9 +1,25 @@
 {
   "name": "@usevibejs/vibecn",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "An independent port of shadcn/ui components for vibe.js, distributed as source code.",
+  "keywords": [
+    "cli",
+    "components",
+    "registry",
+    "shadcn",
+    "tailwindcss",
+    "ui",
+    "vibejs"
+  ],
+  "homepage": "https://github.com/vibejs/vibecn#readme",
+  "bugs": {
+    "url": "https://github.com/vibejs/vibecn/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vibejs/vibecn.git"
+  },
   "bin": {
     "vibecn": "./dist/bin.js"
   },
@@ -18,6 +34,9 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite playground --host 127.0.0.1",
     "build": "tsdown && node scripts/build-registry.ts && vite build playground",
@@ -31,9 +50,11 @@
     "prepare:playground": "node scripts/prepare-playground.ts",
     "predev": "pnpm prepare:playground",
     "prebuild": "pnpm prepare:playground",
-    "precheck": "pnpm prepare:playground"
+    "precheck": "pnpm prepare:playground",
+    "version-packages": "changeset version && pnpm install --lockfile-only"
   },
   "devDependencies": {
+    "@changesets/cli": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@usevibejs/compiler": "catalog:",

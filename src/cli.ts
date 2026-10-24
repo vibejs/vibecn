@@ -1,5 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { applyPlan, planAdd, planInit, type InstallPlan } from './install.ts';
 import { registry } from './registry.ts';
+
+const { version } = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+) as { version: string };
 
 export const help = `vibecn — shadcn/ui components for vibe.js
 
@@ -38,7 +43,7 @@ export function run(
         return 0;
       }
       if (arg === '--version') {
-        output('0.0.0');
+        output(version);
         return 0;
       }
       if (arg === '--cwd') {

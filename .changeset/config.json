@@ -1,0 +1,7 @@
+{
+  "baseBranch": "main",
+  "access": "public",
+  "format": "oxfmt",
+  "updateInternalDependencies": "patch",
+  "privatePackages": { "version": false, "tag": false }
+}

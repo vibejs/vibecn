@@ -5,7 +5,7 @@
 - Components are .vibe source files, compiled by the consuming application's matching vibe.js compiler and runtime.
 - The initial npm artifact is a source installer and registry, not a compiled component library.
 - The CLI has no runtime npm dependencies and supports Node ^24.15.0 || >=26.
-- The package remains private until a separate release review. No npm name availability is implied.
+- The package is published as @usevibejs/vibecn on npm through npm trusted publishing with provenance.
 - Built registry JSON follows shadcn's registry item schema; vibecn's CLI installs its bundled, trusted registry only. Remote registry installation and shadcn CLI compatibility are not promised.
 
 ## Installation
