@@ -1,0 +1,44 @@
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import { RouterLink } from '@usevibejs/ui/router';
+import Button from '@/components/ui/Button.vibe';
+import DocsNav from './DocsNav.vibe';
+import Icon from './Icon.vibe';
+import ThemeToggle from './ThemeToggle.vibe';
+
+const menu = useTemplateRef<HTMLDialogElement>('menu');
+const close = (): void => menu.value?.close();
+const open = (): void => menu.value?.showModal();
+// A click on the dialog element itself lands on its backdrop.
+const closeOnBackdrop = (event: MouseEvent): void => {
+  if (event.target === menu.value) close();
+};
+</script>
+
+<template>
+  <header class="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <div class="mx-auto flex h-14 max-w-screen-2xl items-center gap-2 px-4 md:gap-6 md:px-6">
+      <Button variant="ghost" size="icon" class="size-8 md:hidden" aria-label="Open menu" aria-haspopup="dialog" @click="open"><Icon name="menu" /></Button>
+      <RouterLink to="/" class="flex items-center gap-2 font-semibold tracking-tight">
+        <span class="grid size-6 place-items-center rounded-md bg-foreground text-[0.7rem] font-bold text-background" aria-hidden="true">v</span>
+        vibecn
+      </RouterLink>
+      <nav aria-label="Main" class="hidden items-center gap-5 text-sm text-foreground/70 md:flex">
+        <RouterLink to="/docs" class="transition-colors hover:text-foreground">Docs</RouterLink>
+        <RouterLink to="/docs/components/button" class="transition-colors hover:text-foreground">Components</RouterLink>
+        <a href="https://vibejs.org" class="transition-colors hover:text-foreground">vibe.js</a>
+      </nav>
+      <div class="ml-auto flex items-center gap-1">
+        <a href="https://github.com/vibejs/vibecn" class="inline-flex size-8 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground" aria-label="vibecn on GitHub"><Icon name="github" /></a>
+        <ThemeToggle />
+      </div>
+    </div>
+    <dialog ref="menu" aria-label="Menu" class="m-0 h-dvh max-h-none w-[min(20rem,85vw)] max-w-none overflow-y-auto border-r border-border bg-background p-4 text-foreground backdrop:bg-black/40" @click="closeOnBackdrop">
+      <div class="mb-4 flex items-center justify-between">
+        <RouterLink to="/" class="font-semibold" @click="close">vibecn</RouterLink>
+        <Button variant="ghost" size="icon" class="size-8" aria-label="Close menu" @click="close"><Icon name="close" /></Button>
+      </div>
+      <DocsNav @navigate="close" />
+    </dialog>
+  </header>
+</template>

@@ -1,10 +1,10 @@
 import { applyPlan, planAdd, planInit } from '../src/install.ts';
 import { registry } from '../src/registry.ts';
 
-applyPlan(planInit('playground', true));
+applyPlan(planInit('site', true));
 applyPlan(
   planAdd(
-    'playground',
+    'site',
     registry.map((item) => item.name),
     true,
   ),

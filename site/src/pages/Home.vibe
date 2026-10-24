@@ -1,0 +1,85 @@
+<script setup lang="ts">
+import { RouterLink } from '@usevibejs/ui/router';
+import Badge from '@/components/ui/Badge.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import BadgeDemo from '../examples/badge-demo.vibe';
+import ButtonDemo from '../examples/button-demo.vibe';
+import CardDemo from '../examples/card-demo.vibe';
+import CardStats from '../examples/card-stats.vibe';
+import InputWithButton from '../examples/input-with-button.vibe';
+import SkeletonDemo from '../examples/skeleton-demo.vibe';
+import TextareaWithLabel from '../examples/textarea-with-label.vibe';
+import CopyButton from '../site/CopyButton.vibe';
+import Icon from '../site/Icon.vibe';
+import { componentCount } from '../site/nav.ts';
+
+document.title = 'vibecn · Components for vibe.js';
+const command = 'pnpm dlx @usevibejs/vibecn@latest init';
+const features = [
+  {
+    title: 'Own the code',
+    text: 'Components are copied into your app as .vibe files. Read them, change them and keep them. No wrapper, no override API.',
+  },
+  {
+    title: 'Native first',
+    text: 'Buttons are buttons and inputs are inputs. Overlays use <dialog> and the popover attribute, so focus and keyboard behavior come from the platform.',
+  },
+  {
+    title: 'Themed with variables',
+    text: 'Every color and radius is a CSS variable, with a dark theme included. Change one value and every component follows.',
+  },
+  {
+    title: 'Compiled by your app',
+    text: 'vibe.js compiles the components with the rest of your code. vibecn adds no runtime and nothing to your bundle you did not copy.',
+  },
+];
+</script>
+
+<template>
+  <div class="flex flex-col">
+    <section class="mx-auto flex w-full max-w-screen-xl flex-col items-center gap-6 px-4 pt-16 pb-12 text-center md:pt-24">
+      <RouterLink to="/docs/components/button">
+        <Badge variant="secondary" class="gap-1.5 rounded-full px-3 py-1 text-xs">
+          <span class="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+          {{ componentCount }} components, more every release
+        </Badge>
+      </RouterLink>
+      <h1 class="max-w-3xl text-4xl leading-[1.05] font-semibold tracking-tighter text-balance sm:text-5xl md:text-6xl">The shadcn/ui you know, made for vibe.js</h1>
+      <p class="max-w-2xl text-base text-balance text-muted-foreground sm:text-lg">Accessible, beautifully designed components that you copy into your app as source. Start from good defaults, then make them yours.</p>
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <RouterLink to="/docs/installation" class="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">Get started <Icon name="arrow-right" /></RouterLink>
+        <RouterLink to="/docs/components/button" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-5 text-sm font-medium shadow-xs transition-colors hover:bg-accent">Browse components</RouterLink>
+      </div>
+      <div class="flex max-w-full items-center gap-2 rounded-lg border border-border bg-muted/40 py-1 pr-1 pl-4 font-mono text-sm">
+        <span class="text-muted-foreground select-none" aria-hidden="true">$</span>
+        <code class="truncate">{{ command }}</code>
+        <CopyButton :value="command" label="Copy install command" />
+      </div>
+    </section>
+
+    <section aria-label="Component showcase" class="mx-auto w-full max-w-screen-xl px-4 pb-20">
+      <div class="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-3 [&>*]:min-w-0">
+        <div class="flex flex-col gap-4">
+          <CardStats class="max-w-none" />
+          <Card><CardContent class="flex flex-col gap-5"><ButtonDemo /><BadgeDemo /></CardContent></Card>
+          <Card><CardContent><SkeletonDemo /></CardContent></Card>
+        </div>
+        <CardDemo class="max-w-none" />
+        <div class="flex flex-col gap-4 md:col-span-2 lg:col-span-1">
+          <Card><CardContent><TextareaWithLabel /></CardContent></Card>
+          <Card><CardContent><InputWithButton /></CardContent></Card>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-border/60 bg-muted/30">
+      <div class="mx-auto grid w-full max-w-screen-xl gap-10 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4">
+        <div v-for="feature in features" :key="feature.title" class="flex flex-col gap-2">
+          <h2 class="font-semibold tracking-tight">{{ feature.title }}</h2>
+          <p class="text-sm leading-6 text-muted-foreground">{{ feature.text }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</template>

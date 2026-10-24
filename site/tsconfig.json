@@ -9,9 +9,17 @@
     "skipLibCheck": true,
     "composite": true,
     "emitDeclarationOnly": true,
-    "outDir": "../.tsbuild/playground",
-    "types": ["vite/client"]
+    "outDir": "../.tsbuild/site",
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
-  "contentMappers": [{ "package": "@usevibejs/language-tools", "extensions": [".vibe"] }],
+  "contentMappers": [
+    {
+      "package": "@usevibejs/language-tools",
+      "extensions": [".vibe"]
+    }
+  ],
   "include": ["src"]
 }

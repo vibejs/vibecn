@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Textarea from '@/components/ui/Textarea.vibe';
+
+const message = ref('');
+</script>
+
+<template>
+  <form class="grid w-full max-w-md gap-2" @submit.prevent="message = ''">
+    <Textarea v-model="message" placeholder="Type your message here." aria-label="Message" required />
+    <Button type="submit">Send message</Button>
+  </form>
+</template>

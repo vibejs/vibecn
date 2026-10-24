@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from '@usevibejs/ui';
-import Input from '../playground/src/components/ui/Input.vibe';
-import Textarea from '../playground/src/components/ui/Textarea.vibe';
+import Input from '../site/src/components/ui/Input.vibe';
+import Textarea from '../site/src/components/ui/Textarea.vibe';
 
 const value = ref('Initial value');
 const input = useTemplateRef('input');

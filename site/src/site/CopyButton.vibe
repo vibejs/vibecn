@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import { onUnmounted, ref } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import { cn } from '@/lib/utils.ts';
+import Icon from './Icon.vibe';
+
+const { value, label = 'Copy to clipboard', class: className } = defineProps<{
+  value: string;
+  label?: string;
+  class?: ClassValue;
+}>();
+const copied = ref(false);
+let timer: ReturnType<typeof setTimeout> | undefined;
+
+async function copy(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(value);
+    copied.value = true;
+    clearTimeout(timer);
+    timer = setTimeout(() => (copied.value = false), 2000);
+  } catch {
+    copied.value = false;
+  }
+}
+onUnmounted(() => clearTimeout(timer));
+</script>
+
+<template>
+  <Button variant="ghost" size="icon" :class="cn('size-7 text-muted-foreground hover:text-foreground', className)" :aria-label="copied ? 'Copied' : label" @click="copy">
+    <Icon :name="copied ? 'check' : 'copy'" />
+  </Button>
+</template>

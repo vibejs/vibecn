@@ -10,5 +10,5 @@ defineSlots<{ default?: (props: {}) => unknown }>();
 </script>
 
 <template>
-  <div v-bind="$attrs" data-slot="card-footer" :class="cn('flex items-center gap-2 px-6', className)"><slot /></div>
+  <div v-bind="$attrs" data-slot="card-footer" :class="cn('flex items-center px-6 [.border-t]:pt-6', className)"><slot /></div>
 </template>

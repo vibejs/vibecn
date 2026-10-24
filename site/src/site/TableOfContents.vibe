@@ -1,0 +1,38 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref, watch } from '@usevibejs/ui';
+
+const { items } = defineProps<{ items: { depth: number; text: string; id: string }[] }>();
+const active = ref('');
+let observer: IntersectionObserver | undefined;
+
+function observe(): void {
+  observer?.disconnect();
+  observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.find((entry) => entry.isIntersecting);
+      if (visible) active.value = visible.target.id;
+    },
+    { rootMargin: '0px 0px -75% 0px' },
+  );
+  for (const item of items) {
+    const element = document.getElementById(item.id);
+    if (element) observer.observe(element);
+  }
+}
+onMounted(observe);
+watch(() => items, () => requestAnimationFrame(observe));
+onUnmounted(() => observer?.disconnect());
+</script>
+
+<template>
+  <nav v-if="items.length" aria-label="On this page" class="flex flex-col gap-2 text-sm">
+    <p class="font-medium">On This Page</p>
+    <a
+      v-for="item in items"
+      :key="item.id"
+      :href="'#' + item.id"
+      :aria-current="active === item.id ? 'location' : undefined"
+      :class="['text-muted-foreground transition-colors hover:text-foreground aria-[current]:text-foreground', item.depth === 3 ? 'pl-3' : '']"
+    >{{ item.text }}</a>
+  </nav>
+</template>

@@ -1,0 +1,21 @@
+<script setup lang="ts">
+import { RouterLink } from '@usevibejs/ui/router';
+import { sections } from './nav.ts';
+
+const emit = defineEmits<{ navigate: [] }>();
+</script>
+
+<template>
+  <nav aria-label="Documentation" class="flex flex-col gap-6 text-sm">
+    <div v-for="section in sections" :key="section.title" class="flex flex-col gap-1">
+      <h4 class="px-2 py-1 text-xs font-medium text-muted-foreground">{{ section.title }}</h4>
+      <RouterLink
+        v-for="item in section.items"
+        :key="item.href"
+        :to="item.href"
+        class="rounded-md px-2 py-1.5 text-foreground/80 transition-colors hover:bg-accent hover:text-foreground [&.router-link-exact-active]:bg-accent [&.router-link-exact-active]:font-medium [&.router-link-exact-active]:text-foreground"
+        @click="emit('navigate')"
+      >{{ item.title }}</RouterLink>
+    </div>
+  </nav>
+</template>

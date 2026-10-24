@@ -38,20 +38,20 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "vite playground --host 127.0.0.1",
-    "build": "tsdown && node scripts/build-registry.ts && vite build playground",
-    "typecheck": "tsc -b tsconfig.tools.json && pnpm --dir playground exec tsc -b --runExternalCode",
+    "dev": "vite site --host 127.0.0.1",
+    "build": "tsdown && node scripts/build-registry.ts && vite build site",
+    "typecheck": "tsc -b tsconfig.tools.json && pnpm --dir site exec tsc -b --runExternalCode",
     "lint": "oxlint --deny-warnings",
     "fmt": "oxfmt",
     "test": "vitest run --project unit --project components",
     "test:coverage": "vitest run --coverage --project unit --project components",
     "test:integration": "pnpm build && vitest run --project integration",
     "check": "oxfmt --check && pnpm typecheck && pnpm lint && pnpm test:coverage",
-    "prepare:playground": "node scripts/prepare-playground.ts",
-    "predev": "pnpm prepare:playground",
-    "prebuild": "pnpm prepare:playground",
-    "precheck": "pnpm prepare:playground",
-    "version-packages": "changeset version && pnpm install --lockfile-only"
+    "predev": "pnpm prepare:site",
+    "prebuild": "pnpm prepare:site",
+    "precheck": "pnpm prepare:site",
+    "version-packages": "changeset version && pnpm install --lockfile-only",
+    "prepare:site": "node scripts/prepare-site.ts"
   },
   "devDependencies": {
     "@changesets/cli": "catalog:",

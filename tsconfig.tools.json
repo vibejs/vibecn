@@ -13,6 +13,15 @@
     "outDir": ".tsbuild/tools",
     "types": ["node"]
   },
-  "include": ["src", "scripts", "test", "*.config.ts", "registry/lib"],
+  "include": [
+    "src",
+    "scripts",
+    "test",
+    "*.config.ts",
+    "registry/lib",
+    "site/plugins",
+    "site/vite.config.ts",
+    "site/src/site/types.ts"
+  ],
   "exclude": ["test/components.vibe.test.ts"]
 }

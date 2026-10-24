@@ -1,0 +1,23 @@
+<script setup lang="ts">
+import Badge from '@/components/ui/Badge.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardAction from '@/components/ui/CardAction.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardFooter from '@/components/ui/CardFooter.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+</script>
+
+<template>
+  <Card class="w-full max-w-xs">
+    <CardHeader>
+      <CardDescription>Total revenue</CardDescription>
+      <CardTitle class="text-3xl font-semibold tabular-nums">$1,250.00</CardTitle>
+      <CardAction><Badge variant="outline">+12.5%</Badge></CardAction>
+    </CardHeader>
+    <CardFooter class="flex-col items-start gap-1 text-sm">
+      <p class="font-medium">Trending up this month</p>
+      <p class="text-muted-foreground">Visitors for the last 6 months</p>
+    </CardFooter>
+  </Card>
+</template>

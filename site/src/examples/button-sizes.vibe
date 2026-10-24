@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+</script>
+
+<template>
+  <div class="flex flex-wrap items-center gap-2">
+    <Button size="sm">Small</Button>
+    <Button>Default</Button>
+    <Button size="lg">Large</Button>
+    <Button size="icon" variant="outline" aria-label="Next">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+    </Button>
+  </div>
+</template>

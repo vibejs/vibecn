@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const email = ref('');
+</script>
+
+<template>
+  <div class="grid w-full max-w-sm gap-3">
+    <Label for="input-email">Email</Label>
+    <Input id="input-email" v-model="email" type="email" placeholder="Email" />
+  </div>
+</template>

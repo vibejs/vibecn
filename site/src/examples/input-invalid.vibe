@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const username = ref('a');
+const invalid = computed(() => username.value.length < 3);
+</script>
+
+<template>
+  <div class="grid w-full max-w-sm gap-3">
+    <Label for="input-username">Username</Label>
+    <Input id="input-username" v-model="username" :aria-invalid="invalid" aria-describedby="input-username-hint" />
+    <p id="input-username-hint" :class="['text-sm', invalid ? 'text-destructive' : 'text-muted-foreground']">Use at least 3 characters.</p>
+  </div>
+</template>

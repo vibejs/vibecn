@@ -1,4 +1,4 @@
 {
   "files": [],
-  "references": [{ "path": "tsconfig.tools.json" }, { "path": "playground" }]
+  "references": [{ "path": "tsconfig.tools.json" }, { "path": "site" }]
 }

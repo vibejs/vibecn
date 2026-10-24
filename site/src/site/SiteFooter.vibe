@@ -1,0 +1,11 @@
+<template>
+  <footer class="border-t border-border/60">
+    <div class="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-6 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between md:px-6">
+      <p>
+        Built for <a href="https://vibejs.org" class="font-medium text-foreground underline-offset-4 hover:underline">vibe.js</a>.
+        Adapted from <a href="https://ui.shadcn.com" class="font-medium text-foreground underline-offset-4 hover:underline">shadcn/ui</a> under the MIT license.
+      </p>
+      <p>Independent project, not affiliated with shadcn/ui. Source on <a href="https://github.com/vibejs/vibecn" class="font-medium text-foreground underline-offset-4 hover:underline">GitHub</a>.</p>
+    </div>
+  </footer>
+</template>

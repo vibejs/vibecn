@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import Skeleton from '@/components/ui/Skeleton.vibe';
+</script>
+
+<template>
+  <div class="flex items-center gap-4" role="status" aria-label="Loading profile">
+    <Skeleton class="size-12 rounded-full" />
+    <div class="space-y-2">
+      <Skeleton class="h-4 w-[250px]" />
+      <Skeleton class="h-4 w-[200px]" />
+    </div>
+  </div>
+</template>

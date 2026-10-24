@@ -1,0 +1,124 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import 'tailwindcss';
+@import './vibecn.css';
+@source '.';
+/* The CLI-installed components are gitignored, which Tailwind skips unless they are named. */
+@source './components';
+@source './lib';
+
+@theme {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 5rem;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
+  }
+  ::selection {
+    @apply bg-foreground/15;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/* Highlighted code from shiki, with light and dark colors as CSS variables. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: transparent !important;
+}
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+}
+.shiki {
+  @apply m-0 overflow-x-auto py-4 font-mono text-[0.8125rem] leading-6;
+}
+.shiki code {
+  @apply grid min-w-full px-4;
+}
+.shiki .line {
+  @apply min-h-6;
+}
+
+.code-block {
+  @apply relative rounded-lg border border-border bg-muted/40;
+}
+.copy-button {
+  @apply absolute top-2.5 right-2.5 rounded-md border border-border bg-background px-2 py-1 font-sans text-xs text-muted-foreground opacity-0 transition-opacity hover:text-foreground focus-visible:opacity-100;
+}
+.code-block:hover .copy-button,
+.copy-button[data-copied] {
+  @apply opacity-100;
+}
+
+/* Markdown content. */
+.prose {
+  @apply text-[0.9375rem] leading-7 text-foreground;
+}
+.prose h2 {
+  @apply mt-12 scroll-m-20 border-b border-border pb-2 text-2xl font-semibold tracking-tight;
+}
+.prose h3 {
+  @apply mt-8 scroll-m-20 text-lg font-semibold tracking-tight;
+}
+.prose h4 {
+  @apply mt-6 font-semibold;
+}
+.prose .anchor {
+  @apply -ml-5 inline-block w-5 text-muted-foreground no-underline opacity-0 transition-opacity;
+}
+.prose :is(h2, h3):hover .anchor {
+  @apply opacity-100;
+}
+.prose p {
+  @apply mt-5;
+}
+.prose a:not(.anchor) {
+  @apply font-medium underline underline-offset-4;
+}
+.prose strong {
+  @apply font-semibold;
+}
+.prose :not(pre) > code {
+  @apply rounded-md bg-muted px-[0.35rem] py-[0.15rem] font-mono text-[0.8125rem];
+}
+.prose ul {
+  @apply mt-5 ml-6 list-disc [&>li]:mt-2;
+}
+.prose ol {
+  @apply mt-5 ml-6 list-decimal [&>li]:mt-2;
+}
+.prose blockquote {
+  @apply mt-6 border-l-2 border-border pl-6 text-muted-foreground;
+}
+.prose .code-block {
+  @apply mt-5;
+}
+.prose .table-wrapper {
+  @apply mt-6 w-full overflow-x-auto rounded-lg border border-border;
+}
+.prose table {
+  @apply w-full border-collapse text-sm;
+}
+.prose th {
+  @apply border-b border-border bg-muted/50 px-4 py-2.5 text-left font-medium;
+}
+.prose td {
+  @apply border-b border-border px-4 py-2.5 align-top;
+}
+.prose tr:last-child td {
+  @apply border-b-0;
+}
+.prose hr {
+  @apply my-10 border-border;
+}

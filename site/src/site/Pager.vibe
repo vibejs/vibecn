@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { computed } from '@usevibejs/ui';
+import { RouterLink } from '@usevibejs/ui/router';
+import Icon from './Icon.vibe';
+import { pagesInOrder } from './nav.ts';
+
+const { href } = defineProps<{ href: string }>();
+const index = computed(() => pagesInOrder.findIndex((item) => item.href === href));
+const previous = computed(() => (index.value > 0 ? pagesInOrder[index.value - 1] : undefined));
+const next = computed(() => (index.value >= 0 ? pagesInOrder[index.value + 1] : undefined));
+</script>
+
+<template>
+  <nav aria-label="Pagination" class="mt-16 flex items-center justify-between gap-4 border-t border-border pt-6 text-sm">
+    <RouterLink v-if="previous" :to="previous.href" class="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 font-medium transition-colors hover:bg-accent"><Icon name="arrow-left" />{{ previous.title }}</RouterLink>
+    <span v-else />
+    <RouterLink v-if="next" :to="next.href" class="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 font-medium transition-colors hover:bg-accent">{{ next.title }}<Icon name="arrow-right" /></RouterLink>
+  </nav>
+</template>

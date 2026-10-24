@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+</script>
+
+<template>
+  <Button variant="secondary">Secondary</Button>
+</template>

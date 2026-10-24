@@ -1,0 +1,18 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Input from '@/components/ui/Input.vibe';
+
+const email = ref('');
+const subscribed = ref(false);
+</script>
+
+<template>
+  <form class="flex w-full max-w-sm flex-col gap-2" @submit.prevent="subscribed = true">
+    <div class="flex items-center gap-2">
+      <Input v-model="email" type="email" placeholder="Email" aria-label="Email" autocomplete="email" required />
+      <Button type="submit" variant="outline">Subscribe</Button>
+    </div>
+    <p class="min-h-5 text-sm text-muted-foreground" role="status">{{ subscribed ? 'Thanks, ' + email + ' is subscribed.' : '' }}</p>
+  </form>
+</template>

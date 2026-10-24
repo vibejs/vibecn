@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Label from '@/components/ui/Label.vibe';
+import Textarea from '@/components/ui/Textarea.vibe';
+
+const message = ref('');
+</script>
+
+<template>
+  <div class="grid w-full max-w-md gap-3">
+    <Label for="textarea-message">Your message</Label>
+    <Textarea id="textarea-message" v-model="message" placeholder="Type your message here." aria-describedby="textarea-message-hint" />
+    <p id="textarea-message-hint" class="text-sm text-muted-foreground">Your message will be copied to the support team.</p>
+  </div>
+</template>
