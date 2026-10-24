@@ -3,6 +3,7 @@ import { useTemplateRef } from '@usevibejs/ui';
 import { RouterLink } from '@usevibejs/ui/router';
 import Button from '@/components/ui/Button.vibe';
 import DocsNav from './DocsNav.vibe';
+import SiteSearch from './SiteSearch.vibe';
 import Icon from './Icon.vibe';
 import ThemeToggle from './ThemeToggle.vibe';
 
@@ -28,7 +29,8 @@ const closeOnBackdrop = (event: MouseEvent): void => {
         <RouterLink to="/docs/components/button" class="transition-colors hover:text-foreground">Components</RouterLink>
         <a href="https://vibejs.org" class="transition-colors hover:text-foreground">vibe.js</a>
       </nav>
-      <div class="ml-auto flex items-center gap-1">
+      <div class="ml-auto flex flex-1 items-center justify-end gap-1 md:flex-none">
+        <SiteSearch />
         <a href="https://github.com/vibejs/vibecn" class="inline-flex size-8 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground" aria-label="vibecn on GitHub"><Icon name="github" /></a>
         <ThemeToggle />
       </div>

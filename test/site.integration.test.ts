@@ -76,6 +76,18 @@ it('navigates between pages with client routing and shows a not-found page', asy
   await page.getByRole('heading', { level: 1, name: 'Page not found' }).waitFor();
 });
 
+it('searches pages and components from the keyboard', async () => {
+  await page.goto(`${origin}/docs`);
+  await page.keyboard.press('Control+k');
+  const search = page.getByRole('dialog', { name: 'Search documentation' });
+  await search.getByRole('combobox').fill('popup');
+  await page.keyboard.press('Enter');
+  await page.getByRole('heading', { level: 1, name: 'Tooltip' }).waitFor();
+  // The dialog fades out before it is hidden.
+  await search.waitFor({ state: 'hidden' });
+  expect(page.url()).toBe(`${origin}/docs/components/tooltip`);
+});
+
 it('toggles the dark theme and remembers it', async () => {
   await page.goto(`${origin}/docs`);
   await page.getByRole('button', { name: 'Switch to dark theme' }).click();
