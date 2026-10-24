@@ -14,6 +14,17 @@ const routes: RouteRecordRaw[] = [
     props: { page: 'docs/introduction' },
   },
   {
+    path: '/docs/components',
+    name: 'components',
+    component: () => import('./pages/Components.vibe'),
+  },
+  {
+    path: '/examples/:name?',
+    name: 'examples',
+    component: () => import('./pages/Examples.vibe'),
+    props: (to) => ({ name: to.params.name }),
+  },
+  {
     path: '/docs/components/:name',
     name: 'component',
     component: () => import('./pages/DocPage.vibe'),

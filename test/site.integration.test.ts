@@ -8,6 +8,7 @@ let browser: Browser;
 let page: Page;
 let origin: string;
 const errors: string[] = [];
+let primary = '';
 
 beforeAll(async () => {
   server = await preview({ root: 'site', preview: { host: '127.0.0.1', port: 0 } });
@@ -22,15 +23,20 @@ afterAll(async () => {
   await new Promise<void>((done) => server?.httpServer.close(() => done()));
 });
 
-it('renders the home page with live components and a copyable install command', async () => {
+it('renders the home page with a neutral theme and a copyable install command', async () => {
   await page.goto(origin);
   await page
-    .getByRole('heading', { level: 1, name: /Familiar pieces.*A whole new vibe/ })
+    .getByRole('heading', { level: 1, name: 'The foundation for your vibe.js interface' })
     .waitFor();
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => scrollY)).toBe(0);
-  await page.getByLabel('Your message').fill('Hello');
-  expect(await page.getByLabel('Your message').inputValue()).toBe('Hello');
+  expect(await page.evaluate(() => getComputedStyle(document.body).fontFamily)).toContain('Geist');
+  // The default theme is neutral: the primary color has no chroma.
+  primary = await page.evaluate(() =>
+    getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+  );
+  const [, a, b] = primary.match(/[\d.e-]+/g)!.map(Number);
+  expect(Math.abs(a) + Math.abs(b)).toBeLessThan(0.01);
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.getByRole('button', { name: 'Copy install command' }).click();
   await page.getByRole('button', { name: 'Copied' }).first().waitFor();
@@ -39,51 +45,34 @@ it('renders the home page with live components and a copyable install command', 
   );
 });
 
-it('filters the homepage playground, changes its accent and preserves example state', async () => {
+it('switches the homepage showcase screens and previews other themes', async () => {
   await page.goto(origin);
-  expect(await page.locator('[data-home-example]').count()).toBe(24);
-  const filters = page.getByRole('group', { name: 'Filter examples' });
-  await filters.getByRole('button', { name: /Chat/ }).click();
-  expect(await page.locator('[data-home-example]:visible').count()).toBe(2);
-  const conversation = page.locator('[data-home-example="conversation"]');
-  await conversation
-    .getByRole('textbox', { name: 'Your message' })
-    .fill('A new idea for the homepage');
-  await conversation.getByRole('button', { name: 'Send message' }).click();
-  await conversation.getByText('A new idea for the homepage', { exact: true }).waitFor();
-  expect(await conversation.getByRole('textbox').inputValue()).toBe('');
-  await filters.getByRole('button', { name: /Forms & inputs/ }).click();
-  expect(await page.locator('[data-home-example]:visible').count()).toBe(7);
-  await page.getByRole('button', { name: 'Forest accent' }).click();
+  const showcase = page.getByRole('region', { name: 'Examples' });
+  await showcase.getByText('Payment method', { exact: true }).waitFor();
+  await showcase.getByRole('tab', { name: 'Dashboard' }).click();
+  await showcase.getByRole('textbox', { name: 'Filter emails' }).fill('ken');
+  expect(await showcase.getByRole('checkbox', { name: /^Select .+@/ }).count()).toBe(1);
+  await showcase.getByRole('tab', { name: 'Chat' }).click();
+  await showcase.getByRole('textbox', { name: 'Message' }).fill('A new idea for the homepage');
+  await showcase.getByRole('button', { name: 'Send' }).click();
+  await showcase.getByText('A new idea for the homepage', { exact: true }).waitFor();
+  await showcase.getByRole('tab', { name: 'Sign in' }).click();
+  await showcase.getByRole('heading', { name: 'Sign in to Acme' }).waitFor();
+  await showcase.getByRole('combobox', { name: 'Preview theme' }).click();
+  await page.getByRole('option', { name: 'Green' }).click();
   expect(
-    await page
-      .locator('.homepage')
+    await showcase
+      .locator('[style*="--primary"]')
+      .last()
       .evaluate((element) => getComputedStyle(element).getPropertyValue('--primary').trim()),
-  ).toBe('#187a65');
-  await filters.getByRole('button', { name: /Everything/ }).click();
-  expect(await page.locator('[data-home-example]:visible').count()).toBe(24);
-  await conversation.getByText('A new idea for the homepage', { exact: true }).waitFor();
+  ).not.toBe(primary);
+  await showcase.getByRole('tab', { name: 'Chat' }).click();
+  await showcase.getByText('A new idea for the homepage', { exact: true }).waitFor();
 });
 
-it('makes the homepage workspace interactive and serves optimized WebP brand assets', async () => {
+it('serves optimized WebP brand assets and fits every viewport', async () => {
   await page.goto(origin);
-  const workspace = page.locator('[data-home-workspace]');
-  await workspace.getByRole('tab', { name: 'Team', exact: true }).click();
-  await workspace.getByText('Alex Morgan', { exact: true }).waitFor();
-  await workspace.getByRole('tab', { name: 'Settings', exact: true }).click();
-  const notifications = workspace.getByRole('switch', { name: 'Project notifications' });
-  expect(await notifications.isChecked()).toBe(true);
-  await notifications.uncheck();
-  expect(await notifications.isChecked()).toBe(false);
-  await workspace.getByRole('button', { name: 'Save preferences' }).click();
-  await page.getByText('Workspace preferences saved', { exact: true }).waitFor();
-  await workspace.getByRole('button', { name: /Share project/ }).click();
-  const dialog = page.getByRole('dialog', { name: 'Invite a teammate' });
-  await dialog.getByRole('textbox', { name: 'Email address' }).fill('reader@example.com');
-  await dialog.getByRole('button', { name: 'Send invitation' }).click();
-  await page.getByText('Invitation sent to reader@example.com', { exact: true }).waitFor();
-  await dialog.waitFor({ state: 'hidden' });
-  expect(await dialog.isVisible()).toBe(false);
+  await page.getByRole('tab', { name: 'Sign in' }).click();
   for (const image of await page.locator('img').all()) {
     const asset = await image.evaluate(async (element: HTMLImageElement) => {
       const response = await fetch(element.src);
@@ -108,6 +97,27 @@ it('makes the homepage workspace interactive and serves optimized WebP brand ass
     );
   }
   await page.setViewportSize({ width: 1440, height: 1000 });
+});
+
+it('links the header to the component index and the examples page', async () => {
+  await page.goto(origin);
+  const header = page.getByRole('navigation', { name: 'Main' });
+  await header.getByRole('link', { name: 'Components' }).click();
+  await page.getByRole('heading', { level: 1, name: 'Components', exact: true }).waitFor();
+  expect(
+    await page
+      .getByRole('main')
+      .getByRole('link', { name: /^Accordion/ })
+      .count(),
+  ).toBeGreaterThan(0);
+  await header.getByRole('link', { name: 'Examples' }).click();
+  await page.getByRole('heading', { level: 1, name: 'Examples' }).waitFor();
+  await page
+    .getByRole('navigation', { name: 'Examples' })
+    .getByRole('link', { name: 'Chat' })
+    .click();
+  expect(new URL(page.url()).pathname).toBe('/examples/chat');
+  await page.getByRole('textbox', { name: 'Message' }).waitFor();
 });
 
 it('documents every registry component on its own page', async () => {

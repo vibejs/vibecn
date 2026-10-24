@@ -24,8 +24,8 @@ const closeOnBackdrop = (event: MouseEvent): void => {
       <RouterLink to="/" aria-label="vibecn home" class="flex items-center font-semibold tracking-tight"><Brand /></RouterLink>
       <nav aria-label="Main" class="hidden items-center gap-5 text-sm text-foreground/70 md:flex">
         <RouterLink to="/docs" class="transition-colors hover:text-foreground">Docs</RouterLink>
-        <RouterLink to="/docs/components/button" class="transition-colors hover:text-foreground">Components</RouterLink>
-        <a href="/#playground" class="transition-colors hover:text-foreground">Examples</a>
+        <RouterLink to="/docs/components" class="transition-colors hover:text-foreground">Components</RouterLink>
+        <RouterLink to="/examples" class="transition-colors hover:text-foreground">Examples</RouterLink>
         <a href="https://vibejs.org" class="transition-colors hover:text-foreground">vibe.js</a>
       </nav>
       <div class="ml-auto flex flex-1 items-center justify-end gap-1 md:flex-none">

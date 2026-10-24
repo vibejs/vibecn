@@ -42,7 +42,7 @@ import Button from '@/components/ui/Button.vibe';
 </template>
 ```
 
-Continue with the [installation guide](/docs/installation), or browse the [components](/docs/components/button).
+Continue with the [installation guide](/docs/installation), or browse the [components](/docs/components).
 
 ## Credits
 

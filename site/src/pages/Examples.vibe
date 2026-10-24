@@ -1,0 +1,31 @@
+<script setup lang="ts">
+import { computed, watchEffect } from '@usevibejs/ui';
+import { RouterLink } from '@usevibejs/ui/router';
+import { views } from '../home/views.ts';
+
+const { name } = defineProps<{ name?: string }>();
+const current = computed(() => views.find((view) => view.value === name) ?? views[0]);
+watchEffect(() => (document.title = `${current.value.label} example · vibecn`));
+</script>
+
+<template>
+  <div class="mx-auto flex w-full max-w-screen-2xl flex-col gap-6 px-4 py-10 md:px-6">
+    <div class="flex flex-col gap-2">
+      <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Examples</h1>
+      <p class="max-w-2xl text-lg text-balance text-muted-foreground">Real screens composed from vibecn components. Every control works, and every part is a component you can install.</p>
+    </div>
+    <nav aria-label="Examples" class="flex flex-wrap gap-1 border-b">
+      <RouterLink
+        v-for="view in views"
+        :key="view.value"
+        :to="`/examples/${view.value}`"
+        :aria-current="current.value === view.value ? 'page' : undefined"
+        class="-mb-px border-b-2 border-transparent px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current]:border-foreground aria-[current]:font-medium aria-[current]:text-foreground"
+      >{{ view.label }}</RouterLink>
+    </nav>
+    <p class="text-sm text-muted-foreground">{{ current.description }}</p>
+    <div class="overflow-hidden rounded-xl border bg-background shadow-xs" :class="current.inset ? 'bg-muted/30 p-4 sm:p-6' : ''">
+      <component :is="current.component" :key="current.value" />
+    </div>
+  </div>
+</template>

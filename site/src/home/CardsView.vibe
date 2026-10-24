@@ -1,0 +1,302 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import Button from '@/components/ui/Button.vibe';
+import Calendar from '@/components/ui/Calendar.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardAction from '@/components/ui/CardAction.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardFooter from '@/components/ui/CardFooter.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+import NativeSelect from '@/components/ui/NativeSelect.vibe';
+import NativeSelectOption from '@/components/ui/NativeSelectOption.vibe';
+import RadioGroup from '@/components/ui/RadioGroup.vibe';
+import RadioGroupItem from '@/components/ui/RadioGroupItem.vibe';
+import Select from '@/components/ui/Select.vibe';
+import SelectContent from '@/components/ui/SelectContent.vibe';
+import SelectItem from '@/components/ui/SelectItem.vibe';
+import SelectTrigger from '@/components/ui/SelectTrigger.vibe';
+import SelectValue from '@/components/ui/SelectValue.vibe';
+import Separator from '@/components/ui/Separator.vibe';
+import Switch from '@/components/ui/Switch.vibe';
+import Textarea from '@/components/ui/Textarea.vibe';
+import { toast } from '@/lib/toast.ts';
+import Sparkline from './Sparkline.vibe';
+
+const range = ref<{ from?: string; to?: string }>({ from: '2026-10-08', to: '2026-10-14' });
+const month = ref('2026-10-01');
+
+const members = ref([
+  { name: 'Sofia Davis', email: 'm@example.com', initials: 'SD', role: 'owner' },
+  { name: 'Jackson Lee', email: 'p@example.com', initials: 'JL', role: 'developer' },
+  { name: 'Isabella Nguyen', email: 'i@example.com', initials: 'IN', role: 'billing' },
+]);
+
+const method = ref('card');
+const methods = [
+  { value: 'card', label: 'Card' },
+  { value: 'paypal', label: 'PayPal' },
+  { value: 'apple', label: 'Apple' },
+];
+const payment = ref({ name: '', city: '', number: '', month: '', year: '', cvc: '' });
+
+const goal = ref(350);
+const goalBars = [400, 300, 200, 300, 200, 278, 189, 239, 300, 200, 278, 189, 349];
+const change = (amount: number): void => {
+  goal.value = Math.min(400, Math.max(200, goal.value + amount));
+};
+
+const cookies = ref({ necessary: true, functional: false, performance: false });
+
+const area = ref('billing');
+const severity = ref('2');
+const issue = ref({ subject: '', description: '' });
+
+const shareLink = 'http://example.com/link/to/document';
+const people = ref([
+  { name: 'Olivia Martin', email: 'm@example.com', initials: 'OM', access: 'edit' },
+  { name: 'Isabella Nguyen', email: 'b@example.com', initials: 'IN', access: 'view' },
+  { name: 'Sofia Davis', email: 'p@example.com', initials: 'SD', access: 'view' },
+]);
+
+const account = ref({ email: '', password: '' });
+const revenue = [4, 3, 5, 4, 6, 5, 8, 7, 9, 8, 11, 12];
+const subscriptions = [12, 18, 15, 22, 19, 26, 24, 30, 27, 35, 33, 41];
+const goalLabel = computed(() => goal.value.toLocaleString('en-US'));
+</script>
+
+<template>
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 [&>div]:flex [&>div]:min-w-0 [&>div]:flex-col [&>div]:gap-4">
+    <div>
+      <Card class="gap-4">
+        <CardHeader>
+          <CardDescription>Total revenue</CardDescription>
+          <CardTitle class="text-2xl tabular-nums">$15,231.89</CardTitle>
+          <CardAction><span class="text-xs text-muted-foreground">+20.1% from last month</span></CardAction>
+        </CardHeader>
+        <CardContent class="pb-0"><Sparkline :values="revenue" type="area" :height="72" /></CardContent>
+      </Card>
+      <Card class="gap-4">
+        <CardHeader>
+          <CardDescription>Subscriptions</CardDescription>
+          <CardTitle class="text-2xl tabular-nums">+2,350</CardTitle>
+          <CardAction><span class="text-xs text-muted-foreground">+180.1% from last month</span></CardAction>
+        </CardHeader>
+        <CardContent><Sparkline :values="subscriptions" type="bar" :height="72" /></CardContent>
+      </Card>
+      <Card class="items-center py-3">
+        <Calendar v-model:range="range" v-model:month="month" mode="range" label="Choose dates" />
+      </Card>
+    </div>
+
+    <div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Team members</CardTitle>
+          <CardDescription>Invite your team members to collaborate.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-5">
+          <div v-for="member in members" :key="member.email" class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <Avatar><AvatarFallback>{{ member.initials }}</AvatarFallback></Avatar>
+              <div class="min-w-0">
+                <p class="truncate text-sm leading-none font-medium">{{ member.name }}</p>
+                <p class="mt-1 truncate text-sm text-muted-foreground">{{ member.email }}</p>
+              </div>
+            </div>
+            <NativeSelect v-model="member.role" size="sm" :aria-label="'Role of ' + member.name" class="w-32">
+              <NativeSelectOption value="owner">Owner</NativeSelectOption>
+              <NativeSelectOption value="developer">Developer</NativeSelectOption>
+              <NativeSelectOption value="billing">Billing</NativeSelectOption>
+            </NativeSelect>
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle class="text-xl">Create an account</CardTitle>
+          <CardDescription>Enter your email below to create your account.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4">
+          <div class="grid grid-cols-2 gap-3">
+            <Button variant="outline">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z" /></svg>
+              GitHub
+            </Button>
+            <Button variant="outline">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.8 10.2H12v3.9h5.6c-.5 2.6-2.7 4-5.6 4a6.1 6.1 0 0 1 0-12.2c1.5 0 2.9.6 4 1.5l2.9-2.9A10 10 0 1 0 12 22c5.8 0 9.9-4.1 9.9-9.9 0-.6 0-1.2-.1-1.9Z" /></svg>
+              Google
+            </Button>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-muted-foreground"><Separator class="flex-1" />Or continue with<Separator class="flex-1" /></div>
+          <div class="grid gap-2"><Label for="cards-email">Email</Label><Input id="cards-email" v-model="account.email" type="email" placeholder="m@example.com" autocomplete="email" /></div>
+          <div class="grid gap-2"><Label for="cards-password">Password</Label><Input id="cards-password" v-model="account.password" type="password" autocomplete="new-password" /></div>
+        </CardContent>
+        <CardFooter><Button class="w-full" @click="toast.success('Account created', { description: account.email || 'm@example.com' })">Create account</Button></CardFooter>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Share this document</CardTitle>
+          <CardDescription>Anyone with the link can view this document.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4">
+          <div class="flex gap-2">
+            <Input :model-value="shareLink" readonly aria-label="Document link" class="h-8" />
+            <Button size="sm" variant="secondary" @click="toast('Link copied')">Copy</Button>
+          </div>
+          <Separator />
+          <p class="text-sm font-medium">People with access</p>
+          <div v-for="person in people" :key="person.email" class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 items-center gap-3">
+              <Avatar size="sm"><AvatarFallback>{{ person.initials }}</AvatarFallback></Avatar>
+              <div class="min-w-0">
+                <p class="truncate text-sm leading-none font-medium">{{ person.name }}</p>
+                <p class="mt-1 truncate text-xs text-muted-foreground">{{ person.email }}</p>
+              </div>
+            </div>
+            <NativeSelect v-model="person.access" size="sm" :aria-label="'Access for ' + person.name" class="w-30">
+              <NativeSelectOption value="edit">Can edit</NativeSelectOption>
+              <NativeSelectOption value="view">Can view</NativeSelectOption>
+            </NativeSelect>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Payment method</CardTitle>
+          <CardDescription>Add a new payment method to your account.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-5">
+          <RadioGroup v-model="method" class="grid grid-cols-3 gap-3" aria-label="Payment method">
+            <label
+              v-for="option in methods"
+              :key="option.value"
+              :for="'cards-method-' + option.value"
+              class="flex cursor-pointer flex-col items-center gap-2 rounded-md border p-3 text-sm font-medium transition-colors hover:bg-accent has-[:checked]:border-primary has-[:checked]:bg-primary/5"
+            >
+              <RadioGroupItem :id="'cards-method-' + option.value" :value="option.value" class="sr-only" />
+              <svg v-if="option.value === 'card'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="size-5" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></svg>
+              <svg v-else-if="option.value === 'paypal'" viewBox="0 0 24 24" fill="currentColor" class="size-5" aria-hidden="true"><path d="M7.1 21.5H3.6L6.8 2.6h6.6c3.7 0 5.9 2 5.3 5.4-.7 4.2-3.8 5.7-7.2 5.7H9.1l-1.1 6.7Zm2.6-10.8h1.6c1.9 0 3.2-.8 3.5-2.8.3-1.7-.7-2.4-2.5-2.4h-1.6l-1 5.2Z" /></svg>
+              <svg v-else viewBox="0 0 24 24" fill="currentColor" class="size-5" aria-hidden="true"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1ZM13.9 5c.7-.9 1.2-2 1-3.2-1 .1-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.4-.6 3.1-1.5Z" /></svg>
+              {{ option.label }}
+            </label>
+          </RadioGroup>
+          <div class="grid gap-2"><Label for="cards-name">Name</Label><Input id="cards-name" v-model="payment.name" placeholder="First Last" autocomplete="cc-name" /></div>
+          <div class="grid gap-2"><Label for="cards-city">City</Label><Input id="cards-city" v-model="payment.city" autocomplete="address-level2" /></div>
+          <div class="grid gap-2"><Label for="cards-number">Card number</Label><Input id="cards-number" v-model="payment.number" placeholder="1234 5678 9012 3456" autocomplete="cc-number" /></div>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="grid gap-2">
+              <Label for="cards-month">Expires</Label>
+              <NativeSelect id="cards-month" v-model="payment.month" class="w-full">
+                <NativeSelectOption value="">MM</NativeSelectOption>
+                <NativeSelectOption v-for="index in 12" :key="index" :value="String(index)">{{ String(index).padStart(2, '0') }}</NativeSelectOption>
+              </NativeSelect>
+            </div>
+            <div class="grid gap-2">
+              <Label for="cards-year">Year</Label>
+              <NativeSelect id="cards-year" v-model="payment.year" class="w-full">
+                <NativeSelectOption value="">YYYY</NativeSelectOption>
+                <NativeSelectOption v-for="index in 8" :key="index" :value="String(2025 + index)">{{ 2025 + index }}</NativeSelectOption>
+              </NativeSelect>
+            </div>
+            <div class="grid gap-2"><Label for="cards-cvc">CVC</Label><Input id="cards-cvc" v-model="payment.cvc" placeholder="CVC" autocomplete="cc-csc" /></div>
+          </div>
+        </CardContent>
+        <CardFooter><Button class="w-full" @click="toast.success('Payment method saved')">Continue</Button></CardFooter>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Report an issue</CardTitle>
+          <CardDescription>What area are you having problems with?</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div class="grid gap-2">
+              <Label for="issue-area">Area</Label>
+              <Select v-model="area">
+                <SelectTrigger id="issue-area" class="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="team">Team</SelectItem>
+                  <SelectItem value="billing">Billing</SelectItem>
+                  <SelectItem value="account">Account</SelectItem>
+                  <SelectItem value="deployments">Deployments</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="grid gap-2">
+              <Label for="issue-severity">Severity</Label>
+              <Select v-model="severity">
+                <SelectTrigger id="issue-severity" class="w-full"><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Low</SelectItem>
+                  <SelectItem value="2">Medium</SelectItem>
+                  <SelectItem value="3">High</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div class="grid gap-2"><Label for="issue-subject">Subject</Label><Input id="issue-subject" v-model="issue.subject" placeholder="I need help with..." /></div>
+          <div class="grid gap-2"><Label for="issue-description">Description</Label><Textarea id="issue-description" v-model="issue.description" placeholder="Please include all information relevant to your issue." /></div>
+        </CardContent>
+        <CardFooter class="justify-between">
+          <Button variant="ghost">Cancel</Button>
+          <Button @click="toast.success('Issue reported', { description: 'We will get back to you soon.' })">Submit</Button>
+        </CardFooter>
+      </Card>
+    </div>
+
+    <div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Move goal</CardTitle>
+          <CardDescription>Set your daily activity goal.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-4">
+          <div class="flex items-center justify-between gap-2">
+            <Button variant="outline" size="icon" class="size-8 rounded-full" :disabled="goal <= 200" aria-label="Decrease goal" @click="change(-10)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+            </Button>
+            <div class="text-center" aria-live="polite">
+              <div class="text-5xl font-bold tracking-tighter tabular-nums">{{ goalLabel }}</div>
+              <div class="text-[0.7rem] text-muted-foreground uppercase">Calories / day</div>
+            </div>
+            <Button variant="outline" size="icon" class="size-8 rounded-full" :disabled="goal >= 400" aria-label="Increase goal" @click="change(10)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            </Button>
+          </div>
+          <Sparkline :values="[...goalBars.slice(0, -1), goal]" type="bar" :height="56" />
+        </CardContent>
+        <CardFooter><Button variant="secondary" class="w-full" @click="toast.success(`Daily goal set to ${goalLabel} calories`)">Set goal</Button></CardFooter>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Cookie settings</CardTitle>
+          <CardDescription>Manage your cookie settings here.</CardDescription>
+        </CardHeader>
+        <CardContent class="grid gap-5">
+          <div class="flex items-start justify-between gap-4">
+            <Label for="cookie-necessary" class="flex-col items-start gap-1"><span>Strictly necessary</span><span class="text-xs leading-snug font-normal text-muted-foreground">Required for the site to work.</span></Label>
+            <Switch id="cookie-necessary" v-model="cookies.necessary" disabled />
+          </div>
+          <div class="flex items-start justify-between gap-4">
+            <Label for="cookie-functional" class="flex-col items-start gap-1"><span>Functional</span><span class="text-xs leading-snug font-normal text-muted-foreground">Remember your preferences.</span></Label>
+            <Switch id="cookie-functional" v-model="cookies.functional" />
+          </div>
+          <div class="flex items-start justify-between gap-4">
+            <Label for="cookie-performance" class="flex-col items-start gap-1"><span>Performance</span><span class="text-xs leading-snug font-normal text-muted-foreground">Help us improve the site.</span></Label>
+            <Switch id="cookie-performance" v-model="cookies.performance" />
+          </div>
+        </CardContent>
+        <CardFooter><Button variant="outline" class="w-full" @click="toast('Preferences saved')">Save preferences</Button></CardFooter>
+      </Card>
+    </div>
+  </div>
+</template>
