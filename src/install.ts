@@ -166,18 +166,16 @@ export function planAdd(cwd: string, names: readonly string[], overwrite = false
       )
         .split(sep)
         .join('/');
-      const utility = relative(
-        dirname(resolve(root, path)),
-        resolve(root, config.paths.lib, 'utils.ts'),
-      )
-        .split(sep)
-        .join('/');
+      const library =
+        relative(dirname(resolve(root, path)), resolve(root, config.paths.lib))
+          .split(sep)
+          .join('/') || '.';
+      const prefix = library.startsWith('.') ? library : `./${library}`;
       return {
         path,
-        content: asset(file).replaceAll(
-          '__VIBECN_UTILS__',
-          utility.startsWith('.') ? utility : `./${utility}`,
-        ),
+        content: asset(file)
+          .replaceAll('__VIBECN_UTILS__', `${prefix}/utils.ts`)
+          .replaceAll('__VIBECN_LIB__', prefix),
       };
     }),
   );

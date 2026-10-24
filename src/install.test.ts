@@ -103,6 +103,15 @@ describe('source installation', () => {
     applyPlan(planAdd(root, ['badge']));
     expect(readFileSync(join(root, 'src/ui/Badge.vibe'), 'utf8')).toContain("from './utils.ts'");
   });
+  it('resolves shared helpers in a library nested below the components', () => {
+    const root = initialized();
+    config(root, { components: 'src/ui', lib: 'src/ui/lib', styles: 'src/vibecn.css' });
+    applyPlan(planAdd(root, ['dialog']));
+    const source = readFileSync(join(root, 'src/ui/DialogContent.vibe'), 'utf8');
+    expect(source).toContain("from './lib/overlay.ts'");
+    expect(source).toContain("from './lib/utils.ts'");
+    expect(existsSync(join(root, 'src/ui/lib/overlay.ts'))).toBe(true);
+  });
   it('preflights every conflict before writing and overwrites only when explicit', () => {
     const root = initialized();
     write(root, 'src/components/ui/Button.vibe', 'user source');

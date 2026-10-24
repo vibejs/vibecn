@@ -1,0 +1,12 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { injectOverlay } from '__VIBECN_LIB__/overlay.ts';
+
+defineSlots<{ default?: (props: {}) => unknown }>();
+const overlay = injectOverlay('Popover');
+</script>
+
+<template>
+  <!-- When present, the content is placed next to this element instead of the trigger. -->
+  <div data-slot="popover-anchor" :data-anchor="overlay.id" class="w-fit"><slot /></div>
+</template>

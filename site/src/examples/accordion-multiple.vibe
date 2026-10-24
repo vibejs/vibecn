@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Accordion from '@/components/ui/Accordion.vibe';
+import AccordionContent from '@/components/ui/AccordionContent.vibe';
+import AccordionItem from '@/components/ui/AccordionItem.vibe';
+import AccordionTrigger from '@/components/ui/AccordionTrigger.vibe';
+
+const open = ref(['notifications']);
+</script>
+
+<template>
+  <div class="flex w-full max-w-lg flex-col gap-4">
+    <Accordion v-model:values="open" type="multiple">
+      <AccordionItem value="notifications">
+        <AccordionTrigger>Notification settings</AccordionTrigger>
+        <AccordionContent>Choose how you are notified about mentions, replies and updates.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="privacy">
+        <AccordionTrigger>Privacy settings</AccordionTrigger>
+        <AccordionContent>Control who can see your profile and activity.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="billing" disabled>
+        <AccordionTrigger>Billing (coming soon)</AccordionTrigger>
+        <AccordionContent>Manage your plan and invoices.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+    <p class="text-sm text-muted-foreground" role="status">Open: {{ open.join(', ') || 'none' }}</p>
+  </div>
+</template>

@@ -1,0 +1,34 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { injectOverlay, type DelayedOpen } from '__VIBECN_LIB__/overlay.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, href, target, rel } = defineProps<{
+  class?: ClassValue;
+  href?: string;
+  target?: string;
+  rel?: string;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const overlay = injectOverlay<DelayedOpen>('HoverCard');
+</script>
+
+<template>
+  <a
+    data-slot="hover-card-trigger"
+    :data-state="overlay.open.value ? 'open' : 'closed'"
+    :data-anchor="overlay.id"
+    :href="href"
+    :target="target"
+    :rel="rel"
+    v-bind="$attrs"
+    :class="cn('font-medium underline-offset-4 hover:underline', className)"
+    @pointerenter="overlay.show"
+    @pointerleave="overlay.hide"
+    @focus="overlay.show"
+    @blur="overlay.hide"
+  ><slot /></a>
+</template>

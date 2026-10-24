@@ -1,0 +1,46 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Dialog from '@/components/ui/Dialog.vibe';
+import DialogClose from '@/components/ui/DialogClose.vibe';
+import DialogContent from '@/components/ui/DialogContent.vibe';
+import DialogDescription from '@/components/ui/DialogDescription.vibe';
+import DialogFooter from '@/components/ui/DialogFooter.vibe';
+import DialogHeader from '@/components/ui/DialogHeader.vibe';
+import DialogTitle from '@/components/ui/DialogTitle.vibe';
+import DialogTrigger from '@/components/ui/DialogTrigger.vibe';
+import Button from '@/components/ui/Button.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const open = ref(false);
+const name = ref('Pedro Duarte');
+const username = ref('@peduarte');
+</script>
+
+<template>
+  <Dialog v-model:open="open">
+    <DialogTrigger variant="outline">Edit profile</DialogTrigger>
+    <DialogContent class="sm:max-w-[425px]">
+      <form class="grid gap-4" @submit.prevent="open = false">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>
+        </DialogHeader>
+        <div class="grid gap-4">
+          <div class="grid gap-3">
+            <Label for="dialog-name">Name</Label>
+            <Input id="dialog-name" v-model="name" autocomplete="name" />
+          </div>
+          <div class="grid gap-3">
+            <Label for="dialog-username">Username</Label>
+            <Input id="dialog-username" v-model="username" />
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogClose>Cancel</DialogClose>
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
+</template>

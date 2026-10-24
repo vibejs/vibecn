@@ -22,6 +22,10 @@ vibe.js compiles templates directly to DOM operations and has no virtual DOM. vi
 
 A component is only published once its keyboard, focus and screen reader behavior has been verified. If a component you need is not here yet, it is on the way.
 
+## Browser support
+
+vibecn supports the browsers that implement the popover API and modal dialogs: Chrome and Edge 114, Safari 17 and Firefox 125 or later. Animations use `@starting-style` where the browser supports it and are skipped elsewhere, and whenever the user prefers reduced motion.
+
 ## How it works
 
 1. `vibecn init` adds a configuration file, the theme stylesheet and the license notices to your app.

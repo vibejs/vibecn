@@ -9,5 +9,5 @@ const { class: className } = defineProps<{ class?: ClassValue }>();
 </script>
 
 <template>
-  <div v-bind="$attrs" data-slot="skeleton" aria-hidden="true" :class="cn('animate-pulse rounded-md bg-accent motion-reduce:animate-none', className)" />
+  <div data-slot="skeleton" v-bind="$attrs" aria-hidden="true" :class="cn('animate-pulse rounded-md bg-accent motion-reduce:animate-none', className)" />
 </template>

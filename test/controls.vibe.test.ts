@@ -155,12 +155,28 @@ describe('every component', () => {
   const components = import.meta.glob<{ default: Component }>('../site/src/components/ui/*.vibe', {
     eager: true,
   });
-  // These parts read the state of their parent or render only with content; they are covered above.
-  const nested = ['AvatarImage', 'AvatarFallback', 'RadioGroupItem', 'FieldError'];
-  const standalone = Object.entries(components).filter(
-    ([path]) => !nested.some((name) => path.endsWith(`/${name}.vibe`)),
+  const sources = import.meta.glob<string>('../site/src/components/ui/*.vibe', {
+    eager: true,
+    query: '?raw',
+    import: 'default',
+  });
+  // Roots render only their slot, and parts that read their root's state, directly or through
+  // another part, are covered with their root.
+  const contextual = new Set(
+    Object.keys(sources).filter((path) =>
+      /\b(inject|injectOverlay|provideOverlay)\b/.test(sources[path]),
+    ),
   );
-
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const [path, source] of Object.entries(sources)) {
+      const uses = [...contextual].some((other) => source.includes(`./${other.split('/').pop()}'`));
+      if (!contextual.has(path) && uses) grew = !!contextual.add(path);
+    }
+  }
+  const standalone = Object.entries(components).filter(
+    ([path]) => !contextual.has(path) && !path.endsWith('/FieldError.vibe'),
+  );
   it.each(standalone)('%s renders a slotted element and merges classes', (_, module) => {
     const wrapper = mount(module.default, { props: { class: 'custom-class' } });
     // SVG roots such as Spinner cannot carry data-slot in vibe.js's SVG attribute types.

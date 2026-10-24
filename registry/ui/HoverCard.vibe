@@ -1,0 +1,18 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provideOverlay, useDelayedOpen } from '__VIBECN_LIB__/overlay.ts';
+
+const { openDelay = 700, closeDelay = 300 } = defineProps<{
+  /** Milliseconds the pointer rests on the trigger before the card opens. */
+  openDelay?: number;
+  /** Milliseconds before the card closes, so the pointer can move onto it. */
+  closeDelay?: number;
+}>();
+const open = defineModel<boolean>('open', { default: () => false });
+defineSlots<{ default?: (props: {}) => unknown }>();
+provideOverlay('HoverCard', open, useDelayedOpen(open, () => ({ open: openDelay, close: closeDelay })));
+</script>
+
+<template>
+  <slot />
+</template>

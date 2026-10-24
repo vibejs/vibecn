@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Accordion from '../site/src/components/ui/Accordion.vibe';
+import AccordionContent from '../site/src/components/ui/AccordionContent.vibe';
+import AccordionItem from '../site/src/components/ui/AccordionItem.vibe';
+import AccordionTrigger from '../site/src/components/ui/AccordionTrigger.vibe';
+import AlertDialog from '../site/src/components/ui/AlertDialog.vibe';
+import AlertDialogAction from '../site/src/components/ui/AlertDialogAction.vibe';
+import AlertDialogContent from '../site/src/components/ui/AlertDialogContent.vibe';
+import AlertDialogTitle from '../site/src/components/ui/AlertDialogTitle.vibe';
+import AlertDialogTrigger from '../site/src/components/ui/AlertDialogTrigger.vibe';
+import Collapsible from '../site/src/components/ui/Collapsible.vibe';
+import CollapsibleContent from '../site/src/components/ui/CollapsibleContent.vibe';
+import CollapsibleTrigger from '../site/src/components/ui/CollapsibleTrigger.vibe';
+import Dialog from '../site/src/components/ui/Dialog.vibe';
+import DialogContent from '../site/src/components/ui/DialogContent.vibe';
+import DialogDescription from '../site/src/components/ui/DialogDescription.vibe';
+import DialogFooter from '../site/src/components/ui/DialogFooter.vibe';
+import DialogTitle from '../site/src/components/ui/DialogTitle.vibe';
+import DialogTrigger from '../site/src/components/ui/DialogTrigger.vibe';
+import Drawer from '../site/src/components/ui/Drawer.vibe';
+import DrawerContent from '../site/src/components/ui/DrawerContent.vibe';
+import DrawerTitle from '../site/src/components/ui/DrawerTitle.vibe';
+import DrawerTrigger from '../site/src/components/ui/DrawerTrigger.vibe';
+import HoverCard from '../site/src/components/ui/HoverCard.vibe';
+import HoverCardContent from '../site/src/components/ui/HoverCardContent.vibe';
+import HoverCardTrigger from '../site/src/components/ui/HoverCardTrigger.vibe';
+import Popover from '../site/src/components/ui/Popover.vibe';
+import PopoverContent from '../site/src/components/ui/PopoverContent.vibe';
+import PopoverTrigger from '../site/src/components/ui/PopoverTrigger.vibe';
+import Sheet from '../site/src/components/ui/Sheet.vibe';
+import SheetContent from '../site/src/components/ui/SheetContent.vibe';
+import SheetTitle from '../site/src/components/ui/SheetTitle.vibe';
+import Tooltip from '../site/src/components/ui/Tooltip.vibe';
+import TooltipContent from '../site/src/components/ui/TooltipContent.vibe';
+import TooltipTrigger from '../site/src/components/ui/TooltipTrigger.vibe';
+
+const dialog = ref(false);
+const alert = ref(false);
+const sheet = ref(false);
+const drawer = ref(false);
+const popover = ref(false);
+const tooltip = ref(false);
+const hoverCard = ref(false);
+const collapsible = ref(false);
+const single = ref('a');
+const multiple = ref<string[]>([]);
+const confirmed = ref(0);
+</script>
+
+<template>
+  <div>
+    <Dialog v-model:open="dialog">
+      <DialogTrigger id="dialog-trigger">Open</DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Title</DialogTitle>
+        <DialogDescription>Description</DialogDescription>
+        <DialogFooter show-close-button />
+      </DialogContent>
+    </Dialog>
+    <AlertDialog v-model:open="alert">
+      <AlertDialogTrigger id="alert-trigger">Delete</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogTitle>Sure?</AlertDialogTitle>
+        <AlertDialogAction id="alert-action" @click="confirmed++">Yes</AlertDialogAction>
+      </AlertDialogContent>
+    </AlertDialog>
+    <Sheet v-model:open="sheet">
+      <SheetContent side="left"><SheetTitle>Sheet</SheetTitle></SheetContent>
+    </Sheet>
+    <Drawer v-model:open="drawer">
+      <DrawerTrigger id="drawer-trigger">Drawer</DrawerTrigger>
+      <DrawerContent><DrawerTitle>Drawer</DrawerTitle></DrawerContent>
+    </Drawer>
+    <Popover v-model:open="popover">
+      <PopoverTrigger id="popover-trigger">Popover</PopoverTrigger>
+      <PopoverContent side="top" align="start">Content</PopoverContent>
+    </Popover>
+    <Tooltip v-model:open="tooltip">
+      <TooltipTrigger id="tooltip-trigger">Tip</TooltipTrigger>
+      <TooltipContent>Tooltip</TooltipContent>
+    </Tooltip>
+    <HoverCard v-model:open="hoverCard" :open-delay="100" :close-delay="50">
+      <HoverCardTrigger id="hover-trigger" href="#">Link</HoverCardTrigger>
+      <HoverCardContent>Card</HoverCardContent>
+    </HoverCard>
+    <Collapsible v-model:open="collapsible">
+      <CollapsibleTrigger id="collapsible-trigger">More</CollapsibleTrigger>
+      <CollapsibleContent>Hidden</CollapsibleContent>
+    </Collapsible>
+    <Accordion v-model="single" class="single">
+      <AccordionItem value="a"><AccordionTrigger>A</AccordionTrigger><AccordionContent>A</AccordionContent></AccordionItem>
+      <AccordionItem value="b"><AccordionTrigger>B</AccordionTrigger><AccordionContent>B</AccordionContent></AccordionItem>
+    </Accordion>
+    <Accordion v-model:values="multiple" type="multiple" class="multiple">
+      <AccordionItem value="x"><AccordionTrigger>X</AccordionTrigger><AccordionContent>X</AccordionContent></AccordionItem>
+      <AccordionItem value="y" disabled><AccordionTrigger>Y</AccordionTrigger><AccordionContent>Y</AccordionContent></AccordionItem>
+    </Accordion>
+    <output>{{ JSON.stringify({ dialog, alert, sheet, drawer, popover, tooltip, hoverCard, collapsible, single, multiple, confirmed }) }}</output>
+  </div>
+</template>

@@ -10,5 +10,5 @@ defineSlots<{ default?: (props: {}) => unknown }>();
 </script>
 
 <template>
-  <div v-bind="$attrs" data-slot="card-content" :class="cn('px-6', className)"><slot /></div>
+  <div data-slot="card-content" v-bind="$attrs" :class="cn('px-6', className)"><slot /></div>
 </template>

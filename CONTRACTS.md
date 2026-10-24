@@ -27,7 +27,10 @@
 - Checkbox, Switch, RadioGroupItem, NativeSelect and Slider thumbs are native form controls: keyboard, focus, form submission and validation come from the browser. Checkbox and Switch use boolean models, RadioGroup and NativeSelect string models, Slider a number array with one or two thumbs.
 - Compound parts that share state, such as RadioGroup and Avatar, use provide/inject and must be nested in their parent.
 - Skeleton is decorative. Separator supports horizontal/vertical orientation and is decorative by default; :decorative="false" exposes separator semantics.
-- v0.1 targets client rendering. Dialog, menus, selects and other composite widgets require a separate behavior and accessibility implementation before being advertised.
+- Overlays build on the platform: Dialog, Alert Dialog, Sheet and Drawer on modal `<dialog>`; Popover, Tooltip and Hover Card on the `popover` attribute; Accordion on `<details name>`. Focus trapping, Escape, light dismiss and focus restoration come from the browser. `lib/overlay.ts` shares state between parts and positions floating content.
+- Triggers, closes and actions render a Button and accept its variant and size. `asChild` is not supported.
+- The supported browsers are those with the popover API and modal dialogs: Chrome and Edge 114, Safari 17 and Firefox 125 or later. Enter and exit animations use `@starting-style` and apply where it is supported.
+- v0.1 targets client rendering. Menus, selects, comboboxes and other composite widgets require a separate behavior and accessibility implementation before being advertised.
 
 ## Licensing
 

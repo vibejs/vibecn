@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { vibe } from '@usevibejs/compiler/vite';
 import { defineConfig } from 'vitest/config';
 
@@ -6,7 +7,19 @@ export default defineConfig({
     projects: [
       { test: { name: 'unit', environment: 'node', include: ['src/**/*.test.ts'] } },
       {
-        plugins: [vibe()],
+        plugins: [
+          vibe(),
+          {
+            // Installed components import the copied helpers; test the registry sources instead, so
+            // their coverage counts.
+            name: 'registry-lib',
+            enforce: 'pre',
+            resolveId(source, importer) {
+              if (importer?.includes('/site/src/components/ui/') && source.startsWith('../../lib/'))
+                return resolve('registry/lib', source.slice('../../lib/'.length));
+            },
+          },
+        ],
         test: {
           name: 'components',
           environment: 'jsdom',

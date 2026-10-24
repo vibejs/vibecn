@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import AlertDialog from '@/components/ui/AlertDialog.vibe';
+import AlertDialogAction from '@/components/ui/AlertDialogAction.vibe';
+import AlertDialogCancel from '@/components/ui/AlertDialogCancel.vibe';
+import AlertDialogContent from '@/components/ui/AlertDialogContent.vibe';
+import AlertDialogDescription from '@/components/ui/AlertDialogDescription.vibe';
+import AlertDialogFooter from '@/components/ui/AlertDialogFooter.vibe';
+import AlertDialogHeader from '@/components/ui/AlertDialogHeader.vibe';
+import AlertDialogTitle from '@/components/ui/AlertDialogTitle.vibe';
+import AlertDialogTrigger from '@/components/ui/AlertDialogTrigger.vibe';
+
+const deleted = ref(false);
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-3">
+    <AlertDialog>
+      <AlertDialogTrigger variant="outline">Show dialog</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>This action cannot be undone. This will permanently delete your account and remove your data from our servers.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction @click="deleted = true">Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    <p class="text-sm text-muted-foreground" role="status">{{ deleted ? 'Account deleted.' : '' }}</p>
+  </div>
+</template>

@@ -102,10 +102,9 @@ export function docs(options: DocsOptions): Plugin {
     const sources = items.flatMap((item) => item.files);
     const files = await Promise.all(
       sources.map(async (path) => {
-        const code = readFileSync(join(options.registry, path), 'utf8').replaceAll(
-          '__VIBECN_UTILS__',
-          '../../lib/utils.ts',
-        );
+        const code = readFileSync(join(options.registry, path), 'utf8')
+          .replaceAll('__VIBECN_UTILS__', '../../lib/utils.ts')
+          .replaceAll('__VIBECN_LIB__', '../../lib');
         const target = path.startsWith('ui/') ? `components/${path}` : path;
         return { path: target, code, html: await highlight(code, extensions[extname(path)]) };
       }),
