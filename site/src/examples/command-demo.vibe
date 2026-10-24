@@ -1,0 +1,40 @@
+<script setup lang="ts">
+import Command from '@/components/ui/Command.vibe';
+import CommandEmpty from '@/components/ui/CommandEmpty.vibe';
+import CommandGroup from '@/components/ui/CommandGroup.vibe';
+import CommandInput from '@/components/ui/CommandInput.vibe';
+import CommandItem from '@/components/ui/CommandItem.vibe';
+import CommandList from '@/components/ui/CommandList.vibe';
+import CommandSeparator from '@/components/ui/CommandSeparator.vibe';
+import CommandShortcut from '@/components/ui/CommandShortcut.vibe';
+import { toast } from '@/lib/toast.ts';
+</script>
+
+<template>
+  <Command class="max-w-[450px] rounded-lg border shadow-md">
+    <CommandInput placeholder="Type a command or search..." aria-label="Command" />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup heading="Suggestions">
+        <CommandItem @select="toast">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></svg>
+          Calendar
+        </CommandItem>
+        <CommandItem @select="toast">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" /></svg>
+          Search Emoji
+        </CommandItem>
+        <CommandItem disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M8 6h8M16 14v4M16 10h.01M12 10h.01M8 10h.01M12 14h.01M8 14h.01M12 18h.01M8 18h.01" /></svg>
+          Calculator
+        </CommandItem>
+      </CommandGroup>
+      <CommandSeparator />
+      <CommandGroup heading="Settings">
+        <CommandItem @select="toast">Profile<CommandShortcut>⌘P</CommandShortcut></CommandItem>
+        <CommandItem @select="toast">Billing<CommandShortcut>⌘B</CommandShortcut></CommandItem>
+        <CommandItem :keywords="['preferences']" @select="toast">Settings<CommandShortcut>⌘S</CommandShortcut></CommandItem>
+      </CommandGroup>
+    </CommandList>
+  </Command>
+</template>

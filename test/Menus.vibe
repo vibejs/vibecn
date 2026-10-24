@@ -1,0 +1,149 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Combobox from '../site/src/components/ui/Combobox.vibe';
+import ComboboxContent from '../site/src/components/ui/ComboboxContent.vibe';
+import ComboboxEmpty from '../site/src/components/ui/ComboboxEmpty.vibe';
+import ComboboxInput from '../site/src/components/ui/ComboboxInput.vibe';
+import ComboboxItem from '../site/src/components/ui/ComboboxItem.vibe';
+import Command from '../site/src/components/ui/Command.vibe';
+import CommandGroup from '../site/src/components/ui/CommandGroup.vibe';
+import CommandInput from '../site/src/components/ui/CommandInput.vibe';
+import CommandItem from '../site/src/components/ui/CommandItem.vibe';
+import CommandList from '../site/src/components/ui/CommandList.vibe';
+import CommandShortcut from '../site/src/components/ui/CommandShortcut.vibe';
+import ContextMenu from '../site/src/components/ui/ContextMenu.vibe';
+import ContextMenuContent from '../site/src/components/ui/ContextMenuContent.vibe';
+import ContextMenuItem from '../site/src/components/ui/ContextMenuItem.vibe';
+import ContextMenuTrigger from '../site/src/components/ui/ContextMenuTrigger.vibe';
+import DropdownMenu from '../site/src/components/ui/DropdownMenu.vibe';
+import DropdownMenuCheckboxItem from '../site/src/components/ui/DropdownMenuCheckboxItem.vibe';
+import DropdownMenuContent from '../site/src/components/ui/DropdownMenuContent.vibe';
+import DropdownMenuItem from '../site/src/components/ui/DropdownMenuItem.vibe';
+import DropdownMenuRadioGroup from '../site/src/components/ui/DropdownMenuRadioGroup.vibe';
+import DropdownMenuRadioItem from '../site/src/components/ui/DropdownMenuRadioItem.vibe';
+import DropdownMenuSub from '../site/src/components/ui/DropdownMenuSub.vibe';
+import DropdownMenuSubContent from '../site/src/components/ui/DropdownMenuSubContent.vibe';
+import DropdownMenuSubTrigger from '../site/src/components/ui/DropdownMenuSubTrigger.vibe';
+import DropdownMenuTrigger from '../site/src/components/ui/DropdownMenuTrigger.vibe';
+import Menubar from '../site/src/components/ui/Menubar.vibe';
+import MenubarContent from '../site/src/components/ui/MenubarContent.vibe';
+import MenubarItem from '../site/src/components/ui/MenubarItem.vibe';
+import MenubarMenu from '../site/src/components/ui/MenubarMenu.vibe';
+import MenubarTrigger from '../site/src/components/ui/MenubarTrigger.vibe';
+import NavigationMenu from '../site/src/components/ui/NavigationMenu.vibe';
+import NavigationMenuContent from '../site/src/components/ui/NavigationMenuContent.vibe';
+import NavigationMenuItem from '../site/src/components/ui/NavigationMenuItem.vibe';
+import NavigationMenuLink from '../site/src/components/ui/NavigationMenuLink.vibe';
+import NavigationMenuList from '../site/src/components/ui/NavigationMenuList.vibe';
+import NavigationMenuTrigger from '../site/src/components/ui/NavigationMenuTrigger.vibe';
+import Select from '../site/src/components/ui/Select.vibe';
+import SelectContent from '../site/src/components/ui/SelectContent.vibe';
+import SelectItem from '../site/src/components/ui/SelectItem.vibe';
+import SelectTrigger from '../site/src/components/ui/SelectTrigger.vibe';
+import SelectValue from '../site/src/components/ui/SelectValue.vibe';
+
+const menu = ref(false);
+const checked = ref(false);
+const radio = ref('a');
+const selected = ref<string[]>([]);
+const context = ref('');
+const bar = ref('');
+const fruit = ref('');
+const framework = ref('');
+const commands = ref<string[]>([]);
+const nav = ref('');
+const keep = (event: Event): void => event.preventDefault();
+</script>
+
+<template>
+  <div>
+    <DropdownMenu v-model:open="menu">
+      <DropdownMenuTrigger id="menu-trigger">Menu</DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem id="profile" @select="selected.push('profile')">Profile</DropdownMenuItem>
+        <DropdownMenuItem id="keep" @select="keep">Keep open</DropdownMenuItem>
+        <DropdownMenuItem id="disabled" disabled @select="selected.push('disabled')">Disabled</DropdownMenuItem>
+        <DropdownMenuCheckboxItem id="check" v-model:checked="checked">Check</DropdownMenuCheckboxItem>
+        <DropdownMenuRadioGroup v-model="radio">
+          <DropdownMenuRadioItem id="radio-b" value="b">B</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger id="sub-trigger">More</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <DropdownMenuItem id="sub-item" @select="selected.push('sub')">Sub item</DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger id="disabled-sub" disabled>Off</DropdownMenuSubTrigger>
+          <DropdownMenuSubContent><DropdownMenuItem>Never</DropdownMenuItem></DropdownMenuSubContent>
+        </DropdownMenuSub>
+      </DropdownMenuContent>
+    </DropdownMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger id="empty-trigger">Empty</DropdownMenuTrigger>
+      <DropdownMenuContent id="empty-content" />
+    </DropdownMenu>
+    <ContextMenu>
+      <ContextMenuTrigger id="area">Area</ContextMenuTrigger>
+      <ContextMenuContent><ContextMenuItem @select="context = 'copy'">Copy</ContextMenuItem></ContextMenuContent>
+    </ContextMenu>
+    <ContextMenu>
+      <ContextMenuTrigger id="disabled-area" disabled>Off</ContextMenuTrigger>
+      <ContextMenuContent><ContextMenuItem>Never</ContextMenuItem></ContextMenuContent>
+    </ContextMenu>
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger id="file">File</MenubarTrigger>
+        <MenubarContent><MenubarItem @select="bar = 'new'">New</MenubarItem></MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger id="edit">Edit</MenubarTrigger>
+        <MenubarContent><MenubarItem @select="bar = 'undo'">Undo</MenubarItem></MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger id="help" disabled>Help</MenubarTrigger>
+        <MenubarContent><MenubarItem>About</MenubarItem></MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+    <Select v-model="fruit" name="fruit">
+      <SelectTrigger id="select-trigger"><SelectValue placeholder="Pick" /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="cherry" disabled>Cherry</SelectItem>
+      </SelectContent>
+    </Select>
+    <Combobox v-model="framework" name="framework">
+      <ComboboxInput aria-label="Framework" show-clear />
+      <ComboboxContent>
+        <ComboboxEmpty>None</ComboboxEmpty>
+        <ComboboxItem value="vibe">vibe.js</ComboboxItem>
+        <ComboboxItem value="next">Next.js</ComboboxItem>
+        <ComboboxItem value="off" disabled>Off</ComboboxItem>
+      </ComboboxContent>
+    </Combobox>
+    <Command>
+      <CommandInput aria-label="Command" />
+      <CommandList>
+        <CommandGroup heading="Actions">
+          <CommandItem @select="commands.push($event)">Calendar<CommandShortcut>⌘C</CommandShortcut></CommandItem>
+          <CommandItem :keywords="['preferences']" @select="commands.push($event)">Settings</CommandItem>
+          <CommandItem value="custom" disabled @select="commands.push($event)">Disabled</CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </Command>
+    <NavigationMenu v-model="nav" :delay-duration="0" :close-delay="0">
+      <NavigationMenuList>
+        <NavigationMenuItem value="one">
+          <NavigationMenuTrigger id="nav-one">One</NavigationMenuTrigger>
+          <NavigationMenuContent><NavigationMenuLink href="#a" active>A</NavigationMenuLink></NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="#b" variant="trigger">B</NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+    <button id="outside" type="button">Outside</button>
+    <output>{{ JSON.stringify({ menu, checked, radio, selected, context, bar, fruit, framework, commands, nav }) }}</output>
+  </div>
+</template>

@@ -163,9 +163,7 @@ describe('every component', () => {
   // Roots render only their slot, and parts that read their root's state, directly or through
   // another part, are covered with their root.
   const contextual = new Set(
-    Object.keys(sources).filter((path) =>
-      /\b(inject|injectOverlay|provideOverlay)\b/.test(sources[path]),
-    ),
+    Object.keys(sources).filter((path) => /\b(inject|provide)\w*[<(]/.test(sources[path])),
   );
   for (let grew = true; grew;) {
     grew = false;

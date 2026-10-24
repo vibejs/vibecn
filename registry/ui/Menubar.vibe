@@ -1,0 +1,46 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { useRovingFocus } from '__VIBECN_LIB__/collection.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const bar = useTemplateRef<HTMLElement>('bar');
+const roving = useRovingFocus(bar, '[data-slot="menubar-trigger"]', () => ({ orientation: 'horizontal' }));
+/** The menus of the bar, by id, so the arrow keys can open the next one. */
+const menus = new Map<string, { open: Ref<boolean>; focusOnOpen: Ref<'first' | 'last' | 'content'> }>();
+
+provide(Symbol.for('vibecn.menubar'), {
+  menus,
+  /** Whether any menu is open: hovering another trigger then switches to its menu. */
+  active: () => [...menus.values()].some((menu) => menu.open.value),
+  move(id: string, delta: number) {
+    const triggers = [...bar.value!.querySelectorAll<HTMLButtonElement>('[data-slot="menubar-trigger"]')].filter(
+      (trigger) => trigger === document.activeElement || !trigger.disabled,
+    );
+    const index = triggers.findIndex((trigger) => trigger.dataset.anchor === id);
+    const next = triggers[(index + delta + triggers.length) % triggers.length];
+    const menu = menus.get(next.dataset.anchor!)!;
+    menus.get(id)!.open.value = false;
+    next.focus();
+    menu.focusOnOpen.value = 'first';
+    menu.open.value = true;
+  },
+});
+</script>
+
+<template>
+  <div
+    ref="bar"
+    role="menubar"
+    data-slot="menubar"
+    v-bind="$attrs"
+    :class="cn('flex h-9 items-center gap-1 rounded-md border bg-background p-1 shadow-xs', className)"
+    @keydown="roving.onKeydown"
+    @focusin="roving.onFocusin"
+  ><slot /></div>
+</template>

@@ -1,0 +1,50 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { onMounted, onUnmounted, provide, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, delayDuration = 200, closeDelay = 300 } = defineProps<{
+  class?: ClassValue;
+  /** Milliseconds the pointer rests on a trigger before its content opens. */
+  delayDuration?: number;
+  closeDelay?: number;
+}>();
+/** The value of the open item, or '' when all are closed. */
+const model = defineModel<string>({ default: () => '' });
+defineSlots<{ default?: (props: {}) => unknown }>();
+const root = useTemplateRef<HTMLElement>('root');
+
+let timer: ReturnType<typeof setTimeout> | undefined;
+const set = (value: string, delay: number): void => {
+  clearTimeout(timer);
+  if (delay > 0) timer = setTimeout(() => (model.value = value), delay);
+  else model.value = value;
+};
+provide(Symbol.for('vibecn.navigation-menu'), {
+  model,
+  // Moving from one open item to another switches at once.
+  show: (value: string) => set(value, model.value ? 0 : delayDuration),
+  hide: () => set('', closeDelay),
+  toggle: (value: string) => set(model.value === value ? '' : value, 0),
+});
+// Focus or a press outside the menu closes it.
+const outside = (event: Event): void => {
+  if (!root.value!.contains(event.target as Node)) set('', 0);
+};
+onMounted(() => {
+  document.addEventListener('pointerdown', outside);
+  document.addEventListener('focusin', outside);
+});
+onUnmounted(() => {
+  clearTimeout(timer);
+  document.removeEventListener('pointerdown', outside);
+  document.removeEventListener('focusin', outside);
+});
+</script>
+
+<template>
+  <nav ref="root" data-slot="navigation-menu" v-bind="$attrs" :class="cn('group/navigation-menu relative flex max-w-max flex-1 items-center justify-center', className)"><slot /></nav>
+</template>

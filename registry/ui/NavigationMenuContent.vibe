@@ -1,0 +1,38 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const nav = inject<{
+  model: Ref<string>;
+  show: (value: string) => void;
+  hide: () => void;
+  toggle: (value: string) => void;
+}>(Symbol.for('vibecn.navigation-menu'))!;
+const item = inject<{ value: string; id: string }>(Symbol.for('vibecn.navigation-menu-item'))!;
+
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'Escape') return;
+  nav.model.value = '';
+  document.querySelector<HTMLElement>(`[aria-controls="${item.id}-content"]`)?.focus();
+}
+</script>
+
+<template>
+  <div
+    data-slot="navigation-menu-content"
+    :id="item.id + '-content'"
+    :data-state="nav.model.value === item.value ? 'open' : 'closed'"
+    :hidden="nav.model.value !== item.value"
+    v-bind="$attrs"
+    :class="cn('absolute top-full left-0 z-50 mt-1.5 w-max overflow-hidden rounded-md border bg-popover p-2 pr-2.5 text-popover-foreground shadow transition-[opacity,scale,display] transition-discrete duration-200 starting:scale-95 starting:opacity-0 motion-reduce:transition-none **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none', className)"
+    @pointerenter="nav.show(item.value)"
+    @pointerleave="nav.hide"
+    @keydown="onKeydown"
+  ><slot /></div>
+</template>

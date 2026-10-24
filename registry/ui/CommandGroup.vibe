@@ -1,0 +1,26 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, heading } = defineProps<{ class?: ClassValue; heading?: string }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const id = useId();
+</script>
+
+<template>
+  <!-- A group without visible items hides itself, through CSS. -->
+  <div
+    role="group"
+    data-slot="command-group"
+    :aria-labelledby="heading ? id : undefined"
+    v-bind="$attrs"
+    :class="cn('overflow-hidden p-1 text-foreground [&:not(:has([data-slot=command-item]:not([hidden])))]:hidden', className)"
+  >
+    <div v-if="heading" :id="id" aria-hidden="true" data-slot="command-group-heading" class="px-2 py-1.5 text-xs font-medium text-muted-foreground">{{ heading }}</div>
+    <slot />
+  </div>
+</template>

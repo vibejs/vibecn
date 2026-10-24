@@ -1,0 +1,52 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import ContextMenu from '@/components/ui/ContextMenu.vibe';
+import ContextMenuCheckboxItem from '@/components/ui/ContextMenuCheckboxItem.vibe';
+import ContextMenuContent from '@/components/ui/ContextMenuContent.vibe';
+import ContextMenuItem from '@/components/ui/ContextMenuItem.vibe';
+import ContextMenuLabel from '@/components/ui/ContextMenuLabel.vibe';
+import ContextMenuRadioGroup from '@/components/ui/ContextMenuRadioGroup.vibe';
+import ContextMenuRadioItem from '@/components/ui/ContextMenuRadioItem.vibe';
+import ContextMenuSeparator from '@/components/ui/ContextMenuSeparator.vibe';
+import ContextMenuShortcut from '@/components/ui/ContextMenuShortcut.vibe';
+import ContextMenuSub from '@/components/ui/ContextMenuSub.vibe';
+import ContextMenuSubContent from '@/components/ui/ContextMenuSubContent.vibe';
+import ContextMenuSubTrigger from '@/components/ui/ContextMenuSubTrigger.vibe';
+import ContextMenuTrigger from '@/components/ui/ContextMenuTrigger.vibe';
+
+const bookmarks = ref(true);
+const urls = ref(false);
+const person = ref('pedro');
+</script>
+
+<template>
+  <ContextMenu>
+    <ContextMenuTrigger class="flex h-[150px] w-[300px] items-center justify-center rounded-md border border-dashed text-sm">Right click here</ContextMenuTrigger>
+    <ContextMenuContent class="w-52">
+      <ContextMenuItem inset>Back<ContextMenuShortcut>⌘[</ContextMenuShortcut></ContextMenuItem>
+      <ContextMenuItem inset disabled>Forward<ContextMenuShortcut>⌘]</ContextMenuShortcut></ContextMenuItem>
+      <ContextMenuItem inset>Reload<ContextMenuShortcut>⌘R</ContextMenuShortcut></ContextMenuItem>
+      <ContextMenuSub>
+        <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
+        <ContextMenuSubContent class="w-44">
+          <ContextMenuItem>Save Page...</ContextMenuItem>
+          <ContextMenuItem>Create Shortcut...</ContextMenuItem>
+          <ContextMenuItem>Name Window...</ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem>Developer Tools</ContextMenuItem>
+          <ContextMenuSeparator />
+          <ContextMenuItem variant="destructive">Delete</ContextMenuItem>
+        </ContextMenuSubContent>
+      </ContextMenuSub>
+      <ContextMenuSeparator />
+      <ContextMenuCheckboxItem v-model:checked="bookmarks">Show Bookmarks</ContextMenuCheckboxItem>
+      <ContextMenuCheckboxItem v-model:checked="urls">Show Full URLs</ContextMenuCheckboxItem>
+      <ContextMenuSeparator />
+      <ContextMenuRadioGroup v-model="person">
+        <ContextMenuLabel inset>People</ContextMenuLabel>
+        <ContextMenuRadioItem value="pedro">Pedro Duarte</ContextMenuRadioItem>
+        <ContextMenuRadioItem value="colm">Colm Tuite</ContextMenuRadioItem>
+      </ContextMenuRadioGroup>
+    </ContextMenuContent>
+  </ContextMenu>
+</template>

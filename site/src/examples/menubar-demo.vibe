@@ -1,0 +1,78 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Menubar from '@/components/ui/Menubar.vibe';
+import MenubarCheckboxItem from '@/components/ui/MenubarCheckboxItem.vibe';
+import MenubarContent from '@/components/ui/MenubarContent.vibe';
+import MenubarItem from '@/components/ui/MenubarItem.vibe';
+import MenubarMenu from '@/components/ui/MenubarMenu.vibe';
+import MenubarRadioGroup from '@/components/ui/MenubarRadioGroup.vibe';
+import MenubarRadioItem from '@/components/ui/MenubarRadioItem.vibe';
+import MenubarSeparator from '@/components/ui/MenubarSeparator.vibe';
+import MenubarShortcut from '@/components/ui/MenubarShortcut.vibe';
+import MenubarSub from '@/components/ui/MenubarSub.vibe';
+import MenubarSubContent from '@/components/ui/MenubarSubContent.vibe';
+import MenubarSubTrigger from '@/components/ui/MenubarSubTrigger.vibe';
+import MenubarTrigger from '@/components/ui/MenubarTrigger.vibe';
+
+const bookmarks = ref(false);
+const urls = ref(true);
+const profile = ref('benoit');
+</script>
+
+<template>
+  <Menubar aria-label="Browser">
+    <MenubarMenu>
+      <MenubarTrigger>File</MenubarTrigger>
+      <MenubarContent>
+        <MenubarItem>New Tab<MenubarShortcut>⌘T</MenubarShortcut></MenubarItem>
+        <MenubarItem>New Window<MenubarShortcut>⌘N</MenubarShortcut></MenubarItem>
+        <MenubarItem disabled>New Incognito Window</MenubarItem>
+        <MenubarSeparator />
+        <MenubarSub>
+          <MenubarSubTrigger>Share</MenubarSubTrigger>
+          <MenubarSubContent>
+            <MenubarItem>Email link</MenubarItem>
+            <MenubarItem>Messages</MenubarItem>
+            <MenubarItem>Notes</MenubarItem>
+          </MenubarSubContent>
+        </MenubarSub>
+        <MenubarSeparator />
+        <MenubarItem>Print...<MenubarShortcut>⌘P</MenubarShortcut></MenubarItem>
+      </MenubarContent>
+    </MenubarMenu>
+    <MenubarMenu>
+      <MenubarTrigger>Edit</MenubarTrigger>
+      <MenubarContent>
+        <MenubarItem>Undo<MenubarShortcut>⌘Z</MenubarShortcut></MenubarItem>
+        <MenubarItem>Redo<MenubarShortcut>⇧⌘Z</MenubarShortcut></MenubarItem>
+        <MenubarSeparator />
+        <MenubarItem>Cut</MenubarItem>
+        <MenubarItem>Copy</MenubarItem>
+        <MenubarItem>Paste</MenubarItem>
+      </MenubarContent>
+    </MenubarMenu>
+    <MenubarMenu>
+      <MenubarTrigger>View</MenubarTrigger>
+      <MenubarContent>
+        <MenubarCheckboxItem v-model:checked="bookmarks">Always Show Bookmarks Bar</MenubarCheckboxItem>
+        <MenubarCheckboxItem v-model:checked="urls">Always Show Full URLs</MenubarCheckboxItem>
+        <MenubarSeparator />
+        <MenubarItem inset>Reload<MenubarShortcut>⌘R</MenubarShortcut></MenubarItem>
+        <MenubarItem inset>Toggle Fullscreen</MenubarItem>
+      </MenubarContent>
+    </MenubarMenu>
+    <MenubarMenu>
+      <MenubarTrigger>Profiles</MenubarTrigger>
+      <MenubarContent>
+        <MenubarRadioGroup v-model="profile">
+          <MenubarRadioItem value="andy">Andy</MenubarRadioItem>
+          <MenubarRadioItem value="benoit">Benoit</MenubarRadioItem>
+          <MenubarRadioItem value="luis">Luis</MenubarRadioItem>
+        </MenubarRadioGroup>
+        <MenubarSeparator />
+        <MenubarItem inset>Edit...</MenubarItem>
+        <MenubarItem inset>Add Profile...</MenubarItem>
+      </MenubarContent>
+    </MenubarMenu>
+  </Menubar>
+</template>

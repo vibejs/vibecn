@@ -1,0 +1,15 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { Ref } from '@usevibejs/ui';
+import { injectOverlay } from '__VIBECN_LIB__/overlay.ts';
+
+const { placeholder = '' } = defineProps<{ placeholder?: string }>();
+const select = injectOverlay<{
+  model: Ref<string>;
+  labels: Map<string, string>;
+}>('Select');
+</script>
+
+<template>
+  <span data-slot="select-value">{{ select.labels.get(select.model.value) ?? placeholder }}</span>
+</template>

@@ -1,0 +1,49 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { injectMenu } from '__VIBECN_LIB__/menu.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, disabled = false } = defineProps<{ class?: ClassValue; disabled?: boolean }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const menu = injectMenu();
+const bar = inject<{ active: () => boolean }>(Symbol.for('vibecn.menubar'))!;
+
+function onClick(event: MouseEvent): void {
+  menu.focusOnOpen.value = event.detail === 0 ? 'first' : 'content';
+}
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'ArrowDown') return;
+  event.preventDefault();
+  menu.focusOnOpen.value = 'first';
+  menu.open.value = true;
+}
+// While a menu of the bar is open, moving to another trigger opens its menu instead.
+function onPointerEnter(event: PointerEvent): void {
+  if (disabled || menu.open.value || !bar.active()) return;
+  (event.currentTarget as HTMLElement).focus();
+  menu.open.value = true;
+}
+</script>
+
+<template>
+  <button
+    type="button"
+    role="menuitem"
+    aria-haspopup="menu"
+    data-slot="menubar-trigger"
+    :aria-expanded="menu.open.value"
+    :aria-controls="menu.id + '-content'"
+    :data-state="menu.open.value ? 'open' : 'closed'"
+    :data-anchor="menu.id"
+    :disabled="disabled"
+    v-bind="{ popovertarget: menu.id + '-content', ...$attrs }"
+    :class="cn('flex items-center rounded-sm px-2 py-1 text-sm font-medium outline-hidden select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground', className)"
+    @click="onClick"
+    @keydown="onKeydown"
+    @pointerenter="onPointerEnter"
+  ><slot /></button>
+</template>

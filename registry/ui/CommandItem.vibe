@@ -1,0 +1,66 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, inject, onMounted, ref, useId, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, value, keywords = [], disabled = false } = defineProps<{
+  class?: ClassValue;
+  /** The text matched against the search; the item's text by default. */
+  value?: string;
+  keywords?: string[];
+  disabled?: boolean;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const emit = defineEmits<{ select: [value: string] }>();
+const command = inject<{
+  id: string;
+  search: Ref<string>;
+  active: Ref<string>;
+  activate: (option: HTMLElement) => void;
+  onKeydown: (event: KeyboardEvent) => boolean;
+}>(Symbol.for('vibecn.command'))!;
+const id = useId();
+const item = useTemplateRef<HTMLElement>('item');
+const text = ref(value ?? '');
+// The item's text, without its shortcut.
+onMounted(() => {
+  const nodes = [...item.value!.childNodes].filter(
+    (node) => !(node instanceof Element && node.matches('[data-slot="command-shortcut"]')),
+  );
+  text.value = value ?? nodes.map((node) => node.textContent).join('').trim();
+});
+const visible = computed(() => {
+  const query = command.search.value.trim().toLowerCase();
+  return !query || [text.value, ...keywords].some((word) => word.toLowerCase().includes(query));
+});
+
+function onPointerMove(): void {
+  if (!disabled) command.activate(item.value!);
+}
+function onClick(): void {
+  if (!disabled) emit('select', text.value);
+}
+const base =
+  "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground";
+</script>
+
+<template>
+  <div
+    ref="item"
+    role="option"
+    data-slot="command-item"
+    :id="id"
+    :hidden="!visible"
+    :aria-selected="command.active.value === id"
+    :data-selected="command.active.value === id"
+    :data-disabled="disabled || undefined"
+    :aria-disabled="disabled || undefined"
+    v-bind="$attrs"
+    :class="cn(base, className)"
+    @pointermove="onPointerMove"
+    @click="onClick"
+  ><slot /></div>
+</template>

@@ -1,0 +1,49 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { provideCommand } from '__VIBECN_LIB__/collection.ts';
+import { cn } from '__VIBECN_UTILS__';
+import Dialog from './Dialog.vibe';
+import DialogContent from './DialogContent.vibe';
+import DialogDescription from './DialogDescription.vibe';
+import DialogHeader from './DialogHeader.vibe';
+import DialogTitle from './DialogTitle.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  title = 'Command Palette',
+  description = 'Search for a command to run...',
+  showCloseButton = true,
+} = defineProps<{
+  class?: ClassValue;
+  title?: string;
+  description?: string;
+  showCloseButton?: boolean;
+}>();
+const open = defineModel<boolean>('open', { default: () => false });
+const search = defineModel<string>('search', { default: () => '' });
+defineSlots<{ default?: (props: {}) => unknown }>();
+// Provided here, not by a nested Command: the slot's parts look for it on this component.
+const root = useTemplateRef<HTMLElement>('root');
+provideCommand(root, search);
+</script>
+
+<template>
+  <Dialog v-model:open="open">
+    <DialogContent :show-close-button="showCloseButton" v-bind="$attrs" :class="cn('overflow-hidden p-0', className)">
+      <DialogHeader class="sr-only">
+        <DialogTitle>{{ title }}</DialogTitle>
+        <DialogDescription>{{ description }}</DialogDescription>
+      </DialogHeader>
+      <div
+        ref="root"
+        data-slot="command"
+        :data-searching="!!search || undefined"
+        class="flex h-full w-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground **:data-[slot=command-input-wrapper]:h-12 **:data-[slot=command-group-heading]:px-2 **:data-[slot=command-group-heading]:font-medium **:data-[slot=command-group-heading]:text-muted-foreground **:data-[slot=command-group]:px-2 **:data-[slot=command-input]:h-12 **:data-[slot=command-item]:px-2 **:data-[slot=command-item]:py-3 [&_[data-slot=command-input-wrapper]_svg]:size-5 [&_[data-slot=command-item]_svg]:size-5"
+      ><slot /></div>
+    </DialogContent>
+  </Dialog>
+</template>

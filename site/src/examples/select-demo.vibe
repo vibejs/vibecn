@@ -1,0 +1,30 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Select from '@/components/ui/Select.vibe';
+import SelectContent from '@/components/ui/SelectContent.vibe';
+import SelectGroup from '@/components/ui/SelectGroup.vibe';
+import SelectItem from '@/components/ui/SelectItem.vibe';
+import SelectLabel from '@/components/ui/SelectLabel.vibe';
+import SelectTrigger from '@/components/ui/SelectTrigger.vibe';
+import SelectValue from '@/components/ui/SelectValue.vibe';
+
+const fruit = ref('');
+</script>
+
+<template>
+  <Select v-model="fruit">
+    <SelectTrigger class="w-[180px]" aria-label="Fruit">
+      <SelectValue placeholder="Select a fruit" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Fruits</SelectLabel>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="blueberry">Blueberry</SelectItem>
+        <SelectItem value="grapes">Grapes</SelectItem>
+        <SelectItem value="pineapple">Pineapple</SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+</template>

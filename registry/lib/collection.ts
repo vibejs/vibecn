@@ -1,5 +1,14 @@
 // Keyboard navigation for groups of items: tabs, toggle groups, menus and listboxes.
-import { onMounted, type ShallowRef } from '@usevibejs/ui';
+import {
+  nextTick,
+  onMounted,
+  provide,
+  ref,
+  useId,
+  watch,
+  type Ref,
+  type ShallowRef,
+} from '@usevibejs/ui';
 
 export type Orientation = 'horizontal' | 'vertical';
 
@@ -102,4 +111,65 @@ export function useRovingFocus(
     onFocusin: (event) => focus(event.target as Element),
     sync: () => focus(null),
   };
+}
+
+/**
+ * Keeps one option of a list active while focus stays in an input, as command menus and comboboxes
+ * do: the input points at it with `aria-activedescendant`. Hidden and disabled options are skipped.
+ */
+export function useActiveDescendant(
+  list: () => HTMLElement,
+  selector: string,
+): {
+  active: Ref<string>;
+  /** Activates the first visible option, after filtering. */
+  reset: () => void;
+  /** Activates an option, for example on hover. */
+  activate: (option: HTMLElement) => void;
+  /** Handles ArrowUp, ArrowDown and Enter; returns whether it did. */
+  onKeydown: (event: KeyboardEvent) => boolean;
+} {
+  const active = ref('');
+  const options = (): HTMLElement[] =>
+    [...list().querySelectorAll<HTMLElement>(selector)].filter(
+      (option) => !option.hidden && !option.hasAttribute('data-disabled'),
+    );
+  const activate = (option: HTMLElement | undefined): void => {
+    active.value = option?.id ?? '';
+    option?.scrollIntoView({ block: 'nearest' });
+  };
+  return {
+    active,
+    reset: () => activate(options()[0]),
+    activate,
+    onKeydown: (event) => {
+      const visible = options();
+      const current = visible.find((option) => option.id === active.value) ?? null;
+      if (event.key === 'Enter') {
+        if (!current) return false;
+        event.preventDefault();
+        current.click();
+        return true;
+      }
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return false;
+      event.preventDefault();
+      activate(nextItem(visible, current, event.key, 'vertical', false));
+      return true;
+    },
+  };
+}
+
+/**
+ * Shares a command menu's search and active item with its input and items. Command and
+ * CommandDialog call it, so that items in either one's slot find it.
+ */
+export function provideCommand(
+  root: Readonly<ShallowRef<HTMLElement | null>>,
+  search: Ref<string>,
+): void {
+  const options = useActiveDescendant(() => root.value!, '[data-slot="command-item"]');
+  // After items filter themselves, the first visible one becomes active.
+  onMounted(options.reset);
+  watch(search, () => nextTick(options.reset));
+  provide(Symbol.for('vibecn.command'), { id: useId(), search, ...options });
 }

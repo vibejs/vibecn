@@ -1,0 +1,37 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { nextTick } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { injectMenu } from '__VIBECN_LIB__/menu.ts';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, disabled = false } = defineProps<{ class?: ClassValue; disabled?: boolean }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const menu = injectMenu();
+
+// The menu opens at the pointer, or at the area's corner for the keyboard's context menu key.
+async function onContextMenu(event: MouseEvent): Promise<void> {
+  if (disabled) return;
+  event.preventDefault();
+  const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  const keyboard = event.clientX === 0 && event.clientY === 0;
+  menu.open.value = false;
+  await nextTick();
+  menu.point!.value = keyboard ? { x: box.left, y: box.top } : { x: event.clientX, y: event.clientY };
+  menu.focusOnOpen.value = keyboard ? 'first' : 'content';
+  menu.open.value = true;
+}
+</script>
+
+<template>
+  <div
+    data-slot="context-menu-trigger"
+    :data-state="menu.open.value ? 'open' : 'closed'"
+    :data-disabled="disabled || undefined"
+    v-bind="$attrs"
+    :class="cn('select-none', className)"
+    @contextmenu="onContextMenu"
+  ><slot /></div>
+</template>
