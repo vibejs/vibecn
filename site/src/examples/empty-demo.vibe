@@ -1,0 +1,28 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+import Empty from '@/components/ui/Empty.vibe';
+import EmptyContent from '@/components/ui/EmptyContent.vibe';
+import EmptyDescription from '@/components/ui/EmptyDescription.vibe';
+import EmptyHeader from '@/components/ui/EmptyHeader.vibe';
+import EmptyMedia from '@/components/ui/EmptyMedia.vibe';
+import EmptyTitle from '@/components/ui/EmptyTitle.vibe';
+</script>
+
+<template>
+  <Empty class="border md:p-12">
+    <EmptyHeader>
+      <EmptyMedia variant="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z" /></svg>
+      </EmptyMedia>
+      <EmptyTitle>No projects yet</EmptyTitle>
+      <EmptyDescription>You haven't created any projects yet. Get started by creating your first project.</EmptyDescription>
+    </EmptyHeader>
+    <EmptyContent>
+      <div class="flex gap-2">
+        <Button>Create project</Button>
+        <Button variant="outline">Import project</Button>
+      </div>
+    </EmptyContent>
+    <Button variant="link" size="sm" class="text-muted-foreground">Learn more</Button>
+  </Empty>
+</template>

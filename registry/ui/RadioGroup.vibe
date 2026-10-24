@@ -1,0 +1,30 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, toRef, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, name, disabled = false, required = false } = defineProps<{
+  class?: ClassValue;
+  /** The form field name. A generated name groups the items when it is omitted. */
+  name?: string;
+  disabled?: boolean;
+  required?: boolean;
+}>();
+const model = defineModel<string>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const id = useId();
+
+provide(Symbol.for('vibecn.radio-group'), {
+  model,
+  name: toRef(() => name ?? id),
+  disabled: toRef(() => disabled),
+  required: toRef(() => required),
+});
+</script>
+
+<template>
+  <div role="radiogroup" data-slot="radio-group" :aria-disabled="disabled || undefined" v-bind="$attrs" :class="cn('grid gap-3', className)"><slot /></div>
+</template>

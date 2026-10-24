@@ -1,0 +1,14 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, ratio = 1 } = defineProps<{ class?: ClassValue; ratio?: number }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <div data-slot="aspect-ratio" v-bind="$attrs" :style="{ aspectRatio: String(ratio) }" :class="cn('relative w-full', className)"><slot /></div>
+</template>

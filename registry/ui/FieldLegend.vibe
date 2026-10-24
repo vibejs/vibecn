@@ -1,0 +1,21 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, variant = 'legend' } = defineProps<{
+  class?: ClassValue;
+  variant?: 'legend' | 'label';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const variants = {
+  legend: '',
+  label: '',
+};
+</script>
+
+<template>
+  <legend data-slot="field-legend" :data-variant="variant" v-bind="$attrs" :class="cn('mb-3 font-medium data-[variant=legend]:text-base data-[variant=label]:text-sm', variants[variant], className)"><slot /></legend>
+</template>

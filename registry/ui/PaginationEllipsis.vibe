@@ -1,0 +1,16 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{
+  class?: ClassValue;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <span data-slot="pagination-ellipsis" aria-hidden="true" v-bind="$attrs" :class="cn('flex size-9 items-center justify-center', className)"><svg viewBox="0 0 24 24" fill="currentColor" class="size-4"><circle cx="5" cy="12" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="19" cy="12" r="1.5" /></svg><span class="sr-only">More pages</span></span>
+</template>

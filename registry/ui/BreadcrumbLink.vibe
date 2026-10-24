@@ -1,0 +1,19 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{
+  class?: ClassValue;
+  href?: string;
+  target?: string;
+  rel?: string;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <a data-slot="breadcrumb-link" v-bind="$attrs" :href="$props.href" :target="$props.target" :rel="$props.rel" :class="cn('transition-colors hover:text-foreground', className)"><slot /></a>
+</template>

@@ -1,0 +1,26 @@
+<script setup lang="ts">
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import AvatarGroup from '@/components/ui/AvatarGroup.vibe';
+import AvatarGroupCount from '@/components/ui/AvatarGroupCount.vibe';
+import AvatarImage from '@/components/ui/AvatarImage.vibe';
+</script>
+
+<template>
+  <div class="flex flex-wrap items-center gap-12">
+    <Avatar>
+      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+      <AvatarFallback>CN</AvatarFallback>
+    </Avatar>
+    <Avatar class="rounded-lg">
+      <AvatarImage src="https://github.com/vibejs.png" alt="vibe.js" />
+      <AvatarFallback class="rounded-lg">VJ</AvatarFallback>
+    </Avatar>
+    <AvatarGroup>
+      <Avatar><AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" /><AvatarFallback>CN</AvatarFallback></Avatar>
+      <Avatar><AvatarFallback>ER</AvatarFallback></Avatar>
+      <Avatar><AvatarFallback>MC</AvatarFallback></Avatar>
+      <AvatarGroupCount>+3</AvatarGroupCount>
+    </AvatarGroup>
+  </div>
+</template>

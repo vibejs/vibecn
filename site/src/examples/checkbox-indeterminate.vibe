@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const items = ref([
+  { id: 'recents', label: 'Recents', checked: true },
+  { id: 'home', label: 'Home', checked: false },
+  { id: 'downloads', label: 'Downloads', checked: false },
+]);
+const all = computed({
+  get: () => items.value.every((item) => item.checked),
+  set: (value: boolean) => items.value.forEach((item) => (item.checked = value)),
+});
+const some = computed(() => !all.value && items.value.some((item) => item.checked));
+</script>
+
+<template>
+  <div class="flex flex-col gap-3">
+    <div class="flex items-center gap-3">
+      <Checkbox id="folders-all" v-model="all" :indeterminate="some" />
+      <Label for="folders-all">All folders</Label>
+    </div>
+    <div v-for="item in items" :key="item.id" class="ml-6 flex items-center gap-3">
+      <Checkbox :id="'folders-' + item.id" v-model="item.checked" />
+      <Label :for="'folders-' + item.id">{{ item.label }}</Label>
+    </div>
+  </div>
+</template>

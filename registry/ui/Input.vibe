@@ -25,10 +25,10 @@ const inputAttrs = computed(() => ({ ...attrs, name, placeholder, disabled, requ
 
 <template>
   <!-- The compiler rejects v-model with a bound :type (VIBE2507); one static input per type keeps v-model's IME handling. -->
-  <input v-if="type === 'email'" type="email" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
-  <input v-else-if="type === 'password'" type="password" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
-  <input v-else-if="type === 'search'" type="search" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
-  <input v-else-if="type === 'tel'" type="tel" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
-  <input v-else-if="type === 'url'" type="url" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
-  <input v-else type="text" ref="field" v-bind="inputAttrs" v-model="model" data-slot="input" />
+  <input v-if="type === 'email'" type="email" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
+  <input v-else-if="type === 'password'" type="password" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
+  <input v-else-if="type === 'search'" type="search" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
+  <input v-else-if="type === 'tel'" type="tel" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
+  <input v-else-if="type === 'url'" type="url" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
+  <input v-else type="text" ref="field" data-slot="input" v-bind="inputAttrs" v-model="model" />
 </template>

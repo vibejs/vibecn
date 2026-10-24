@@ -1,0 +1,15 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import PaginationLink from './PaginationLink.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, href } = defineProps<{ class?: ClassValue; href?: string }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <PaginationLink aria-label="Go to next page" size="default" :href="href" v-bind="$attrs" :class="cn('gap-1 px-2.5 sm:pr-2.5', className)"><span class="hidden sm:block"><slot>Next</slot></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg></PaginationLink>
+</template>

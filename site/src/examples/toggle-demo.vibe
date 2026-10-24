@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Toggle from '@/components/ui/Toggle.vibe';
+
+const bookmarked = ref(false);
+const italic = ref(true);
+</script>
+
+<template>
+  <div class="flex flex-wrap items-center gap-2">
+    <Toggle v-model:pressed="bookmarked" variant="outline" size="sm" aria-label="Bookmark" class="data-[state=on]:bg-transparent data-[state=on]:*:[svg]:fill-blue-500 data-[state=on]:*:[svg]:stroke-blue-500">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16Z" /></svg>
+      Bookmark
+    </Toggle>
+    <Toggle v-model:pressed="italic" aria-label="Toggle italic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 4h-9M14 20H5M15 4 9 20" /></svg>
+    </Toggle>
+    <Toggle disabled aria-label="Toggle underline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 4v6a6 6 0 0 0 12 0V4M4 20h16" /></svg>
+    </Toggle>
+  </div>
+</template>

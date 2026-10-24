@@ -1,0 +1,36 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import AvatarFallback from '../site/src/components/ui/AvatarFallback.vibe';
+import Avatar from '../site/src/components/ui/Avatar.vibe';
+import AvatarImage from '../site/src/components/ui/AvatarImage.vibe';
+import InputGroup from '../site/src/components/ui/InputGroup.vibe';
+import InputGroupAddon from '../site/src/components/ui/InputGroupAddon.vibe';
+import InputGroupButton from '../site/src/components/ui/InputGroupButton.vibe';
+import InputGroupInput from '../site/src/components/ui/InputGroupInput.vibe';
+import RadioGroup from '../site/src/components/ui/RadioGroup.vibe';
+import RadioGroupItem from '../site/src/components/ui/RadioGroupItem.vibe';
+
+const { src = '' } = defineProps<{ src?: string }>();
+const plan = ref('monthly');
+const query = ref('');
+</script>
+
+<template>
+  <div>
+    <RadioGroup v-model="plan" aria-label="Plan">
+      <RadioGroupItem value="monthly" aria-label="Monthly" />
+      <RadioGroupItem value="yearly" aria-label="Yearly" />
+      <RadioGroupItem value="lifetime" aria-label="Lifetime" disabled />
+    </RadioGroup>
+    <output>{{ plan }}</output>
+    <Avatar>
+      <AvatarImage :src="src" alt="Ada" />
+      <AvatarFallback>AL</AvatarFallback>
+    </Avatar>
+    <InputGroup>
+      <InputGroupInput v-model="query" aria-label="Search" />
+      <InputGroupAddon><span class="icon">S</span></InputGroupAddon>
+      <InputGroupAddon align="inline-end"><InputGroupButton>Go</InputGroupButton></InputGroupAddon>
+    </InputGroup>
+  </div>
+</template>

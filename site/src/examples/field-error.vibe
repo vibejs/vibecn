@@ -1,0 +1,24 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Field from '@/components/ui/Field.vibe';
+import FieldDescription from '@/components/ui/FieldDescription.vibe';
+import FieldError from '@/components/ui/FieldError.vibe';
+import FieldLabel from '@/components/ui/FieldLabel.vibe';
+import Input from '@/components/ui/Input.vibe';
+
+const username = ref('vb');
+const errors = computed(() => [
+  username.value.length < 3 ? { message: 'Use at least 3 characters.' } : undefined,
+  /\s/.test(username.value) ? { message: 'Spaces are not allowed.' } : undefined,
+]);
+const invalid = computed(() => errors.value.some(Boolean));
+</script>
+
+<template>
+  <Field :data-invalid="invalid" class="max-w-sm">
+    <FieldLabel for="field-username">Username</FieldLabel>
+    <Input id="field-username" v-model="username" :aria-invalid="invalid" aria-describedby="field-username-hint" />
+    <FieldDescription id="field-username-hint">Your public handle.</FieldDescription>
+    <FieldError :errors="errors" />
+  </Field>
+</template>

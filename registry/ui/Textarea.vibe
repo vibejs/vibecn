@@ -24,9 +24,9 @@ defineExpose({ focus: () => field.value?.focus() });
 <template>
   <textarea
     ref="field"
+    data-slot="textarea"
     v-bind="$attrs"
     v-model="model"
-    data-slot="textarea"
     :rows="$props.rows"
     :name="$props.name"
     :placeholder="$props.placeholder"

@@ -1,0 +1,37 @@
+<script setup lang="ts">
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import Button from '@/components/ui/Button.vibe';
+import Item from '@/components/ui/Item.vibe';
+import ItemActions from '@/components/ui/ItemActions.vibe';
+import ItemContent from '@/components/ui/ItemContent.vibe';
+import ItemDescription from '@/components/ui/ItemDescription.vibe';
+import ItemGroup from '@/components/ui/ItemGroup.vibe';
+import ItemMedia from '@/components/ui/ItemMedia.vibe';
+import ItemSeparator from '@/components/ui/ItemSeparator.vibe';
+import ItemTitle from '@/components/ui/ItemTitle.vibe';
+
+const people = [
+  { name: 'Ada Lovelace', email: 'ada@example.com', initials: 'AL' },
+  { name: 'Grace Hopper', email: 'grace@example.com', initials: 'GH' },
+  { name: 'Alan Turing', email: 'alan@example.com', initials: 'AT' },
+];
+</script>
+
+<template>
+  <ItemGroup class="w-full max-w-sm">
+    <template v-for="(person, index) in people" :key="person.email">
+      <ItemSeparator v-if="index > 0" />
+      <Item role="listitem">
+        <ItemMedia><Avatar><AvatarFallback>{{ person.initials }}</AvatarFallback></Avatar></ItemMedia>
+        <ItemContent class="gap-1">
+          <ItemTitle>{{ person.name }}</ItemTitle>
+          <ItemDescription>{{ person.email }}</ItemDescription>
+        </ItemContent>
+        <ItemActions><Button variant="ghost" size="icon" class="rounded-full" :aria-label="'Invite ' + person.name">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+        </Button></ItemActions>
+      </Item>
+    </template>
+  </ItemGroup>
+</template>

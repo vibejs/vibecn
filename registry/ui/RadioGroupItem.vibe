@@ -1,0 +1,36 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, value, disabled = false } = defineProps<{
+  class?: ClassValue;
+  value: string;
+  disabled?: boolean;
+}>();
+const group = inject<{
+  model: Ref<string | undefined>;
+  name: Ref<string>;
+  disabled: Ref<boolean>;
+  required: Ref<boolean>;
+}>(Symbol.for('vibecn.radio-group'))!;
+</script>
+
+<template>
+  <input
+    type="radio"
+    data-slot="radio-group-item"
+    :data-state="group.model.value === value ? 'checked' : 'unchecked'"
+    :name="group.name.value"
+    :value="value"
+    :checked="group.model.value === value"
+    :disabled="disabled || group.disabled.value"
+    :required="group.required.value"
+    v-bind="$attrs"
+    :class="cn('peer inline-grid aspect-square size-4 shrink-0 cursor-default appearance-none place-content-center rounded-full border border-input text-primary shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40 before:hidden before:size-2 before:rounded-full before:bg-primary checked:before:block', className)"
+    @change="group.model.value = value"
+  />
+</template>
