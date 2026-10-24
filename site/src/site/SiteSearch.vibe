@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from '@usevibejs/ui';
+import { useRouter } from '@usevibejs/ui/router';
+import CommandDialog from '@/components/ui/CommandDialog.vibe';
+import CommandEmpty from '@/components/ui/CommandEmpty.vibe';
+import CommandGroup from '@/components/ui/CommandGroup.vibe';
+import CommandInput from '@/components/ui/CommandInput.vibe';
+import CommandItem from '@/components/ui/CommandItem.vibe';
+import CommandList from '@/components/ui/CommandList.vibe';
+import Kbd from '@/components/ui/Kbd.vibe';
+import { sections } from './nav.ts';
+
+const open = ref(false);
+const search = ref('');
+const router = useRouter();
+
+// ⌘K or Ctrl K toggles the search from anywhere on the page.
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key !== 'k' || !(event.metaKey || event.ctrlKey)) return;
+  event.preventDefault();
+  open.value = !open.value;
+}
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onUnmounted(() => document.removeEventListener('keydown', onKeydown));
+
+async function go(href: string): Promise<void> {
+  open.value = false;
+  search.value = '';
+  await router.push(href);
+}
+</script>
+
+<template>
+  <button
+    type="button"
+    aria-haspopup="dialog"
+    class="inline-flex h-8 w-full items-center gap-2 rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted md:w-56 lg:w-64"
+    @click="open = true"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="size-4"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+    <span class="hidden sm:inline">Search documentation...</span>
+    <span class="sm:hidden">Search</span>
+    <Kbd class="ml-auto hidden sm:inline-flex">⌘K</Kbd>
+  </button>
+  <CommandDialog v-model:open="open" v-model:search="search" title="Search documentation" description="Search for a page or a component">
+    <CommandInput placeholder="Search documentation..." aria-label="Search documentation" />
+    <CommandList>
+      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandGroup v-for="section in sections" :key="section.title" :heading="section.title">
+        <CommandItem
+          v-for="item in section.items"
+          :key="item.href"
+          :value="item.title"
+          :keywords="[item.description]"
+          @select="go(item.href)"
+        >
+          <span>{{ item.title }}</span>
+          <span class="ml-auto hidden truncate text-xs text-muted-foreground sm:block sm:max-w-56">{{ item.description }}</span>
+        </CommandItem>
+      </CommandGroup>
+    </CommandList>
+  </CommandDialog>
+</template>

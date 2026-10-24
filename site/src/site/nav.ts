@@ -3,6 +3,7 @@ import pages from 'virtual:docs-index';
 export interface NavItem {
   title: string;
   href: string;
+  description: string;
 }
 
 const order = (path: string, value: string | undefined): number =>
@@ -14,12 +15,17 @@ const guides: NavItem[] = pages
   .map((page) => ({
     title: page.frontmatter.title,
     href: page.path === 'docs/introduction' ? '/docs' : `/${page.path}`,
+    description: page.frontmatter.description,
   }));
 
 const components: NavItem[] = pages
   .filter((page) => page.path.startsWith('components/'))
   .sort((a, b) => a.frontmatter.title.localeCompare(b.frontmatter.title))
-  .map((page) => ({ title: page.frontmatter.title, href: `/docs/${page.path}` }));
+  .map((page) => ({
+    title: page.frontmatter.title,
+    href: `/docs/${page.path}`,
+    description: page.frontmatter.description,
+  }));
 
 export const sections = [
   { title: 'Getting Started', items: guides },
