@@ -1,0 +1,28 @@
+<script setup lang="ts">
+import Attachment from '@/components/ui/Attachment.vibe';
+import AttachmentContent from '@/components/ui/AttachmentContent.vibe';
+import AttachmentDescription from '@/components/ui/AttachmentDescription.vibe';
+import AttachmentGroup from '@/components/ui/AttachmentGroup.vibe';
+import AttachmentMedia from '@/components/ui/AttachmentMedia.vibe';
+import AttachmentTitle from '@/components/ui/AttachmentTitle.vibe';
+
+const images = [
+  { name: 'Sunrise', color: 'from-amber-300 to-rose-400' },
+  { name: 'Forest', color: 'from-emerald-400 to-teal-600' },
+  { name: 'Ocean', color: 'from-sky-400 to-indigo-500' },
+  { name: 'Dusk', color: 'from-violet-400 to-fuchsia-500' },
+  { name: 'Sand', color: 'from-yellow-200 to-orange-300' },
+];
+</script>
+
+<template>
+  <AttachmentGroup class="w-full max-w-md" aria-label="Attached images">
+    <Attachment v-for="image in images" :key="image.name" orientation="vertical" state="done">
+      <AttachmentMedia variant="image"><div :class="['size-full bg-gradient-to-br', image.color]" role="img" :aria-label="image.name" /></AttachmentMedia>
+      <AttachmentContent>
+        <AttachmentTitle>{{ image.name }}.png</AttachmentTitle>
+        <AttachmentDescription>PNG</AttachmentDescription>
+      </AttachmentContent>
+    </Attachment>
+  </AttachmentGroup>
+</template>

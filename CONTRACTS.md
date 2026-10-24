@@ -33,6 +33,7 @@
 - Overlays build on the platform: Dialog, Alert Dialog, Sheet and Drawer on modal `<dialog>`; Popover, Tooltip and Hover Card on the `popover` attribute; Accordion on `<details name>`. Focus trapping, Escape, light dismiss and focus restoration come from the browser. `lib/overlay.ts` shares state between parts and positions floating content.
 - Triggers, closes and actions render a Button and accept its variant and size. `asChild` is not supported.
 - The supported browsers are those with the popover API and modal dialogs: Chrome and Edge 114, Safari 17 and Firefox 125 or later. Enter and exit animations use `@starting-style` and apply where it is supported.
+- Chat components (Attachment, Bubble, Marker, Message, Message Scroller) are layout and styling; Message Scroller keeps the view at the newest content while the reader is at the end. The `shimmer` and `scroll-fade-*` utilities they use ship in the theme.
 - v0.1 targets client rendering. Menus, selects, comboboxes and other composite widgets require a separate behavior and accessibility implementation before being advertised.
 
 ## Licensing

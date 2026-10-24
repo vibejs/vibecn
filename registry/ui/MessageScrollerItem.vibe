@@ -1,0 +1,33 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onMounted, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref, ShallowRef } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, scrollAnchor = false } = defineProps<{
+  class?: ClassValue;
+  /** Scrolls this item to the top when it appears, such as the question a reply answers. */
+  scrollAnchor?: boolean;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const scroller = inject<{
+  viewport: ShallowRef<HTMLElement | null>;
+  atStart: Ref<boolean>;
+  atEnd: Ref<boolean>;
+  stick: Ref<boolean>;
+  scrollTo: (direction: 'start' | 'end', behavior?: ScrollBehavior) => void;
+}>(Symbol.for('vibecn.message-scroller'))!;
+const item = useTemplateRef<HTMLElement>('item');
+onMounted(() => {
+  if (!scrollAnchor) return;
+  scroller.stick.value = false;
+  const view = scroller.viewport.value!;
+  view.scrollTo({ top: item.value!.offsetTop - view.offsetTop, behavior: 'smooth' });
+});
+</script>
+
+<template>
+  <div ref="item" data-slot="message-scroller-item" v-bind="$attrs" :class="cn('min-w-0 shrink-0 [contain-intrinsic-size:auto_10rem] [content-visibility:auto]', className)"><slot /></div>
+</template>

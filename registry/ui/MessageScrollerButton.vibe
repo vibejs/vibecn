@@ -1,0 +1,48 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, inject } from '@usevibejs/ui';
+import type { ClassValue, Ref, ShallowRef } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Button from './Button.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, direction = 'end', variant = 'secondary', size = 'icon-sm' } = defineProps<{
+  class?: ClassValue;
+  direction?: 'start' | 'end';
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
+  size?: 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const scroller = inject<{
+  viewport: ShallowRef<HTMLElement | null>;
+  atStart: Ref<boolean>;
+  atEnd: Ref<boolean>;
+  stick: Ref<boolean>;
+  scrollTo: (direction: 'start' | 'end', behavior?: ScrollBehavior) => void;
+}>(Symbol.for('vibecn.message-scroller'))!;
+// Shown only while there is something to scroll to in its direction.
+const active = computed(() => (direction === 'end' ? !scroller.atEnd.value : !scroller.atStart.value));
+const base =
+  'absolute left-1/2 -translate-x-1/2 border-border bg-background text-foreground transition-[translate,scale,opacity] duration-200 hover:bg-muted hover:text-foreground data-[active=false]:pointer-events-none data-[active=false]:scale-95 data-[active=false]:opacity-0 data-[active=false]:duration-400 data-[active=false]:ease-[cubic-bezier(0.7,0,0.84,0)] data-[active=true]:translate-y-0 data-[active=true]:scale-100 data-[active=true]:opacity-100 data-[active=true]:ease-[cubic-bezier(0.23,1,0.32,1)] data-[direction=end]:bottom-4 data-[direction=end]:data-[active=false]:translate-y-full data-[direction=start]:top-4 data-[direction=start]:data-[active=false]:-translate-y-full motion-reduce:transition-none data-[direction=start]:[&_svg]:rotate-180';
+</script>
+
+<template>
+  <Button
+    data-slot="message-scroller-button"
+    :data-direction="direction"
+    :data-active="active"
+    :aria-hidden="!active || undefined"
+    :tabindex="active ? undefined : -1"
+    :variant="variant"
+    :size="size"
+    v-bind="$attrs"
+    :class="cn(base, className)"
+    @click="scroller.scrollTo(direction)"
+  >
+    <slot>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7" /></svg>
+      <span class="sr-only">{{ direction === 'end' ? 'Scroll to end' : 'Scroll to start' }}</span>
+    </slot>
+  </Button>
+</template>

@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Attachment from '../site/src/components/ui/Attachment.vibe';
+import AttachmentAction from '../site/src/components/ui/AttachmentAction.vibe';
+import Bubble from '../site/src/components/ui/Bubble.vibe';
+import BubbleContent from '../site/src/components/ui/BubbleContent.vibe';
+import Message from '../site/src/components/ui/Message.vibe';
+import MessageScroller from '../site/src/components/ui/MessageScroller.vibe';
+import MessageScrollerButton from '../site/src/components/ui/MessageScrollerButton.vibe';
+import MessageScrollerContent from '../site/src/components/ui/MessageScrollerContent.vibe';
+import MessageScrollerItem from '../site/src/components/ui/MessageScrollerItem.vibe';
+import MessageScrollerViewport from '../site/src/components/ui/MessageScrollerViewport.vibe';
+
+const { items = ['one'] } = defineProps<{ items?: string[] }>();
+const removed = ref(0);
+</script>
+
+<template>
+  <div>
+    <Attachment state="uploading"><AttachmentAction aria-label="Remove" @click="removed++">x</AttachmentAction></Attachment>
+    <Message align="end"><Bubble variant="tinted" align="end"><BubbleContent>Hi</BubbleContent></Bubble></Message>
+    <MessageScroller>
+      <MessageScrollerViewport>
+        <MessageScrollerContent>
+          <MessageScrollerItem v-for="(item, index) in items" :key="item" :scroll-anchor="index === items.length - 1 && item.startsWith('anchor')">{{ item }}</MessageScrollerItem>
+        </MessageScrollerContent>
+      </MessageScrollerViewport>
+      <MessageScrollerButton class="end" />
+      <MessageScrollerButton class="start" direction="start" />
+    </MessageScroller>
+    <output>{{ removed }}</output>
+  </div>
+</template>

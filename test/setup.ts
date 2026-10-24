@@ -25,11 +25,24 @@ HTMLElement.prototype.hidePopover = function hidePopover(this: HTMLElement) {
   toggle(this, 'closed');
 };
 Element.prototype.setPointerCapture ??= function setPointerCapture() {};
-globalThis.ResizeObserver ??= class {
-  observe(): void {}
+// Tests call `ResizeObserver.resize()` to run every observer's callback.
+globalThis.ResizeObserver = class {
+  static observers = new Set<{ callback: ResizeObserverCallback }>();
+  static resize(): void {
+    for (const observer of this.observers) observer.callback([], observer as never);
+  }
+  callback: ResizeObserverCallback;
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+  }
+  observe(): void {
+    (globalThis.ResizeObserver as unknown as { observers: Set<unknown> }).observers.add(this);
+  }
   unobserve(): void {}
-  disconnect(): void {}
-};
+  disconnect(): void {
+    (globalThis.ResizeObserver as unknown as { observers: Set<unknown> }).observers.delete(this);
+  }
+} as unknown as typeof ResizeObserver;
 Element.prototype.scrollIntoView ??= function scrollIntoView() {};
 // jsdom hides closed popovers, which makes their items unfocusable; the stand-ins above track
 // the open state instead.

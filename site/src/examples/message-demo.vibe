@@ -1,0 +1,31 @@
+<script setup lang="ts">
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import Bubble from '@/components/ui/Bubble.vibe';
+import BubbleContent from '@/components/ui/BubbleContent.vibe';
+import Message from '@/components/ui/Message.vibe';
+import MessageAvatar from '@/components/ui/MessageAvatar.vibe';
+import MessageContent from '@/components/ui/MessageContent.vibe';
+import MessageFooter from '@/components/ui/MessageFooter.vibe';
+import MessageGroup from '@/components/ui/MessageGroup.vibe';
+import MessageHeader from '@/components/ui/MessageHeader.vibe';
+</script>
+
+<template>
+  <MessageGroup class="w-full max-w-md gap-6">
+    <Message>
+      <MessageAvatar><Avatar><AvatarFallback>AL</AvatarFallback></Avatar></MessageAvatar>
+      <MessageContent>
+        <MessageHeader>Ada</MessageHeader>
+        <Bubble variant="muted"><BubbleContent>Did the build pass after the theme change?</BubbleContent></Bubble>
+        <MessageFooter>09:41</MessageFooter>
+      </MessageContent>
+    </Message>
+    <Message align="end">
+      <MessageContent>
+        <Bubble><BubbleContent>Yes, every check is green. Deploying now.</BubbleContent></Bubble>
+        <MessageFooter>Read 09:42</MessageFooter>
+      </MessageContent>
+    </Message>
+  </MessageGroup>
+</template>
