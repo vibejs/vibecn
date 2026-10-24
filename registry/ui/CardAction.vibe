@@ -1,0 +1,14 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{ class?: ClassValue; }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <div v-bind="$attrs" data-slot="card-action" :class="cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', className)"><slot /></div>
+</template>

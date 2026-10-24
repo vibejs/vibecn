@@ -1,0 +1,47 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, variant = 'default', size = 'default', type = 'button', disabled = false } = defineProps<{
+  class?: ClassValue;
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  name?: string;
+  value?: string;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+
+const variants = {
+  default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+  destructive: 'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20',
+  outline: 'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
+  ghost: 'hover:bg-accent hover:text-accent-foreground',
+  link: 'text-primary underline-offset-4 hover:underline',
+};
+const sizes = {
+  default: 'h-9 px-4 py-2',
+  sm: 'h-8 rounded-md px-3 text-xs',
+  lg: 'h-10 rounded-md px-6',
+  icon: 'size-9',
+};
+</script>
+
+<template>
+  <button
+    v-bind="$attrs"
+    data-slot="button"
+    :data-variant="variant"
+    :data-size="size"
+    :type="type"
+    :disabled="disabled"
+    :name="$props.name"
+    :value="$props.value"
+    :class="cn('inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0', variants[variant], sizes[size], className)"
+  ><slot /></button>
+</template>

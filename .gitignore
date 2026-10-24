@@ -1,0 +1,13 @@
+node_modules/
+dist/
+public/
+coverage/
+.tsbuild/
+*.tgz
+playground/dist/
+playground/src/components/
+playground/src/lib/
+playground/src/vibecn.css
+playground/vibecn.json
+playground/vibecn.LICENSE
+.DS_Store

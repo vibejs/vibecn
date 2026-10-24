@@ -1,0 +1,14 @@
+{
+  "name": "vibecn-playground",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@usevibejs/ui": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
+  },
+  "devDependencies": {
+    "@usevibejs/language-tools": "catalog:",
+    "typescript": "catalog:ts-next"
+  }
+}

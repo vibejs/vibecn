@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import { ref, useTemplateRef } from '@usevibejs/ui';
+import Input from '../playground/src/components/ui/Input.vibe';
+import Textarea from '../playground/src/components/ui/Textarea.vibe';
+
+const value = ref('Initial value');
+const input = useTemplateRef('input');
+const textarea = useTemplateRef('textarea');
+</script>
+
+<template>
+  <div>
+    <Input ref="input" v-model="value" aria-label="Single line" />
+    <Textarea ref="textarea" v-model="value" aria-label="Multiple lines" />
+    <button type="button" @click="input?.focus()">Focus input</button>
+    <button type="button" @click="textarea?.focus()">Focus textarea</button>
+    <output>{{ value }}</output>
+  </div>
+</template>

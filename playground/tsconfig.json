@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2024", "dom"],
+    "module": "preserve",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "outDir": "../.tsbuild/playground",
+    "types": ["vite/client"]
+  },
+  "contentMappers": [{ "package": "@usevibejs/language-tools", "extensions": [".vibe"] }],
+  "include": ["src"]
+}

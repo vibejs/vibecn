@@ -1,0 +1,125 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Badge from './components/ui/Badge.vibe';
+import Button from './components/ui/Button.vibe';
+import Card from './components/ui/Card.vibe';
+import CardContent from './components/ui/CardContent.vibe';
+import CardDescription from './components/ui/CardDescription.vibe';
+import CardFooter from './components/ui/CardFooter.vibe';
+import CardHeader from './components/ui/CardHeader.vibe';
+import CardTitle from './components/ui/CardTitle.vibe';
+import Input from './components/ui/Input.vibe';
+import Label from './components/ui/Label.vibe';
+import Separator from './components/ui/Separator.vibe';
+import Skeleton from './components/ui/Skeleton.vibe';
+import Textarea from './components/ui/Textarea.vibe';
+
+const dark = ref(false);
+const theme = ref('neutral');
+const name = ref('Alex Morgan');
+const email = ref('alex@example.com');
+const notes = ref('A little less setup. A little more building.');
+const saved = ref(false);
+const counter = ref(0);
+const copied = ref(false);
+const copyFailed = ref(false);
+const codeView = ref('install');
+const command = 'vibecn add button card input';
+const colors: Record<string, string> = { blue: '#2563eb', violet: '#7c3aed' };
+const themeStyle = computed(() => theme.value === 'neutral' ? {} : { '--primary': colors[theme.value], '--primary-foreground': '#ffffff', '--ring': colors[theme.value] });
+const snippets: Record<string, string> = {
+  install: 'vibecn init\nvibecn add button card input\n\n# Source files are now in your app.\n# Import them. Change them. Keep them.',
+  usage: 'import Button from "./components/ui/Button.vibe";\n\n<Button variant="outline" @click="save">\n  Save changes\n</Button>',
+};
+const snippet = computed(() => snippets[codeView.value]);
+async function copyCommand(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(command);
+    copied.value = true;
+    copyFailed.value = false;
+  } catch {
+    copyFailed.value = true;
+  }
+}
+function resetForm(): void {
+  name.value = 'Alex Morgan';
+  email.value = 'alex@example.com';
+  notes.value = 'A little less setup. A little more building.';
+  saved.value = false;
+}
+</script>
+
+<template>
+  <div :class="['catalog', { dark }]" :style="themeStyle">
+    <a class="skip-link" href="#components">Skip to components</a>
+    <header class="site-header">
+      <a class="wordmark" href="#" aria-label="vibecn home"><span class="brand-mark" aria-hidden="true">▧</span>vibecn<span class="wordmark-dot">.</span></a>
+      <nav aria-label="Main navigation">
+        <a href="#components">Components</a>
+        <a href="#installation">Installation</a>
+        <a href="https://vibejs.org">vibe.js <span aria-hidden="true">↗</span></a>
+      </nav>
+      <Button variant="ghost" size="icon" :aria-label="dark ? 'Use light theme' : 'Use dark theme'" @click="dark = !dark"><span aria-hidden="true">{{ dark ? '☀' : '☾' }}</span></Button>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="status-dot" />Made for vibe.js <span class="eyebrow-slash">/</span> source distribution</div>
+        <h1 id="page-title">Good defaults.<br /><span>Your source code.</span></h1>
+        <p>shadcn/ui, adapted to <strong>.vibe</strong>. Accessible native elements, familiar styles, and component code that lives in your project.</p>
+        <div class="install-command"><code>{{ command }}</code><Button variant="ghost" size="sm" :aria-label="copied ? 'Command copied' : 'Copy install command'" @click="copyCommand">{{ copied ? 'Copied ✓' : 'Copy' }}</Button></div>
+        <p v-if="copyFailed" class="copy-error" role="status">Copy is unavailable. Select the command above to copy it.</p>
+        <div class="intro-meta"><span>8 component groups</span><span>MIT licensed</span><span>Client rendered</span></div>
+      </section>
+
+      <section id="components" class="component-section" aria-labelledby="component-title">
+        <div class="section-heading"><div><span class="eyebrow">The collection</span><h2 id="component-title">A small set. A solid start.</h2></div><Badge variant="outline">Preview · 0.0.0</Badge></div>
+        <div class="workbench">
+          <aside class="component-index" aria-label="Component index">
+            <span class="index-label">Components</span>
+            <a href="#buttons">Button <span>06</span></a>
+            <a href="#badges">Badge <span>04</span></a>
+            <a href="#form">Card <span>07 parts</span></a>
+            <a href="#form">Input</a>
+            <a href="#form">Textarea</a>
+            <a href="#form">Label</a>
+            <a href="#loading">Separator</a>
+            <a href="#loading">Skeleton</a>
+            <div class="index-note">Native elements first.<br />Composite widgets are next.</div>
+          </aside>
+
+          <div class="preview-area">
+            <div class="preview-toolbar"><span class="toolbar-title">Live preview</span><div class="theme-options" aria-label="Accent color"><button v-for="color in ['neutral', 'blue', 'violet']" :key="color" type="button" :class="['theme-dot', color]" :aria-label="'Use ' + color + ' accent'" :aria-pressed="theme === color" @click="theme = color" /></div><span class="toolbar-hint">Make it yours.</span></div>
+            <div class="preview-grid">
+              <form id="form" @submit.prevent="saved = true">
+                <Card class="gap-5 shadow-none">
+                  <CardHeader><div class="card-eyebrow">An everyday example</div><CardTitle class="text-xl tracking-tight">Your profile</CardTitle><CardDescription>A familiar form, built with the components.</CardDescription></CardHeader>
+                  <CardContent class="space-y-5">
+                    <div class="field"><Label for="name">Full name</Label><Input id="name" v-model="name" name="name" autocomplete="name" required @input="saved = false" /></div>
+                    <div class="field"><Label for="email">Email address</Label><Input id="email" v-model="email" type="email" name="email" autocomplete="email" required @input="saved = false" /></div>
+                    <div class="field"><Label for="notes">A few words</Label><Textarea id="notes" v-model="notes" name="notes" :rows="3" @input="saved = false" /></div>
+                  </CardContent>
+                  <CardFooter><Button type="submit">Save changes <span aria-hidden="true">↗</span></Button><Button variant="ghost" @click="resetForm">Reset</Button></CardFooter>
+                </Card>
+                <p class="form-status" role="status">{{ saved ? 'Saved locally for ' + name + '.' : 'Try it. This preview stays in your browser.' }}</p>
+              </form>
+
+              <div class="component-stack">
+                <section id="buttons" class="sample-block"><div class="sample-caption"><h3>Button</h3><code>variant</code></div><div class="button-grid"><Button @click="counter++">Default</Button><Button variant="secondary" @click="counter++">Secondary</Button><Button variant="outline" @click="counter++">Outline</Button><Button variant="ghost" @click="counter++">Ghost</Button><Button variant="destructive" @click="counter++">Destructive</Button><Button variant="link" @click="counter++">Link <span aria-hidden="true">↗</span></Button></div><p class="sample-feedback" role="status">{{ counter ? counter + ' button clicks. Same native behavior.' : 'Six variants. Try any of them.' }}</p><Button disabled class="mt-3">Disabled button</Button></section>
+                <Separator />
+                <section id="badges" class="sample-block"><div class="sample-caption"><h3>Badge</h3><code>variant</code></div><div class="badge-row"><Badge>Default</Badge><Badge variant="secondary">Secondary</Badge><Badge variant="outline">Outline</Badge><Badge variant="destructive">Destructive</Badge></div></section>
+                <Separator />
+                <section id="loading" class="sample-block"><div class="sample-caption"><h3>Skeleton</h3><code>motion-safe</code></div><div class="loading-preview" role="status" aria-label="Loading preview"><Skeleton class="size-10 rounded-full" /><div class="loading-lines"><Skeleton class="h-3 w-32" /><Skeleton class="mt-2 h-3 w-48 max-w-full" /></div></div></section>
+              </div>
+            </div>
+            <div class="preview-footer"><span class="status-dot" />Rendered with vibe.js <span class="footer-right">No React runtime.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="installation" class="installation-section" aria-labelledby="install-title"><div><span class="eyebrow">Bring it into your project</span><h2 id="install-title">Add the pieces.<br />Keep the control.</h2><p>The CLI copies <code>.vibe</code> files into your app, alongside a shared class utility and theme. You decide what happens next.</p><a href="https://ui.shadcn.com/docs" class="text-link">Built on the shadcn/ui approach <span aria-hidden="true">↗</span></a></div><div class="code-panel"><div class="code-toolbar"><button type="button" :aria-pressed="codeView === 'install'" @click="codeView = 'install'">Install</button><button type="button" :aria-pressed="codeView === 'usage'" @click="codeView = 'usage'">Use a component</button><span>Source preview</span></div><pre><code>{{ snippet }}</code></pre><p>Development preview: use the local CLI. The npm package is not published.</p></div></section>
+    </main>
+
+    <footer class="site-footer"><span class="footer-wordmark">vibecn.</span><p>An independent shadcn/ui port for vibe.js.<br />Not affiliated with or endorsed by shadcn/ui.</p><a href="https://github.com/shadcn-ui/ui/blob/main/LICENSE.md">MIT license <span aria-hidden="true">↗</span></a></footer>
+  </div>
+</template>
