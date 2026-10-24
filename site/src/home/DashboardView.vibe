@@ -1,0 +1,162 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import Badge from '@/components/ui/Badge.vibe';
+import Button from '@/components/ui/Button.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardAction from '@/components/ui/CardAction.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Table from '@/components/ui/Table.vibe';
+import TableBody from '@/components/ui/TableBody.vibe';
+import TableCell from '@/components/ui/TableCell.vibe';
+import TableHead from '@/components/ui/TableHead.vibe';
+import TableHeader from '@/components/ui/TableHeader.vibe';
+import TableRow from '@/components/ui/TableRow.vibe';
+import ToggleGroup from '@/components/ui/ToggleGroup.vibe';
+import ToggleGroupItem from '@/components/ui/ToggleGroupItem.vibe';
+import Sparkline from './Sparkline.vibe';
+
+const nav = ['Dashboard', 'Lifecycle', 'Analytics', 'Projects', 'Team'];
+const active = ref('Dashboard');
+const period = ref('3m');
+const series: Record<string, number[]> = {
+  '3m': [42, 38, 51, 47, 55, 61, 58, 66, 72, 69, 78, 84, 80, 91, 88, 97, 103, 99, 112, 118],
+  '30d': [61, 58, 66, 72, 69, 78, 84, 80, 91, 88, 97, 103],
+  '7d': [88, 97, 103, 99, 112, 118, 121],
+};
+const kpis = [
+  { label: 'Total revenue', value: '$1,250.00', change: '+12.5%', up: true, note: 'Trending up this month' },
+  { label: 'New customers', value: '1,234', change: '-20%', up: false, note: 'Acquisition needs attention' },
+  { label: 'Active accounts', value: '45,678', change: '+12.5%', up: true, note: 'Strong user retention' },
+  { label: 'Growth rate', value: '4.5%', change: '+4.5%', up: true, note: 'Meets growth projections' },
+];
+const sales = [
+  { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+$1,999.00', initials: 'OM' },
+  { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+$39.00', initials: 'JL' },
+  { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+$299.00', initials: 'IN' },
+  { name: 'William Kim', email: 'will@email.com', amount: '+$99.00', initials: 'WK' },
+];
+const payments = ref([
+  { id: 'm5gr84i9', status: 'Success', email: 'ken99@example.com', amount: 316, selected: false },
+  { id: '3u1reuv4', status: 'Success', email: 'abe45@example.com', amount: 242, selected: false },
+  { id: 'derv1ws0', status: 'Processing', email: 'monserrat44@example.com', amount: 837, selected: false },
+  { id: '5kma53ae', status: 'Success', email: 'silas22@example.com', amount: 874, selected: false },
+  { id: 'bhqecj4p', status: 'Failed', email: 'carmella@example.com', amount: 721, selected: false },
+]);
+const filter = ref('');
+const visible = computed(() => payments.value.filter((row) => row.email.includes(filter.value.trim().toLowerCase())));
+const all = computed({
+  get: () => visible.value.length > 0 && visible.value.every((row) => row.selected),
+  set: (value: boolean) => visible.value.forEach((row) => (row.selected = value)),
+});
+const some = computed(() => !all.value && visible.value.some((row) => row.selected));
+const selected = computed(() => payments.value.filter((row) => row.selected).length);
+const money = (value: number): string => value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+</script>
+
+<template>
+  <div class="flex min-h-[44rem]">
+    <aside class="hidden w-52 shrink-0 flex-col gap-1 border-r bg-muted/30 p-3 lg:flex" aria-label="Workspace">
+      <div class="mb-3 flex items-center gap-2 px-2 py-1.5">
+        <span class="grid size-7 place-items-center rounded-md bg-primary text-xs font-semibold text-primary-foreground" aria-hidden="true">A</span>
+        <div class="leading-tight"><p class="text-sm font-semibold">Acme Inc.</p><p class="text-xs text-muted-foreground">Enterprise</p></div>
+      </div>
+      <button
+        v-for="item in nav"
+        :key="item"
+        type="button"
+        :aria-current="active === item ? 'page' : undefined"
+        class="rounded-md px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground aria-[current]:bg-accent aria-[current]:font-medium aria-[current]:text-foreground"
+        @click="active = item"
+      >{{ item }}</button>
+      <div class="mt-auto flex items-center gap-2 rounded-md px-2 py-1.5">
+        <Avatar size="sm"><AvatarFallback>SD</AvatarFallback></Avatar>
+        <div class="min-w-0 leading-tight"><p class="truncate text-sm font-medium">Sofia Davis</p><p class="truncate text-xs text-muted-foreground">sofia@acme.com</p></div>
+      </div>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col gap-4 p-4 sm:p-6">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <h3 class="text-lg font-semibold tracking-tight">{{ active }}</h3>
+        <Button size="sm">Quick create</Button>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card v-for="kpi in kpis" :key="kpi.label" class="gap-3 bg-gradient-to-t from-primary/5 to-card py-5 shadow-xs">
+          <CardHeader>
+            <CardDescription>{{ kpi.label }}</CardDescription>
+            <CardTitle class="text-2xl font-semibold tabular-nums">{{ kpi.value }}</CardTitle>
+            <CardAction><Badge variant="outline">{{ kpi.change }}</Badge></CardAction>
+          </CardHeader>
+          <CardContent class="text-sm text-muted-foreground">{{ kpi.note }}</CardContent>
+        </Card>
+      </div>
+      <div class="grid gap-4 xl:grid-cols-[1fr_22rem]">
+        <Card class="gap-4">
+          <CardHeader>
+            <CardTitle>Total visitors</CardTitle>
+            <CardDescription>Total for the selected period</CardDescription>
+            <CardAction>
+              <ToggleGroup v-model="period" variant="outline" size="sm" aria-label="Period">
+                <ToggleGroupItem value="3m">3 months</ToggleGroupItem>
+                <ToggleGroupItem value="30d">30 days</ToggleGroupItem>
+                <ToggleGroupItem value="7d">7 days</ToggleGroupItem>
+              </ToggleGroup>
+            </CardAction>
+          </CardHeader>
+          <CardContent><Sparkline :values="series[period || '3m']" type="area" :height="200" /></CardContent>
+        </Card>
+        <Card class="gap-4">
+          <CardHeader>
+            <CardTitle>Recent sales</CardTitle>
+            <CardDescription>You made 265 sales this month.</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-5">
+            <div v-for="sale in sales" :key="sale.email" class="flex items-center gap-3">
+              <Avatar><AvatarFallback>{{ sale.initials }}</AvatarFallback></Avatar>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm leading-none font-medium">{{ sale.name }}</p>
+                <p class="mt-1 truncate text-sm text-muted-foreground">{{ sale.email }}</p>
+              </div>
+              <span class="text-sm font-medium tabular-nums">{{ sale.amount }}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <Card class="gap-4">
+        <CardHeader>
+          <CardTitle>Payments</CardTitle>
+          <CardDescription>{{ selected }} of {{ payments.length }} rows selected.</CardDescription>
+          <CardAction><Input v-model="filter" placeholder="Filter emails..." aria-label="Filter emails" class="h-8 w-40 sm:w-56" /></CardAction>
+        </CardHeader>
+        <CardContent>
+          <div class="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead class="w-10"><Checkbox v-model="all" :indeterminate="some" aria-label="Select all" /></TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead class="text-right">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="row in visible" :key="row.id" :data-state="row.selected ? 'selected' : undefined">
+                  <TableCell><Checkbox v-model="row.selected" :aria-label="'Select ' + row.email" /></TableCell>
+                  <TableCell><Badge :variant="row.status === 'Failed' ? 'destructive' : row.status === 'Processing' ? 'secondary' : 'outline'">{{ row.status }}</Badge></TableCell>
+                  <TableCell class="lowercase">{{ row.email }}</TableCell>
+                  <TableCell class="text-right font-medium tabular-nums">{{ money(row.amount) }}</TableCell>
+                </TableRow>
+                <TableRow v-if="!visible.length"><TableCell :colspan="4" class="h-20 text-center text-muted-foreground">No results.</TableCell></TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+</template>

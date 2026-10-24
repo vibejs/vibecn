@@ -1,0 +1,138 @@
+<script setup lang="ts">
+import { onUnmounted, ref } from '@usevibejs/ui';
+import Attachment from '@/components/ui/Attachment.vibe';
+import AttachmentContent from '@/components/ui/AttachmentContent.vibe';
+import AttachmentDescription from '@/components/ui/AttachmentDescription.vibe';
+import AttachmentMedia from '@/components/ui/AttachmentMedia.vibe';
+import AttachmentTitle from '@/components/ui/AttachmentTitle.vibe';
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+import Bubble from '@/components/ui/Bubble.vibe';
+import BubbleContent from '@/components/ui/BubbleContent.vibe';
+import InputGroup from '@/components/ui/InputGroup.vibe';
+import InputGroupAddon from '@/components/ui/InputGroupAddon.vibe';
+import InputGroupButton from '@/components/ui/InputGroupButton.vibe';
+import InputGroupText from '@/components/ui/InputGroupText.vibe';
+import InputGroupTextarea from '@/components/ui/InputGroupTextarea.vibe';
+import Marker from '@/components/ui/Marker.vibe';
+import MarkerContent from '@/components/ui/MarkerContent.vibe';
+import Message from '@/components/ui/Message.vibe';
+import MessageAvatar from '@/components/ui/MessageAvatar.vibe';
+import MessageContent from '@/components/ui/MessageContent.vibe';
+import MessageFooter from '@/components/ui/MessageFooter.vibe';
+import MessageScroller from '@/components/ui/MessageScroller.vibe';
+import MessageScrollerButton from '@/components/ui/MessageScrollerButton.vibe';
+import MessageScrollerContent from '@/components/ui/MessageScrollerContent.vibe';
+import MessageScrollerItem from '@/components/ui/MessageScrollerItem.vibe';
+import MessageScrollerViewport from '@/components/ui/MessageScrollerViewport.vibe';
+
+interface Entry {
+  id: number;
+  from: 'me' | 'assistant';
+  text: string;
+  time: string;
+}
+const threads = [
+  { title: 'Landing page review', preview: 'The hero reads well. Two notes…', active: true },
+  { title: 'Release checklist', preview: 'All 313 tests pass on main.', active: false },
+  { title: 'Theme tokens', preview: 'Use oklch for the accent ramp.', active: false },
+  { title: 'Onboarding copy', preview: 'Shorter, and say what happens.', active: false },
+];
+const messages = ref<Entry[]>([
+  { id: 1, from: 'me', text: 'Can you review the new landing page before we ship it?', time: '09:41' },
+  { id: 2, from: 'assistant', text: 'Of course. The hero reads well and the showcase loads fast. Two notes: tighten the subtitle to one sentence, and give the install command more room on mobile.', time: '09:41' },
+  { id: 3, from: 'me', text: 'Done. Anything about accessibility?', time: '09:43' },
+  { id: 4, from: 'assistant', text: 'Focus rings are visible, the dialogs trap focus natively, and motion stops when reduced motion is on. Ship it.', time: '09:43' },
+]);
+const draft = ref('');
+const reply = 'Happy to help. Every component here is plain .vibe source in your app, so you can adjust any of these details directly.';
+let timer: ReturnType<typeof setInterval> | undefined;
+onUnmounted(() => clearInterval(timer));
+
+// Streams the reply word by word, as an assistant would.
+function send(): void {
+  const text = draft.value.trim();
+  if (!text) return;
+  draft.value = '';
+  const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const answer: Entry = { id: Date.now() + 1, from: 'assistant', text: '', time };
+  messages.value = [...messages.value, { id: Date.now(), from: 'me', text, time }, answer];
+  const words = reply.split(' ');
+  let index = 0;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    index += 1;
+    messages.value = messages.value.map((entry) => (entry.id === answer.id ? { ...entry, text: words.slice(0, index).join(' ') } : entry));
+    if (index >= words.length) clearInterval(timer);
+  }, 45);
+}
+function onKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    send();
+  }
+}
+</script>
+
+<template>
+  <div class="flex h-[44rem]">
+    <aside class="hidden w-64 shrink-0 flex-col border-r md:flex" aria-label="Conversations">
+      <div class="border-b p-4"><p class="text-sm font-semibold">Conversations</p></div>
+      <ul class="flex flex-col gap-1 p-2">
+        <li v-for="thread in threads" :key="thread.title">
+          <button
+            type="button"
+            :aria-current="thread.active ? 'true' : undefined"
+            class="flex w-full flex-col items-start gap-1 rounded-md px-3 py-2 text-left transition-colors hover:bg-accent aria-[current]:bg-accent"
+          >
+            <span class="text-sm font-medium">{{ thread.title }}</span>
+            <span class="line-clamp-1 text-xs text-muted-foreground">{{ thread.preview }}</span>
+          </button>
+        </li>
+      </ul>
+    </aside>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <div class="flex items-center gap-3 border-b px-4 py-3">
+        <Avatar size="sm"><AvatarFallback>AI</AvatarFallback></Avatar>
+        <div class="leading-tight"><p class="text-sm font-semibold">Landing page review</p><p class="text-xs text-muted-foreground">Assistant</p></div>
+      </div>
+      <MessageScroller class="min-h-0 flex-1">
+        <MessageScrollerViewport aria-label="Messages">
+          <MessageScrollerContent class="mx-auto w-full max-w-2xl gap-5 p-4 sm:p-6">
+            <Marker variant="separator"><MarkerContent>Today</MarkerContent></Marker>
+            <MessageScrollerItem v-for="entry in messages" :key="entry.id">
+              <Message :align="entry.from === 'me' ? 'end' : 'start'">
+                <MessageAvatar v-if="entry.from === 'assistant'"><Avatar size="sm"><AvatarFallback>AI</AvatarFallback></Avatar></MessageAvatar>
+                <MessageContent>
+                  <Bubble :variant="entry.from === 'me' ? 'default' : 'muted'"><BubbleContent>{{ entry.text || '…' }}</BubbleContent></Bubble>
+                  <MessageFooter>{{ entry.time }}</MessageFooter>
+                </MessageContent>
+              </Message>
+            </MessageScrollerItem>
+          </MessageScrollerContent>
+        </MessageScrollerViewport>
+        <MessageScrollerButton />
+      </MessageScroller>
+      <form class="mx-auto w-full max-w-2xl p-4 pt-2" @submit.prevent="send">
+        <InputGroup>
+          <InputGroupAddon align="block-start" class="flex-wrap gap-2">
+            <Attachment size="xs" state="done">
+              <AttachmentMedia><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /></svg></AttachmentMedia>
+              <AttachmentContent>
+                <AttachmentTitle>landing-page.png</AttachmentTitle>
+                <AttachmentDescription>1.2 MB</AttachmentDescription>
+              </AttachmentContent>
+            </Attachment>
+          </InputGroupAddon>
+          <InputGroupTextarea v-model="draft" placeholder="Ask, search or chat..." aria-label="Message" :rows="2" @keydown="onKeydown" />
+          <InputGroupAddon align="block-end">
+            <InputGroupText>Enter to send</InputGroupText>
+            <InputGroupButton type="submit" variant="default" size="icon-xs" class="ml-auto rounded-full" aria-label="Send" :disabled="!draft.trim()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+            </InputGroupButton>
+          </InputGroupAddon>
+        </InputGroup>
+      </form>
+    </div>
+  </div>
+</template>

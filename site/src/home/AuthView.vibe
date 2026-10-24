@@ -1,0 +1,90 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Field from '@/components/ui/Field.vibe';
+import FieldDescription from '@/components/ui/FieldDescription.vibe';
+import FieldGroup from '@/components/ui/FieldGroup.vibe';
+import FieldLabel from '@/components/ui/FieldLabel.vibe';
+import FieldSeparator from '@/components/ui/FieldSeparator.vibe';
+import Input from '@/components/ui/Input.vibe';
+import InputOTP from '@/components/ui/InputOTP.vibe';
+import InputOTPGroup from '@/components/ui/InputOTPGroup.vibe';
+import InputOTPSeparator from '@/components/ui/InputOTPSeparator.vibe';
+import InputOTPSlot from '@/components/ui/InputOTPSlot.vibe';
+import Spinner from '@/components/ui/Spinner.vibe';
+import { toast } from '@/lib/toast.ts';
+import logo from '../assets/vibecn-mark.webp';
+
+const step = ref<'email' | 'code'>('email');
+const email = ref('');
+const code = ref('');
+const sending = ref(false);
+
+function sendCode(): void {
+  sending.value = true;
+  setTimeout(() => {
+    sending.value = false;
+    step.value = 'code';
+  }, 700);
+}
+function verify(value: string): void {
+  toast.success('Signed in', { description: `Code ${value} accepted.` });
+  step.value = 'email';
+  code.value = '';
+}
+</script>
+
+<template>
+  <div class="grid min-h-[44rem] lg:grid-cols-2">
+    <div class="relative hidden flex-col justify-between overflow-hidden bg-zinc-950 p-10 text-zinc-50 lg:flex">
+      <div class="flex items-center gap-2 text-lg font-semibold"><img :src="logo" alt="" class="size-7" />Acme Inc</div>
+      <svg viewBox="0 0 400 400" aria-hidden="true" class="pointer-events-none absolute -right-24 top-1/2 size-[34rem] -translate-y-1/2 text-zinc-800">
+        <g fill="none" stroke="currentColor" stroke-width="1">
+          <circle v-for="index in 9" :key="index" cx="200" cy="200" :r="index * 22" />
+        </g>
+      </svg>
+      <blockquote class="relative max-w-md space-y-3">
+        <p class="text-lg leading-relaxed">“We rebuilt our dashboard in an afternoon. The components were already ours, so we just changed what we needed.”</p>
+        <footer class="text-sm text-zinc-400">Sofia Davis, design engineer</footer>
+      </blockquote>
+    </div>
+    <div class="flex items-center justify-center p-6 sm:p-10">
+      <form v-if="step === 'email'" class="w-full max-w-sm" @submit.prevent="sendCode">
+        <FieldGroup>
+          <div class="flex flex-col gap-2 text-center">
+            <h3 class="text-2xl font-semibold tracking-tight">Sign in to Acme</h3>
+            <p class="text-sm text-balance text-muted-foreground">Enter your email and we will send you a sign-in code.</p>
+          </div>
+          <Field>
+            <FieldLabel for="auth-email" class="sr-only">Email</FieldLabel>
+            <Input id="auth-email" v-model="email" type="email" placeholder="name@example.com" autocomplete="email" required />
+          </Field>
+          <Button type="submit" :disabled="sending"><Spinner v-if="sending" aria-hidden="true" />Sign in with email</Button>
+          <FieldSeparator>Or continue with</FieldSeparator>
+          <Button variant="outline" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z" /></svg>
+            GitHub
+          </Button>
+          <FieldDescription class="text-center">By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</FieldDescription>
+        </FieldGroup>
+      </form>
+      <form v-else class="w-full max-w-sm" @submit.prevent="verify(code)">
+        <FieldGroup>
+          <div class="flex flex-col gap-2 text-center">
+            <h3 class="text-2xl font-semibold tracking-tight">Check your email</h3>
+            <p class="text-sm text-balance text-muted-foreground">We sent a 6-digit code to {{ email || 'your inbox' }}.</p>
+          </div>
+          <Field class="items-center">
+            <InputOTP v-model="code" :maxlength="6" aria-label="Verification code" @complete="verify">
+              <InputOTPGroup><InputOTPSlot :index="0" /><InputOTPSlot :index="1" /><InputOTPSlot :index="2" /></InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup><InputOTPSlot :index="3" /><InputOTPSlot :index="4" /><InputOTPSlot :index="5" /></InputOTPGroup>
+            </InputOTP>
+          </Field>
+          <Button type="submit" :disabled="code.length < 6">Verify</Button>
+          <Button type="button" variant="link" @click="step = 'email'">Use a different email</Button>
+        </FieldGroup>
+      </form>
+    </div>
+  </div>
+</template>

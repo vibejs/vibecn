@@ -1,48 +1,107 @@
 <script setup lang="ts">
 import { computed, ref } from '@usevibejs/ui';
 import { RouterLink } from '@usevibejs/ui/router';
-import Playground from '../home/Playground.vibe';
-import Workspace from '../home/Workspace.vibe';
+import Select from '@/components/ui/Select.vibe';
+import SelectContent from '@/components/ui/SelectContent.vibe';
+import SelectItem from '@/components/ui/SelectItem.vibe';
+import SelectTrigger from '@/components/ui/SelectTrigger.vibe';
+import SelectValue from '@/components/ui/SelectValue.vibe';
+import Tabs from '@/components/ui/Tabs.vibe';
+import TabsContent from '@/components/ui/TabsContent.vibe';
+import TabsList from '@/components/ui/TabsList.vibe';
+import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
+import { views } from '../home/views.ts';
 import CopyButton from '../site/CopyButton.vibe';
-import Icon from '../site/Icon.vibe';
-import { componentCount } from '../site/nav.ts';
-import logo from '../assets/vibecn-logo.webp';
-import '../home.css';
+import { componentCount, sections } from '../site/nav.ts';
 
-document.title = 'vibecn · A whole new vibe for your interface';
+document.title = 'vibecn · Components for vibe.js';
 const command = 'pnpm dlx @usevibejs/vibecn@latest init';
-const accent = ref('cobalt');
-const colors = [ { name: 'cobalt', label: 'Cobalt', color: '#3c55e8' }, { name: 'forest', label: 'Forest', color: '#187a65' }, { name: 'rose', label: 'Rose', color: '#b74768' }, { name: 'ink', label: 'Ink', color: '#30343d' } ];
-const palettes: Record<string, Record<string, string>> = {
-  cobalt: { '--primary': '#3c55e8', '--primary-foreground': '#ffffff', '--ring': '#8191eb', '--chart-1': '#3c55e8', '--chart-2': '#6d83e8', '--chart-3': '#79bda7', '--chart-4': '#d7a866', '--chart-5': '#ba9de5' },
-  forest: { '--primary': '#187a65', '--primary-foreground': '#ffffff', '--ring': '#76b9a9', '--chart-1': '#187a65', '--chart-2': '#479d88', '--chart-3': '#89c6af', '--chart-4': '#d7b96b', '--chart-5': '#769da8' },
-  rose: { '--primary': '#b74768', '--primary-foreground': '#ffffff', '--ring': '#d593a5', '--chart-1': '#b74768', '--chart-2': '#ce7c94', '--chart-3': '#dfabba', '--chart-4': '#e5b989', '--chart-5': '#aa92c1' },
-  ink: { '--primary': '#30343d', '--primary-foreground': '#ffffff', '--ring': '#90959e', '--chart-1': '#30343d', '--chart-2': '#656b76', '--chart-3': '#939aa6', '--chart-4': '#b5bac3', '--chart-5': '#d2d6dd' },
+const view = ref('cards');
+
+// The default is shadcn/ui's neutral theme; the others only recolor the showcase.
+const theme = ref('neutral');
+const themes: Record<string, Record<string, string>> = {
+  neutral: {},
+  blue: { '--primary': 'oklch(0.546 0.245 262.881)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.623 0.214 259.815)' },
+  green: { '--primary': 'oklch(0.527 0.154 150.069)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.627 0.194 149.214)' },
+  rose: { '--primary': 'oklch(0.586 0.253 17.585)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.645 0.246 16.439)' },
+  violet: { '--primary': 'oklch(0.541 0.281 293.009)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.606 0.25 292.717)' },
 };
-const palette = computed(() => palettes[accent.value]);
-const principles = [
-  { symbol: '</>', title: 'Your code. Your call.', text: 'Copy the .vibe source into your app. Read it, change it, and make it feel like you.' },
-  { symbol: '⌘', title: 'Feels right by default.', text: 'Native controls, thoughtful focus behavior, and keyboard support built into the details.' },
-  { symbol: '◐', title: 'A theme of your own.', text: 'A few CSS variables set the tone. Light and dark modes are ready when you are.' },
-];
+const themeStyle = computed(() => themes[theme.value]);
+const components = sections.find((section) => section.title === 'Components')!.items;
 </script>
 
 <template>
-  <div class="homepage" :style="palette">
-    <section class="home-hero home-container" aria-labelledby="home-heading">
-      <div class="home-hero-copy">
-        <RouterLink to="/docs" class="home-intro-pill"><span class="home-pill-dot" aria-hidden="true" />Open source. Open to possibility.<Icon name="arrow-right" /></RouterLink>
-        <h1 id="home-heading">Familiar pieces.<br />A whole new <span>vibe.</span></h1>
-        <p class="home-hero-description">The shadcn/ui you love, made for <a href="https://vibejs.org">vibe.js</a>.<br class="hidden sm:block" /> Beautiful, accessible components you can copy,<br class="hidden xl:block" /> shape, and make entirely your own.</p>
-        <div class="home-hero-actions"><RouterLink to="/docs/installation" class="home-button home-button-primary">Start building<Icon name="arrow-right" /></RouterLink><a href="#playground" class="home-button home-button-secondary">Explore the playground<span aria-hidden="true">↓</span></a></div>
-        <div class="home-install"><span class="home-install-prompt" aria-hidden="true">$</span><code>{{ command }}</code><CopyButton :value="command" label="Copy install command" /></div>
-        <div class="home-hero-footnote"><span>{{ componentCount }} component pages</span><i aria-hidden="true" /><span>MIT licensed</span><i aria-hidden="true" /><span>Yours to build with</span></div>
+  <div class="flex flex-col">
+    <section class="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 px-4 pt-16 pb-10 text-center sm:pt-24" aria-labelledby="home-title">
+      <RouterLink
+        to="/docs/components/message-scroller"
+        class="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs font-medium shadow-xs transition-colors hover:bg-accent"
+      >
+        <span class="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
+        New: chat components
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="size-3 text-muted-foreground"><path d="m9 18 6-6-6-6" /></svg>
+      </RouterLink>
+      <h1 id="home-title" class="max-w-2xl text-4xl leading-tight font-semibold tracking-tight text-balance lg:leading-[1.1] xl:text-5xl xl:tracking-tighter">The foundation for your vibe.js interface</h1>
+      <p class="max-w-3xl text-base text-balance text-foreground sm:text-lg">
+        Accessible components adapted from shadcn/ui. Copy them into your app as .vibe source, then shape them to fit your product.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+        <RouterLink to="/docs/installation" class="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">Get started</RouterLink>
+        <RouterLink to="/docs/components" class="inline-flex h-9 items-center rounded-md px-4 text-sm font-medium transition-colors hover:bg-accent">Browse components</RouterLink>
       </div>
-      <Workspace />
+      <div class="mt-2 flex max-w-full items-center gap-1 rounded-lg border bg-muted/40 py-1 pr-1 pl-3 font-mono text-[0.8125rem]">
+        <code class="truncate"><span class="text-muted-foreground select-none" aria-hidden="true">$ </span>{{ command }}</code>
+        <CopyButton :value="command" label="Copy install command" />
+      </div>
     </section>
-    <section class="home-materials home-container" aria-label="Built from familiar foundations"><span>A familiar foundation.<br /><strong>A fresh way to build.</strong></span><div><span class="home-material-wordmark">shadcn/ui</span><span class="home-material-plus" aria-hidden="true">+</span><span class="home-material-wordmark home-vibe-wordmark">vibe<span>.js</span></span><span class="home-material-plus" aria-hidden="true">=</span><span class="home-material-wordmark home-material-brand"><img :src="logo" alt="" width="32" height="32" decoding="async" />vibecn</span></div><a href="https://github.com/vibejs/vibecn" class="home-source-link">The source is yours<Icon name="arrow-right" /></a></section>
-    <div class="home-container"><div class="home-accent-bar"><span><span aria-hidden="true">◒</span> A different color. A different feeling.</span><div role="group" aria-label="Preview accent color"><button v-for="color in colors" :key="color.name" type="button" :aria-label="color.label + ' accent'" :aria-pressed="accent === color.name" :style="{ '--swatch': color.color }" @click="accent = color.name"><span aria-hidden="true" />{{ color.label }}</button></div></div><Playground /></div>
-    <section class="home-principles"><div class="home-container home-principles-grid"><div v-for="principle in principles" :key="principle.title"><span class="home-principle-symbol" aria-hidden="true">{{ principle.symbol }}</span><h2>{{ principle.title }}</h2><p>{{ principle.text }}</p></div></div></section>
-    <section class="home-outro home-container"><p class="home-eyebrow">FROM A SMALL IDEA TO SOMETHING REAL</p><h2>Your next interface<br />is already taking shape.</h2><p>Take the pieces you need. Leave room for your own ideas.</p><div class="home-hero-actions"><RouterLink to="/docs/installation" class="home-button home-button-primary">Make a start<Icon name="arrow-right" /></RouterLink><a href="https://github.com/vibejs/vibecn" class="home-button home-button-secondary"><Icon name="github" />Explore the source</a></div><span class="home-outro-signature">Good things are made of little things.</span></section>
+
+    <section class="mx-auto w-full max-w-screen-2xl px-4 pb-24 md:px-6" aria-label="Examples">
+      <Tabs v-model="view" class="gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <TabsList aria-label="Example screens">
+            <TabsTrigger v-for="item in views" :key="item.value" :value="item.value" class="px-3">{{ item.label }}</TabsTrigger>
+          </TabsList>
+          <Select v-model="theme">
+            <SelectTrigger size="sm" class="w-36" aria-label="Preview theme">
+              <span class="size-3 rounded-full bg-primary" :style="themeStyle" aria-hidden="true" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem v-for="name in Object.keys(themes)" :key="name" :value="name">{{ name.charAt(0).toUpperCase() + name.slice(1) }}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div class="overflow-hidden rounded-xl border bg-background shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_40px_-12px_rgb(0_0_0/0.12)] dark:shadow-none" :style="themeStyle">
+          <TabsContent v-for="item in views" :key="item.value" :value="item.value" :class="item.inset ? 'bg-muted/30 p-4 sm:p-6' : undefined"><component :is="item.component" /></TabsContent>
+        </div>
+      </Tabs>
+    </section>
+
+    <section class="border-t" aria-labelledby="home-components">
+      <div class="mx-auto grid w-full max-w-screen-2xl gap-10 px-4 py-20 md:px-6 lg:grid-cols-[20rem_1fr]">
+        <div class="flex flex-col gap-3">
+          <h2 id="home-components" class="text-2xl font-semibold tracking-tight">Everything you need, nothing you don't</h2>
+          <p class="text-muted-foreground">{{ componentCount }} components with live examples, keyboard support and an API reference. Add only the ones you use.</p>
+          <RouterLink to="/docs/cli" class="text-sm font-medium underline underline-offset-4">How the CLI works</RouterLink>
+        </div>
+        <ul class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+          <li v-for="item in components" :key="item.href">
+            <RouterLink :to="item.href" class="text-muted-foreground transition-colors hover:text-foreground">{{ item.title }}</RouterLink>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="border-t bg-muted/30" aria-labelledby="home-start">
+      <div class="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 py-20 text-center">
+        <h2 id="home-start" class="text-3xl font-semibold tracking-tighter text-balance sm:text-4xl">Start with one component</h2>
+        <p class="max-w-lg text-muted-foreground">Initialize vibecn, add a button, and see it render with your own compiler. Everything after that is your code.</p>
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+          <RouterLink to="/docs/installation" class="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90">Read the installation guide</RouterLink>
+          <a href="https://github.com/vibejs/vibecn" class="inline-flex h-9 items-center rounded-md border bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent">View on GitHub</a>
+        </div>
+      </div>
+    </section>
   </div>
 </template>

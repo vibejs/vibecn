@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import { computed } from '@usevibejs/ui';
+
+const { values, type = 'line', height = 64 } = defineProps<{
+  values: number[];
+  type?: 'line' | 'area' | 'bar';
+  height?: number;
+}>();
+// A small decorative trend; the card states the numbers in text.
+const width = 240;
+const max = computed(() => Math.max(...values));
+const min = computed(() => Math.min(...values));
+const point = (value: number, index: number): [number, number] => [
+  (index / (values.length - 1)) * width,
+  height - 6 - ((value - min.value) / (max.value - min.value || 1)) * (height - 12),
+];
+const line = computed(() => values.map((value, index) => point(value, index).join(',')).join(' '));
+const area = computed(() => `0,${height} ${line.value} ${width},${height}`);
+const bar = computed(() => width / values.length);
+</script>
+
+<template>
+  <svg :viewBox="`0 0 ${width} ${height}`" preserveAspectRatio="none" aria-hidden="true" class="w-full overflow-visible" :style="{ height: height + 'px' }">
+    <template v-if="type === 'bar'">
+      <rect
+        v-for="(value, index) in values"
+        :key="index"
+        :x="index * bar + bar * 0.18"
+        :y="height - (value / max) * height"
+        :width="bar * 0.64"
+        :height="(value / max) * height"
+        rx="3"
+        class="fill-primary"
+        :opacity="index === values.length - 1 ? 1 : 0.2"
+      />
+    </template>
+    <template v-else>
+      <polygon v-if="type === 'area'" :points="area" class="fill-primary/10" />
+      <polyline :points="line" fill="none" class="stroke-primary" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+    </template>
+  </svg>
+</template>

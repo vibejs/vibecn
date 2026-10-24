@@ -1,0 +1,32 @@
+<script setup lang="ts">
+import { RouterLink } from '@usevibejs/ui/router';
+import DocsNav from '../site/DocsNav.vibe';
+import { componentCount, sections } from '../site/nav.ts';
+
+document.title = 'Components · vibecn';
+const components = sections.find((section) => section.title === 'Components')!.items;
+</script>
+
+<template>
+  <div class="mx-auto flex w-full max-w-screen-2xl flex-1 px-4 md:px-6">
+    <aside class="sticky top-14 hidden h-[calc(100svh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-border/60 py-8 pr-4 md:block">
+      <DocsNav />
+    </aside>
+    <div class="min-w-0 flex-1 py-8 md:pl-10">
+      <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
+        <RouterLink to="/docs" class="hover:text-foreground">Docs</RouterLink>
+        <span aria-hidden="true">/</span><span class="text-foreground">Components</span>
+      </div>
+      <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Components</h1>
+      <p class="mt-3 max-w-2xl text-lg text-balance text-muted-foreground">{{ componentCount }} accessible components for vibe.js. Each page has a live example, installation steps and an API reference.</p>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <li v-for="item in components" :key="item.href">
+          <RouterLink :to="item.href" class="flex h-full flex-col gap-1 rounded-lg border p-4 transition-colors hover:bg-accent/50">
+            <span class="text-sm font-medium">{{ item.title }}</span>
+            <span class="line-clamp-2 text-sm text-muted-foreground">{{ item.description }}</span>
+          </RouterLink>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
