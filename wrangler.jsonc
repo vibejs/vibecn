@@ -1,5 +1,7 @@
 {
   "name": "vibecn",
+  "account_id": "1ded18c671a5573b13fc3bdb814ee1c9",
   "compatibility_date": "2026-10-01",
   "assets": { "directory": "./site/dist", "not_found_handling": "single-page-application" },
+  "routes": [{ "pattern": "vibecn.dev", "custom_domain": true }],
 }

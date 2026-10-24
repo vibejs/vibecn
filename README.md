@@ -4,7 +4,7 @@ Accessible, beautifully designed components for [vibe.js](https://vibejs.org), a
 
 vibecn is not a component library you import from `node_modules`. The CLI copies `.vibe` source into your application, where you own it: read it, change it, keep it. Your app compiles the components with its own vibe.js compiler, so there is no runtime to install.
 
-**Documentation:** https://vibecn.monsterorigin.workers.dev
+**Documentation:** https://vibecn.dev
 
 This project is independent and not affiliated with or endorsed by shadcn/ui.
 
@@ -37,7 +37,7 @@ import Button from './components/ui/Button.vibe';
 </template>
 ```
 
-The [installation guide](https://vibecn.monsterorigin.workers.dev/docs/installation) covers the requirements, the import alias and dark mode. The [CLI reference](https://vibecn.monsterorigin.workers.dev/docs/cli) lists every command and option.
+The [installation guide](https://vibecn.dev/docs/installation) covers the requirements, the import alias and dark mode. The [CLI reference](https://vibecn.dev/docs/cli) lists every command and option.
 
 ## Development
 
