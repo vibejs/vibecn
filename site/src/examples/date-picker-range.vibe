@@ -1,0 +1,17 @@
+<script setup lang="ts">
+import { ref, watch } from '@usevibejs/ui';
+import Calendar from '@/components/ui/Calendar.vibe';
+import Popover from '@/components/ui/Popover.vibe';
+import PopoverContent from '@/components/ui/PopoverContent.vibe';
+import PopoverTrigger from '@/components/ui/PopoverTrigger.vibe';
+
+const dates = ref<{ from?: string; to?: string }>({});
+const open = ref(false);
+watch(dates, (value) => { if (value.to) open.value = false; });
+</script>
+<template>
+  <Popover v-model:open="open">
+    <PopoverTrigger variant="outline" class="min-w-64 justify-start font-normal">{{ dates.from ? `${dates.from}${dates.to ? ' – ' + dates.to : ' – …'}` : 'Pick a date range' }}</PopoverTrigger>
+    <PopoverContent aria-label="Choose a date range" class="w-auto p-0" align="start"><Calendar :autofocus="open" v-model:range="dates" mode="range" /></PopoverContent>
+  </Popover>
+</template>

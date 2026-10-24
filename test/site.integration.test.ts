@@ -99,6 +99,189 @@ it('stops the skeleton animation when reduced motion is preferred', async () => 
   await page.emulateMedia({ reducedMotion: 'no-preference' });
 });
 
+it('navigates the calendar grid and selects single dates, multiple dates and ranges', async () => {
+  await page.goto(`${origin}/docs/components/calendar`);
+  const example = page.locator('[data-example="calendar-demo"]');
+  const day = example.locator('[data-date="2026-10-24"]');
+  await day.focus();
+  await day.press('PageDown');
+  await page.waitForFunction(
+    () => (document.activeElement as HTMLElement)?.dataset.date === '2026-11-24',
+  );
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+  expect(
+    await example.locator('[data-date="2026-11-25"]').getAttribute('data-selected-single'),
+  ).toBe('true');
+  await example.getByRole('button', { name: 'Previous month' }).click();
+  expect(await example.locator('[aria-live="polite"]').textContent()).toBe('October 2026');
+  const multiple = page.locator('[data-example="calendar-multiple"]');
+  await multiple.locator('[data-date="2026-10-20"]').click();
+  expect(await multiple.locator('[aria-selected="true"]').count()).toBe(3);
+  const range = page.locator('[data-example="calendar-range"]');
+  await range.locator('[data-date="2026-10-21"]').click();
+  await range.locator('[data-date="2026-10-24"]').click();
+  expect(await range.locator('[data-range-middle="true"]').count()).toBe(2);
+  const restricted = page.locator('[data-example="calendar-locale"]');
+  await restricted.locator('[data-date="2026-10-24"]').focus();
+  await page.keyboard.press('Enter');
+  expect(await restricted.locator('[aria-selected="true"]').count()).toBe(0);
+});
+
+it('opens date pickers with day focus and restores the trigger on selection and Escape', async () => {
+  await page.goto(`${origin}/docs/components/date-picker`);
+  const example = page.locator('[data-example="date-picker-demo"]');
+  const trigger = example.getByRole('button', { name: 'Pick a date' });
+  await trigger.click();
+  await page.waitForFunction(() => document.activeElement?.hasAttribute('data-date'));
+  await page.keyboard.press('Enter');
+  expect(await example.locator('[data-slot="popover-trigger"]').getAttribute('aria-expanded')).toBe(
+    'false',
+  );
+  expect(
+    await example
+      .locator('[data-slot="popover-trigger"]')
+      .evaluate((element) => element === document.activeElement),
+  ).toBe(true);
+  await example.locator('[data-slot="popover-trigger"]').click();
+  await page.waitForFunction(() => document.activeElement?.hasAttribute('data-date'));
+  await page.keyboard.press('Escape');
+  expect(await example.locator('[data-slot="popover-trigger"]').getAttribute('aria-expanded')).toBe(
+    'false',
+  );
+  const input = page.getByRole('textbox', { name: 'Appointment date' });
+  await input.fill('2024-02-30');
+  expect(await input.getAttribute('aria-invalid')).toBe('true');
+  await input.fill('2024-02-29');
+  await page.getByRole('button', { name: 'Choose appointment date' }).click();
+  await page.waitForFunction(
+    () => (document.activeElement as HTMLElement)?.dataset.date === '2024-02-29',
+  );
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Enter');
+  expect(await input.inputValue()).toBe('2024-03-01');
+});
+
+it('scrolls horizontal and vertical carousels without moving the surrounding page', async () => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(`${origin}/docs/components/carousel`);
+  const example = page.locator('[data-example="carousel-demo"]');
+  await example.scrollIntoViewIfNeeded();
+  const scrollY = await page.evaluate(() => window.scrollY);
+  await example.getByRole('button', { name: 'Next slide' }).click();
+  await page.waitForFunction(() => {
+    const content = document.querySelector(
+      '[data-example="carousel-demo"] [data-slot="carousel-content"]',
+    )!;
+    return content.scrollLeft > 100;
+  });
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY);
+  expect(await example.locator('[aria-live="polite"]').textContent()).toBe('Slide 2 of 5');
+  const content = example.locator('[data-slot="carousel-content"]');
+  await content.focus();
+  await content.press('ArrowLeft');
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[data-example="carousel-demo"] [data-slot="carousel-content"]')!
+        .scrollLeft < 1,
+  );
+  await example.locator('[data-slot="carousel-item"]').evaluateAll((items) =>
+    items.forEach((item) => {
+      (item as HTMLElement).style.flexBasis = '50%';
+    }),
+  );
+  for (let slide = 0; slide < 3; slide++) {
+    await example.getByRole('button', { name: 'Next slide' }).click();
+    await page.waitForFunction(
+      (index) =>
+        document.querySelector('[data-example="carousel-demo"] [aria-live="polite"]')!
+          .textContent === `Slide ${index + 1} of 5`,
+      slide + 1,
+    );
+  }
+  expect(await example.getByRole('button', { name: 'Next slide' }).isDisabled()).toBe(true);
+  const vertical = page.locator('[data-example="carousel-vertical"]');
+  await vertical.getByRole('button', { name: 'Next slide' }).click();
+  await page.waitForFunction(
+    () =>
+      document.querySelector('[data-example="carousel-vertical"] [data-slot="carousel-content"]')!
+        .scrollTop > 100,
+  );
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+});
+
+it('shows all chart types and uses themed colors', async () => {
+  await page.goto(`${origin}/docs/components/chart`);
+  const chart = page.locator('[data-example="chart-types"] [data-slot="chart"]');
+  for (const type of ['bar', 'line', 'area', 'pie']) {
+    await page.getByRole('combobox', { name: 'Chart type' }).selectOption(type);
+    expect(await chart.locator('svg').getAttribute('role')).toBe('img');
+    expect(await chart.getByRole('table').locator('tbody tr').count()).toBe(5);
+  }
+  expect(
+    await chart
+      .locator('svg path')
+      .first()
+      .evaluate((element) => getComputedStyle(element).fill),
+  ).not.toBe('rgb(0, 0, 0)');
+});
+
+it('sorts, filters, selects and paginates the data table pattern', async () => {
+  await page.goto(`${origin}/docs/components/data-table`);
+  const example = page.locator('[data-example="data-table-demo"]');
+  await example.getByRole('checkbox', { name: 'Select alex@example.com' }).check();
+  expect(
+    await example
+      .getByRole('checkbox', { name: 'Select all rows on this page' })
+      .evaluate((element: HTMLInputElement) => element.indeterminate),
+  ).toBe(true);
+  await example.getByRole('button', { name: 'Next', exact: true }).click();
+  await example.getByText('drew@example.com', { exact: true }).waitFor();
+  await example.getByRole('button', { name: /Email/ }).click();
+  await example.getByText('gray@example.com', { exact: true }).waitFor();
+  await example.getByRole('textbox', { name: 'Filter emails' }).fill('alex');
+  await example.getByText('1 of 1 row(s) selected.', { exact: true }).waitFor();
+  await example.getByRole('button', { name: 'Columns' }).click();
+  await example.getByRole('menuitemcheckbox', { name: 'Amount' }).click();
+  expect(await example.getByRole('columnheader', { name: 'Amount' }).count()).toBe(0);
+  await page.keyboard.press('Escape');
+});
+
+it('collapses the desktop sidebar and opens a modal Sheet on mobile', async () => {
+  await page.goto(`${origin}/docs/components/sidebar`);
+  const example = page.locator('[data-example="sidebar-demo"]');
+  const trigger = example.locator('[data-slot="sidebar-trigger"]');
+  await trigger.click();
+  expect(await trigger.getAttribute('aria-expanded')).toBe('false');
+  await trigger.press('Control+b');
+  expect(await trigger.getAttribute('aria-expanded')).toBe('true');
+  await page.setViewportSize({ width: 375, height: 812 });
+  for (const name of ['calendar', 'date-picker', 'carousel', 'chart', 'data-table', 'sidebar']) {
+    await page.goto(`${origin}/docs/components/${name}`);
+    await page.locator('[data-example] [data-slot]').first().waitFor();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
+      375,
+    );
+  }
+  const mobileTrigger = page
+    .locator('[data-example="sidebar-demo"]')
+    .getByRole('button', { name: 'Toggle Sidebar' });
+  await mobileTrigger.click();
+  const sheet = page.getByRole('dialog', { name: 'Sidebar', exact: true });
+  await sheet.waitFor();
+  await sheet.getByRole('button', { name: 'Inbox', exact: true }).focus();
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(
+    () => !document.querySelector('[data-example="sidebar-demo"] dialog')?.hasAttribute('open'),
+  );
+  expect(await mobileTrigger.evaluate((element) => document.activeElement === element)).toBe(true);
+  await mobileTrigger.click();
+  await sheet.waitFor();
+  await sheet.getByRole('button', { name: 'Close', exact: true }).click();
+  expect(await mobileTrigger.getAttribute('aria-expanded')).toBe('false');
+  await page.setViewportSize({ width: 1440, height: 1000 });
+});
+
 it('fits a phone screen and opens the navigation in a modal dialog', async () => {
   await page.setViewportSize({ width: 375, height: 812 });
   for (const path of ['/', '/docs/components/card', '/docs/installation']) {

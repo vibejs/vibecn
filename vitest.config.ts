@@ -7,6 +7,7 @@ export default defineConfig({
     projects: [
       { test: { name: 'unit', environment: 'node', include: ['src/**/*.test.ts'] } },
       {
+        resolve: { alias: { '@': resolve('site/src') } },
         plugins: [
           vibe(),
           {

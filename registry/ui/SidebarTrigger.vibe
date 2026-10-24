@@ -1,0 +1,17 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Button from './Button.vibe';
+
+defineOptions({ inheritAttrs: false });
+const { class: className, disabled = false } = defineProps<{ class?: ClassValue; disabled?: boolean }>();
+const sidebar = inject<{ open: Ref<boolean>; openMobile: Ref<boolean>; mobile: Ref<boolean>; id: string; toggle: () => void }>(Symbol.for('vibecn.sidebar'))!;
+const emit = defineEmits<{ click: [event: MouseEvent] }>();
+function onClick(event: MouseEvent): void { emit('click', event); if (!event.defaultPrevented) sidebar.toggle(); }
+</script>
+
+<template>
+  <Button data-slot="sidebar-trigger" data-sidebar="trigger" variant="ghost" size="icon" :disabled="disabled" :aria-controls="sidebar.id" :aria-expanded="sidebar.mobile.value ? sidebar.openMobile.value : sidebar.open.value" v-bind="$attrs" :class="cn('size-7', className)" @click="onClick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18" /></svg><span class="sr-only">Toggle Sidebar</span></Button>
+</template>

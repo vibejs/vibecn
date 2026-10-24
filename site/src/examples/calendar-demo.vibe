@@ -1,0 +1,6 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Calendar from '@/components/ui/Calendar.vibe';
+const date = ref<string | null>('2026-10-24');
+</script>
+<template><Calendar v-model="date" default-month="2026-10" class="rounded-md border shadow-sm" /></template>

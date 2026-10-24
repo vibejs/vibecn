@@ -1,0 +1,14 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const base = "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-sidebar-border px-2.5 py-0.5 group-data-[collapsible=icon]:hidden";
+</script>
+
+<template>
+  <ul data-slot="sidebar-menu-sub" data-sidebar="menu-sub" v-bind="$attrs" :class="cn(base, className)"><slot /></ul>
+</template>

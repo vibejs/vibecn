@@ -1,0 +1,41 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Sidebar from '@/components/ui/Sidebar.vibe';
+import SidebarProvider from '@/components/ui/SidebarProvider.vibe';
+import SidebarContent from '@/components/ui/SidebarContent.vibe';
+import SidebarFooter from '@/components/ui/SidebarFooter.vibe';
+import SidebarGroup from '@/components/ui/SidebarGroup.vibe';
+import SidebarGroupLabel from '@/components/ui/SidebarGroupLabel.vibe';
+import SidebarGroupContent from '@/components/ui/SidebarGroupContent.vibe';
+import SidebarHeader from '@/components/ui/SidebarHeader.vibe';
+import SidebarInput from '@/components/ui/SidebarInput.vibe';
+import SidebarInset from '@/components/ui/SidebarInset.vibe';
+import SidebarMenu from '@/components/ui/SidebarMenu.vibe';
+import SidebarMenuButton from '@/components/ui/SidebarMenuButton.vibe';
+import SidebarMenuItem from '@/components/ui/SidebarMenuItem.vibe';
+import SidebarMenuBadge from '@/components/ui/SidebarMenuBadge.vibe';
+import SidebarMenuSub from '@/components/ui/SidebarMenuSub.vibe';
+import SidebarMenuSubItem from '@/components/ui/SidebarMenuSubItem.vibe';
+import SidebarMenuSubButton from '@/components/ui/SidebarMenuSubButton.vibe';
+import SidebarRail from '@/components/ui/SidebarRail.vibe';
+import SidebarSeparator from '@/components/ui/SidebarSeparator.vibe';
+import SidebarTrigger from '@/components/ui/SidebarTrigger.vibe';
+const active = ref('Inbox');
+const openMobile = ref(false);
+const search = ref('');
+</script>
+<template>
+  <SidebarProvider v-model:open-mobile="openMobile" class="relative isolate min-h-[26rem] w-full overflow-hidden rounded-xl border [--sidebar-width:13rem]">
+    <Sidebar collapsible="icon" variant="inset" class="absolute! h-full!">
+      <SidebarHeader><SidebarMenu><SidebarMenuItem><SidebarMenuButton size="lg" tooltip="Acme Inc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" /><path d="m8 16 4-8 4 8M10 13h4" /></svg><span>Acme Inc</span></SidebarMenuButton></SidebarMenuItem></SidebarMenu><SidebarInput v-model="search" aria-label="Search workspace" placeholder="Search workspace..." class="group-data-[collapsible=icon]:hidden" /></SidebarHeader>
+      <SidebarSeparator />
+      <SidebarContent><SidebarGroup><SidebarGroupLabel>Workspace</SidebarGroupLabel><SidebarGroupContent><SidebarMenu>
+        <SidebarMenuItem v-for="item in ['Inbox', 'Projects', 'Settings'].filter((item) => item.toLowerCase().includes(search.toLowerCase()))" :key="item"><SidebarMenuButton :is-active="active === item" :tooltip="item" @click="active = item; openMobile = false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 12h5l2 3h4l2-3h5" /></svg><span>{{ item }}</span></SidebarMenuButton><SidebarMenuBadge v-if="item === 'Inbox'">12</SidebarMenuBadge></SidebarMenuItem>
+        <SidebarMenuItem><SidebarMenuSub><SidebarMenuSubItem><SidebarMenuSubButton href="/docs/components/calendar">Calendar</SidebarMenuSubButton></SidebarMenuSubItem></SidebarMenuSub></SidebarMenuItem>
+      </SidebarMenu></SidebarGroupContent></SidebarGroup></SidebarContent>
+      <SidebarFooter><SidebarMenu><SidebarMenuItem><SidebarMenuButton tooltip="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 22v-2a8 8 0 0 1 16 0v2" /></svg><span>Alex Morgan</span></SidebarMenuButton></SidebarMenuItem></SidebarMenu></SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+    <SidebarInset class="min-w-0"><header class="flex h-14 items-center gap-2 border-b px-4"><SidebarTrigger /><span class="text-sm font-medium">{{ active }}</span></header><div class="grid flex-1 gap-4 p-4"><div class="h-20 rounded-lg bg-muted/60" /><div class="min-h-24 rounded-lg border border-dashed" /></div></SidebarInset>
+  </SidebarProvider>
+</template>

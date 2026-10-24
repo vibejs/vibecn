@@ -26,6 +26,9 @@
 - Card parts are explicit imports. CardTitle is a heading; its heading level is h3 in this version.
 - Checkbox, Switch, RadioGroupItem, NativeSelect and Slider thumbs are native form controls: keyboard, focus, form submission and validation come from the browser. Checkbox and Switch use boolean models, RadioGroup and NativeSelect string models, Slider a number array with one or two thumbs.
 - Compound parts that share state, such as RadioGroup and Avatar, use provide/inject and must be nested in their parent.
+- Calendar uses local Gregorian ISO dates, with a string/null model for single selection, `values` for multiple selection and `range` for inclusive ranges. Disabled dates remain focusable but cannot be selected or crossed by a range. Date Picker is a documented Popover composition.
+- Carousel uses native scroll snapping, orientation-specific arrow keys and a zero-based `index` model. Chart renders a single numeric series as native SVG bar, line, area or pie graphics with an accessible data table; Recharts APIs are not supported.
+- Sidebar uses independent desktop and mobile models, optional localStorage persistence, and the existing Sheet on mobile. Its menu parts are native lists, buttons and links. Data Table is a documented composition with application-owned state.
 - Skeleton is decorative. Separator supports horizontal/vertical orientation and is decorative by default; :decorative="false" exposes separator semantics.
 - Overlays build on the platform: Dialog, Alert Dialog, Sheet and Drawer on modal `<dialog>`; Popover, Tooltip and Hover Card on the `popover` attribute; Accordion on `<details name>`. Focus trapping, Escape, light dismiss and focus restoration come from the browser. `lib/overlay.ts` shares state between parts and positions floating content.
 - Triggers, closes and actions render a Button and accept its variant and size. `asChild` is not supported.

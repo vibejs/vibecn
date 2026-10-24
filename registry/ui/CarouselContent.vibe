@@ -1,0 +1,19 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onMounted, onUnmounted, useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+const { class: className } = defineProps<{ class?: ClassValue }>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const carousel = inject<{ orientation: Ref<string>; viewport: Ref<HTMLElement | undefined> }>(Symbol.for('vibecn.carousel'))!;
+const onScroll = inject<() => void>(Symbol.for('vibecn.carousel.scroll'))!;
+const content = useTemplateRef<HTMLElement>('content');
+onMounted(() => { carousel.viewport.value = content.value!; });
+onUnmounted(() => { carousel.viewport.value = undefined; });
+</script>
+
+<template>
+  <div ref="content" data-slot="carousel-content" tabindex="0" v-bind="$attrs" :class="cn('flex overflow-auto overscroll-contain outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', carousel.orientation.value === 'horizontal' ? '-ml-4 snap-x snap-mandatory' : '-mt-4 h-full flex-col snap-y snap-mandatory', className)" @scroll="onScroll"><slot /></div>
+</template>

@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import Carousel from '@/components/ui/Carousel.vibe';
+import CarouselContent from '@/components/ui/CarouselContent.vibe';
+import CarouselItem from '@/components/ui/CarouselItem.vibe';
+import CarouselNext from '@/components/ui/CarouselNext.vibe';
+import CarouselPrevious from '@/components/ui/CarouselPrevious.vibe';
+</script>
+<template>
+  <div class="w-full px-12">
+    <Carousel label="Featured collections" class="mx-auto w-full max-w-xs">
+      <CarouselContent><CarouselItem v-for="item in 5" :key="item"><div class="grid aspect-square place-items-center rounded-xl border bg-card text-4xl font-semibold">{{ item }}</div></CarouselItem></CarouselContent>
+      <CarouselPrevious /><CarouselNext />
+    </Carousel>
+  </div>
+</template>

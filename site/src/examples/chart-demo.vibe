@@ -1,0 +1,5 @@
+<script setup lang="ts">
+import Chart from '@/components/ui/Chart.vibe';
+const data = [{ label: 'Jan', value: 186 }, { label: 'Feb', value: 305 }, { label: 'Mar', value: 237 }, { label: 'Apr', value: 273 }, { label: 'May', value: 209 }];
+</script>
+<template><Chart label="Monthly visitors" description="January through May" :data="data" class="max-w-lg" /></template>

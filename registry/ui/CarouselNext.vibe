@@ -1,0 +1,22 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Button from './Button.vibe';
+
+defineOptions({ inheritAttrs: false });
+const { class: className, disabled = false, variant = 'outline', size = 'icon' } = defineProps<{
+  class?: ClassValue;
+  disabled?: boolean;
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'ghost' | 'link';
+  size?: 'default' | 'xs' | 'sm' | 'lg' | 'icon' | 'icon-xs' | 'icon-sm' | 'icon-lg';
+}>();
+const emit = defineEmits<{ click: [event: MouseEvent] }>();
+const carousel = inject<{ orientation: Ref<string>; index: Ref<number>; count: Ref<number>; canPrevious: Ref<boolean>; canNext: Ref<boolean>; go: (index: number) => void }>(Symbol.for('vibecn.carousel'))!;
+function onClick(event: MouseEvent): void { emit('click', event); if (!event.defaultPrevented) carousel.go(carousel.index.value + 1); }
+</script>
+
+<template>
+  <Button data-slot="carousel-next" :variant="variant" :size="size" :disabled="disabled || !carousel.canNext.value" v-bind="$attrs" :class="cn('absolute size-8 rounded-full', carousel.orientation.value === 'horizontal' ? 'top-1/2 -right-12 -translate-y-1/2' : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90', className)" @click="onClick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7" /></svg><span class="sr-only">Next slide</span></Button>
+</template>

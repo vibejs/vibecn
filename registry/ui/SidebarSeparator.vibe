@@ -1,0 +1,9 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Separator from './Separator.vibe';
+defineOptions({ inheritAttrs: false });
+const { class: className } = defineProps<{ class?: ClassValue }>();
+</script>
+<template><Separator data-slot="sidebar-separator" data-sidebar="separator" v-bind="$attrs" :class="cn('mx-2 w-auto bg-sidebar-border', className)" /></template>

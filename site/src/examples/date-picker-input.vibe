@@ -1,0 +1,31 @@
+<script setup lang="ts">
+import { ref, useId, watch } from '@usevibejs/ui';
+import Calendar from '@/components/ui/Calendar.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+import Popover from '@/components/ui/Popover.vibe';
+import PopoverContent from '@/components/ui/PopoverContent.vibe';
+import PopoverTrigger from '@/components/ui/PopoverTrigger.vibe';
+import { parseDate } from '@/lib/calendar.ts';
+
+const id = useId();
+const text = ref('');
+const date = ref<string | null>(null);
+const month = ref('2026-10');
+const open = ref(false);
+watch(text, (value) => { date.value = parseDate(value) ? value : null; if (date.value) month.value = value.slice(0, 7); });
+function choose(value: string | null): void { date.value = value; text.value = value ?? ''; open.value = false; }
+</script>
+<template>
+  <div class="grid w-72 gap-2">
+    <Label :for="id">Appointment date</Label>
+    <div class="flex gap-2">
+      <Input :id="id" v-model="text" placeholder="YYYY-MM-DD" :aria-describedby="id + '-hint'" :aria-invalid="!!text && !parseDate(text)" />
+      <Popover v-model:open="open">
+        <PopoverTrigger variant="outline" size="icon" aria-label="Choose appointment date">▦</PopoverTrigger>
+        <PopoverContent aria-label="Choose appointment date" class="w-auto p-0" align="end"><Calendar :autofocus="open" :model-value="date" v-model:month="month" @update:model-value="choose" /></PopoverContent>
+      </Popover>
+    </div>
+    <p :id="id + '-hint'" class="text-xs text-muted-foreground">{{ text && !parseDate(text) ? 'Enter a valid date in YYYY-MM-DD format.' : 'Format: YYYY-MM-DD' }}</p>
+  </div>
+</template>

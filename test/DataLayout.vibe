@@ -1,0 +1,40 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Carousel from '../site/src/components/ui/Carousel.vibe';
+import CarouselContent from '../site/src/components/ui/CarouselContent.vibe';
+import CarouselItem from '../site/src/components/ui/CarouselItem.vibe';
+import CarouselNext from '../site/src/components/ui/CarouselNext.vibe';
+import CarouselPrevious from '../site/src/components/ui/CarouselPrevious.vibe';
+import Sidebar from '../site/src/components/ui/Sidebar.vibe';
+import SidebarProvider from '../site/src/components/ui/SidebarProvider.vibe';
+import SidebarContent from '../site/src/components/ui/SidebarContent.vibe';
+import SidebarMenu from '../site/src/components/ui/SidebarMenu.vibe';
+import SidebarMenuItem from '../site/src/components/ui/SidebarMenuItem.vibe';
+import SidebarMenuButton from '../site/src/components/ui/SidebarMenuButton.vibe';
+import SidebarMenuLink from '../site/src/components/ui/SidebarMenuLink.vibe';
+import SidebarTrigger from '../site/src/components/ui/SidebarTrigger.vibe';
+import SidebarRail from '../site/src/components/ui/SidebarRail.vibe';
+
+const { orientation = 'horizontal', collapsible = 'icon', side = 'left', variant = 'sidebar', storageKey, cancel = false } = defineProps<{
+  orientation?: 'horizontal' | 'vertical';
+  collapsible?: 'offcanvas' | 'icon' | 'none';
+  side?: 'left' | 'right';
+  variant?: 'sidebar' | 'floating' | 'inset';
+  storageKey?: string;
+  cancel?: boolean;
+}>();
+const index = ref(0);
+const slides = ref(3);
+const open = ref(true);
+const openMobile = ref(false);
+const clicks = ref(0);
+function clicked(event: MouseEvent): void { clicks.value++; if (cancel) event.preventDefault(); }
+</script>
+<template>
+  <div>
+    <Carousel v-model:index="index" :orientation="orientation" label="Test slides"><CarouselContent><CarouselItem v-for="slide in slides" :key="slide"><input v-if="slide === 1" aria-label="Slide input" />{{ slide }}</CarouselItem></CarouselContent><CarouselPrevious @click="clicked" /><CarouselNext @click="clicked" /></Carousel>
+    <button id="add" @click="slides++">Add slide</button><button id="remove" @click="slides = 0">Remove slides</button><button id="external-index" @click="index = 2">Set index</button>
+    <SidebarProvider v-model:open="open" v-model:open-mobile="openMobile" :storage-key="storageKey"><Sidebar :collapsible="collapsible" :side="side" :variant="variant"><SidebarContent><SidebarMenu><SidebarMenuItem><SidebarMenuButton is-active tooltip="Inbox">Inbox</SidebarMenuButton></SidebarMenuItem><SidebarMenuItem><SidebarMenuLink href="#calendar" is-active>Calendar</SidebarMenuLink></SidebarMenuItem></SidebarMenu></SidebarContent><SidebarRail @click="clicked" /></Sidebar><main><SidebarTrigger @click="clicked" /><input aria-label="Editor" /></main></SidebarProvider>
+    <output>{{ JSON.stringify({ index, open, openMobile, clicks }) }}</output>
+  </div>
+</template>

@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import Carousel from '@/components/ui/Carousel.vibe';
+import CarouselContent from '@/components/ui/CarouselContent.vibe';
+import CarouselItem from '@/components/ui/CarouselItem.vibe';
+import CarouselNext from '@/components/ui/CarouselNext.vibe';
+import CarouselPrevious from '@/components/ui/CarouselPrevious.vibe';
+</script>
+<template>
+  <div class="py-12"><Carousel label="Featured numbers" orientation="vertical" class="w-64"><CarouselContent class="h-64"><CarouselItem v-for="item in 4" :key="item"><div class="grid h-full place-items-center rounded-xl border text-4xl font-semibold">{{ item }}</div></CarouselItem></CarouselContent><CarouselPrevious /><CarouselNext /></Carousel></div>
+</template>
