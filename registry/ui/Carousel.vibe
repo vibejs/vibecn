@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, provide, ref, toRef, watch } from '@usevibejs/ui';
 import type { ClassValue } from '@usevibejs/ui';
+import { logicalKey } from '__VIBECN_LIB__/collection.ts';
 import { cn } from '__VIBECN_UTILS__';
 
 defineOptions({ inheritAttrs: false });
@@ -52,10 +53,11 @@ function onKeydown(event: KeyboardEvent): void {
   if (target.closest('input, textarea, select, [contenteditable="true"]')) return;
   const previous = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp';
   const next = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown';
-  if (event.key !== previous && event.key !== next) return;
+  const key = logicalKey(event.key, target);
+  if (key !== previous && key !== next) return;
   event.preventDefault();
-  if (event.key === previous ? !canPrevious.value : !canNext.value) return;
-  go(index.value + (event.key === previous ? -1 : 1));
+  if (key === previous ? !canPrevious.value : !canNext.value) return;
+  go(index.value + (key === previous ? -1 : 1));
 }
 provide(Symbol.for('vibecn.carousel'), { orientation: toRef(() => orientation), viewport, index, count, canPrevious, canNext, go });
 let resize: ResizeObserver;

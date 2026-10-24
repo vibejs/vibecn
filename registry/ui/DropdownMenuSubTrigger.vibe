@@ -1,6 +1,7 @@
 <!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
 <script setup lang="ts">
 import type { ClassValue } from '@usevibejs/ui';
+import { logicalKey } from '__VIBECN_LIB__/collection.ts';
 import { injectMenu } from '__VIBECN_LIB__/menu.ts';
 import { cn } from '__VIBECN_UTILS__';
 
@@ -25,7 +26,8 @@ function onPointerMove(event: PointerEvent): void {
   if (!sub.open.value) open('content');
 }
 function onKeydown(event: KeyboardEvent): void {
-  if (event.key !== 'ArrowRight' && event.key !== 'Enter' && event.key !== ' ') return;
+  const key = logicalKey(event.key, event.currentTarget as Element);
+  if (key !== 'ArrowRight' && key !== 'Enter' && key !== ' ') return;
   event.preventDefault();
   event.stopPropagation();
   open('first');

@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@usevibejs/ui/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createTypeahead, nextItem } from '../registry/lib/collection.ts';
+import { createTypeahead, isRtl, logicalKey, nextItem } from '../registry/lib/collection.ts';
+import { mirror } from '../registry/lib/overlay.ts';
 import { toast, toasts } from '../registry/lib/toast.ts';
 import Toaster from '../site/src/components/ui/Toaster.vibe';
 import Composites from './Composites.vibe';
@@ -51,6 +52,37 @@ describe('collection helpers', () => {
     expect(find('l', names, names[2])).toBe(names[3]);
     vi.advanceTimersByTime(500);
     expect(find('z', names, names[1])).toBeUndefined();
+  });
+});
+
+describe('direction', () => {
+  it('reads the nearest dir attribute and swaps horizontal arrows in right-to-left text', () => {
+    const outer = Object.assign(document.createElement('div'), { dir: 'rtl' });
+    const inner = document.createElement('span');
+    outer.append(inner);
+    expect(isRtl(inner)).toBe(true);
+    expect(isRtl(null)).toBe(false);
+    expect(logicalKey('ArrowLeft', inner)).toBe('ArrowRight');
+    expect(logicalKey('ArrowRight', inner)).toBe('ArrowLeft');
+    expect(logicalKey('ArrowUp', inner)).toBe('ArrowUp');
+    expect(logicalKey('ArrowLeft', document.body)).toBe('ArrowLeft');
+    const placement = { side: 'right', align: 'start', sideOffset: 4, alignOffset: 0 } as const;
+    expect(mirror(placement, true)).toEqual({ ...placement, side: 'left', align: 'end' });
+    expect(mirror({ ...placement, side: 'top', align: 'center' }, true)).toMatchObject({
+      side: 'top',
+      align: 'center',
+    });
+    expect(mirror(placement, false)).toBe(placement);
+  });
+  it('moves tabs with ArrowLeft in right-to-left text', async () => {
+    const wrapper = mount(Composites, { attachTo: document.body });
+    wrapper.element.setAttribute('dir', 'rtl');
+    const tabs = wrapper.findAll('[role="tab"]');
+    (tabs[0].element as HTMLElement).focus();
+    key(wrapper.get('[role="tablist"]').element, 'ArrowLeft');
+    await flushPromises();
+    expect(document.activeElement).toBe(tabs[2].element);
+    wrapper.unmount();
   });
 });
 

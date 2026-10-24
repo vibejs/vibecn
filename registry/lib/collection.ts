@@ -12,6 +12,19 @@ import {
 
 export type Orientation = 'horizontal' | 'vertical';
 
+/** Whether `element` is in right-to-left text, from the nearest `dir` attribute. */
+export const isRtl = (element: Element | null | undefined): boolean =>
+  element?.closest('[dir]')?.getAttribute('dir') === 'rtl';
+
+/**
+ * The key as if the text ran left to right: in right-to-left text, ArrowLeft moves forward and
+ * ArrowRight back, so they swap.
+ */
+export function logicalKey(key: string, element: Element | null | undefined): string {
+  if (!isRtl(element)) return key;
+  return key === 'ArrowLeft' ? 'ArrowRight' : key === 'ArrowRight' ? 'ArrowLeft' : key;
+}
+
 /**
  * Returns the item a navigation key moves to from `current`: arrow keys along `orientation`
  * (both axes for `both`), Home and End. Returns undefined for any other key.
@@ -101,7 +114,8 @@ export function useRovingFocus(
   onMounted(() => focus(null));
   return {
     onKeydown: (event) => {
-      const next = nextItem(items(), document.activeElement, event.key, options().orientation);
+      const key = logicalKey(event.key, root.value);
+      const next = nextItem(items(), document.activeElement, key, options().orientation);
       if (!next) return;
       event.preventDefault();
       next.focus();

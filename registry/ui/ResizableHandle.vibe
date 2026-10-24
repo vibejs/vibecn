@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { computed, inject, onMounted, ref, useTemplateRef } from '@usevibejs/ui';
 import type { ClassValue, Ref } from '@usevibejs/ui';
+import { isRtl, logicalKey } from '__VIBECN_LIB__/collection.ts';
 import { cn } from '__VIBECN_UTILS__';
 
 defineOptions({ inheritAttrs: false });
@@ -43,7 +44,9 @@ function onPointerMove(event: PointerEvent): void {
   const pair = sides();
   if (!start || !pair || !start.length) return;
   const position = horizontal.value ? event.clientX : event.clientY;
-  group.resize(pair[0], pair[1], ((position - start.position) / start.length) * 100);
+  // In right-to-left text the first panel is on the right, so moving left grows it.
+  const sign = horizontal.value && isRtl(handle.value) ? -1 : 1;
+  group.resize(pair[0], pair[1], ((sign * (position - start.position)) / start.length) * 100);
   start.position = position;
 }
 function onPointerUp(): void {
@@ -55,9 +58,10 @@ function onKeydown(event: KeyboardEvent): void {
   const keys: Record<string, number> = horizontal.value
     ? { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 }
     : { ArrowUp: -5, ArrowDown: 5, Home: -100, End: 100 };
-  if (!(event.key in keys)) return;
+  const key = logicalKey(event.key, handle.value);
+  if (!(key in keys)) return;
   event.preventDefault();
-  group.resize(pair[0], pair[1], keys[event.key]);
+  group.resize(pair[0], pair[1], keys[key]);
 }
 </script>
 

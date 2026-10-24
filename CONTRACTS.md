@@ -34,6 +34,7 @@
 - Triggers, closes and actions render a Button and accept its variant and size. `asChild` is not supported.
 - The supported browsers are those with the popover API and modal dialogs: Chrome and Edge 114, Safari 17 and Firefox 125 or later. Enter and exit animations use `@starting-style` and apply where it is supported.
 - Chat components (Attachment, Bubble, Marker, Message, Message Scroller) are layout and styling; Message Scroller keeps the view at the newest content while the reader is at the end. The `shimmer` and `scroll-fade-*` utilities they use ship in the theme.
+- Components follow the nearest `dir` attribute: horizontal arrow keys, submenu keys and floating placement mirror in right-to-left text. DirectionProvider sets the attribute for part of a page.
 - v0.1 targets client rendering. Menus, selects, comboboxes and other composite widgets require a separate behavior and accessibility implementation before being advertised.
 
 ## Licensing
