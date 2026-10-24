@@ -74,7 +74,7 @@ it('switches the homepage showcase screens and previews other themes', async () 
   await page.getByRole('option', { name: 'Green' }).click();
   expect(
     await showcase
-      .locator('[style*="--primary"]')
+      .locator('div[data-preview-theme]')
       .last()
       .evaluate((element) => getComputedStyle(element).getPropertyValue('--primary').trim()),
   ).not.toBe(primary);

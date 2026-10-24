@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from '@usevibejs/ui';
+import { ref } from '@usevibejs/ui';
 import { RouterLink } from '@usevibejs/ui/router';
 import Select from '@/components/ui/Select.vibe';
 import SelectContent from '@/components/ui/SelectContent.vibe';
@@ -10,6 +10,8 @@ import Tabs from '@/components/ui/Tabs.vibe';
 import TabsContent from '@/components/ui/TabsContent.vibe';
 import TabsList from '@/components/ui/TabsList.vibe';
 import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
+import { themes } from '../home/themes.ts';
+import '../home/themes.css';
 import { views } from '../home/views.ts';
 import CopyButton from '../site/CopyButton.vibe';
 import { componentCount, sections } from '../site/nav.ts';
@@ -20,14 +22,6 @@ const view = ref('cards');
 
 // The default is shadcn/ui's neutral theme; the others only recolor the showcase.
 const theme = ref('neutral');
-const themes: Record<string, Record<string, string>> = {
-  neutral: {},
-  blue: { '--primary': 'oklch(0.546 0.245 262.881)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.623 0.214 259.815)' },
-  green: { '--primary': 'oklch(0.527 0.154 150.069)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.627 0.194 149.214)' },
-  rose: { '--primary': 'oklch(0.586 0.253 17.585)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.645 0.246 16.439)' },
-  violet: { '--primary': 'oklch(0.541 0.281 293.009)', '--primary-foreground': 'oklch(0.985 0 0)', '--ring': 'oklch(0.606 0.25 292.717)' },
-};
-const themeStyle = computed(() => themes[theme.value]);
 const components = sections.find((section) => section.title === 'Components')!.items;
 </script>
 
@@ -64,15 +58,15 @@ const components = sections.find((section) => section.title === 'Components')!.i
           </TabsList>
           <Select v-model="theme">
             <SelectTrigger size="sm" class="w-36" aria-label="Preview theme">
-              <span class="size-3 rounded-full bg-primary" :style="themeStyle" aria-hidden="true" />
+              <span class="size-3 rounded-full bg-primary" :data-preview-theme="theme" aria-hidden="true" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
-              <SelectItem v-for="name in Object.keys(themes)" :key="name" :value="name">{{ name.charAt(0).toUpperCase() + name.slice(1) }}</SelectItem>
+              <SelectItem v-for="item in themes" :key="item.name" :value="item.name">{{ item.title }}</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div class="overflow-hidden rounded-xl border bg-background shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_40px_-12px_rgb(0_0_0/0.12)] dark:shadow-none" :style="themeStyle">
+        <div class="overflow-hidden rounded-xl border bg-background shadow-[0_1px_2px_rgb(0_0_0/0.04),0_12px_40px_-12px_rgb(0_0_0/0.12)] dark:shadow-none" :data-preview-theme="theme">
           <TabsContent v-for="item in views" :key="item.value" :value="item.value" :class="item.inset ? 'bg-muted/30 p-4 sm:p-6' : undefined"><component :is="item.component" /></TabsContent>
         </div>
       </Tabs>
