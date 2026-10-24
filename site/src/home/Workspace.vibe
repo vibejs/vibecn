@@ -33,7 +33,7 @@ function invite(): void { toast.success(`Invitation sent to ${email.value}`); sh
 </script>
 <template>
   <div class="home-workspace-wrap">
-    <div class="home-logo-tile"><img class="dark:invert" :src="logo" alt="" width="112" height="112" fetchpriority="high" decoding="async" /></div>
+    <div class="home-logo-tile"><img :src="logo" alt="" width="112" height="112" fetchpriority="high" decoding="async" /></div>
     <div class="home-workspace" data-home-workspace>
       <div class="home-window-bar"><span class="home-window-dots" aria-hidden="true"><i /><i /><i /></span><span>your-next-idea.vibe</span><span class="home-preview-indicator">Live preview</span></div>
       <div class="home-workspace-header"><div class="home-project-symbol" aria-hidden="true">a<span>↗</span></div><div><p class="home-workspace-title">Acme Studio</p><p class="home-workspace-subtitle">A little space for big ideas.</p></div><Dialog v-model:open="sharing"><DialogTrigger variant="outline" size="sm" class="ml-auto">Share project ↗</DialogTrigger><DialogContent><DialogHeader><DialogTitle>Invite a teammate</DialogTitle><DialogDescription>This is a live demo. Try the form to see the components in action.</DialogDescription></DialogHeader><form class="grid gap-4" @submit.prevent="invite"><div class="grid gap-2"><Label for="home-invite">Email address</Label><Input id="home-invite" v-model="email" type="email" placeholder="teammate@example.com" required /></div><Button type="submit">Send invitation</Button></form></DialogContent></Dialog></div>
