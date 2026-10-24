@@ -3,6 +3,7 @@
 An independent shadcn/ui port for vibe.js. Read CONTRACTS.md and docs/decisions/ before changing distribution or component APIs.
 
 - English only in code, documentation, messages and commits.
+- Follow existing branch names: `feat/components-wave-<wave>` for component waves and `feat/<topic>` for other features. Never include `codex`, agent names or AI/tool attribution in branch names.
 - Keep upstream copyright and license notices in source files and distributions.
 - Never publish packages or create remote resources without an explicit release request.
 - Releases go through changesets and .github/workflows/release.yml. Add a changeset for every user-visible change.
