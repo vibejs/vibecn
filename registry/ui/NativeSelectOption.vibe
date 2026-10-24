@@ -1,0 +1,18 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className } = defineProps<{
+  class?: ClassValue;
+  value?: string;
+  disabled?: boolean;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+</script>
+
+<template>
+  <option data-slot="native-select-option" v-bind="$attrs" :value="$props.value" :disabled="$props.disabled" :class="cn('bg-[Canvas] text-[CanvasText]', className)"><slot /></option>
+</template>

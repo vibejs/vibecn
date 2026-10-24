@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import Avatar from '@/components/ui/Avatar.vibe';
+import AvatarBadge from '@/components/ui/AvatarBadge.vibe';
+import AvatarFallback from '@/components/ui/AvatarFallback.vibe';
+</script>
+
+<template>
+  <div class="flex items-center gap-6">
+    <Avatar size="sm"><AvatarFallback>SM</AvatarFallback><AvatarBadge class="bg-emerald-500" /></Avatar>
+    <Avatar><AvatarFallback>MD</AvatarFallback><AvatarBadge class="bg-emerald-500" /></Avatar>
+    <Avatar size="lg"><AvatarFallback>LG</AvatarFallback><AvatarBadge class="bg-emerald-500" /></Avatar>
+  </div>
+</template>

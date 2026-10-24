@@ -1,0 +1,9 @@
+<script setup lang="ts">
+import AspectRatio from '@/components/ui/AspectRatio.vibe';
+</script>
+
+<template>
+  <AspectRatio :ratio="16 / 9" class="max-w-md overflow-hidden rounded-lg bg-muted">
+    <div class="grid size-full place-items-center bg-gradient-to-br from-muted to-muted-foreground/30 text-sm text-muted-foreground">16 : 9</div>
+  </AspectRatio>
+</template>

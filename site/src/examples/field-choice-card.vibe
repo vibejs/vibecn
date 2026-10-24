@@ -1,0 +1,41 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Field from '@/components/ui/Field.vibe';
+import FieldContent from '@/components/ui/FieldContent.vibe';
+import FieldDescription from '@/components/ui/FieldDescription.vibe';
+import FieldLabel from '@/components/ui/FieldLabel.vibe';
+import FieldLegend from '@/components/ui/FieldLegend.vibe';
+import FieldSet from '@/components/ui/FieldSet.vibe';
+import FieldTitle from '@/components/ui/FieldTitle.vibe';
+import RadioGroup from '@/components/ui/RadioGroup.vibe';
+import RadioGroupItem from '@/components/ui/RadioGroupItem.vibe';
+
+const plan = ref('kubernetes');
+</script>
+
+<template>
+  <FieldSet class="w-full max-w-sm">
+    <FieldLegend variant="label">Compute environment</FieldLegend>
+    <FieldDescription>Select the compute environment for your cluster.</FieldDescription>
+    <RadioGroup v-model="plan" aria-label="Compute environment">
+      <FieldLabel for="choice-kubernetes">
+        <Field orientation="horizontal">
+          <FieldContent>
+            <FieldTitle>Kubernetes</FieldTitle>
+            <FieldDescription>Run GPU workloads on a K8s configured cluster.</FieldDescription>
+          </FieldContent>
+          <RadioGroupItem id="choice-kubernetes" value="kubernetes" />
+        </Field>
+      </FieldLabel>
+      <FieldLabel for="choice-vm">
+        <Field orientation="horizontal">
+          <FieldContent>
+            <FieldTitle>Virtual Machine</FieldTitle>
+            <FieldDescription>Access a VM configured cluster to run GPU workloads.</FieldDescription>
+          </FieldContent>
+          <RadioGroupItem id="choice-vm" value="vm" />
+        </Field>
+      </FieldLabel>
+    </RadioGroup>
+  </FieldSet>
+</template>

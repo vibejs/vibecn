@@ -24,6 +24,8 @@
 - Button renders a native button and defaults to type="button". asChild is not supported.
 - Input and Textarea use a string v-model. Input supports text, email, password, search, tel and url; checkbox, radio and file inputs are outside this contract.
 - Card parts are explicit imports. CardTitle is a heading; its heading level is h3 in this version.
+- Checkbox, Switch, RadioGroupItem, NativeSelect and Slider thumbs are native form controls: keyboard, focus, form submission and validation come from the browser. Checkbox and Switch use boolean models, RadioGroup and NativeSelect string models, Slider a number array with one or two thumbs.
+- Compound parts that share state, such as RadioGroup and Avatar, use provide/inject and must be nested in their parent.
 - Skeleton is decorative. Separator supports horizontal/vertical orientation and is decorative by default; :decorative="false" exposes separator semantics.
 - v0.1 targets client rendering. Dialog, menus, selects and other composite widgets require a separate behavior and accessibility implementation before being advertised.
 

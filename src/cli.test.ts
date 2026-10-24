@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { project } from '../test/project.ts';
 import { help, run } from './cli.ts';
+import { registry } from './registry.ts';
 
 const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
@@ -24,7 +25,7 @@ describe('CLI commands', () => {
     expect(invoke(['list']).output).toContain('button');
     const result = JSON.parse(invoke(['list', '--json']).output);
     expect(result.ok).toBe(true);
-    expect(result.components).toHaveLength(8);
+    expect(result.components).toHaveLength(registry.length - 1);
   });
   it('initializes a different application and supports previewing without writes', () => {
     const root = project();

@@ -1,0 +1,19 @@
+<script setup lang="ts">
+import Alert from '@/components/ui/Alert.vibe';
+import AlertDescription from '@/components/ui/AlertDescription.vibe';
+import AlertTitle from '@/components/ui/AlertTitle.vibe';
+</script>
+
+<template>
+  <div class="grid w-full max-w-xl items-start gap-4">
+    <Alert>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+      <AlertTitle>Success! Your changes have been saved</AlertTitle>
+      <AlertDescription>This is an alert with an icon, a title and a description.</AlertDescription>
+    </Alert>
+    <Alert>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 8v4M12 16h.01" /></svg>
+      <AlertTitle>This alert has a title and an icon. No description.</AlertTitle>
+    </Alert>
+  </div>
+</template>

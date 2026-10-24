@@ -23,5 +23,5 @@
     "site/vite.config.ts",
     "site/src/site/types.ts"
   ],
-  "exclude": ["test/components.vibe.test.ts"]
+  "exclude": ["test/*.vibe.test.ts"]
 }

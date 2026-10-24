@@ -1,0 +1,28 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const terms = ref(false);
+const notifications = ref(true);
+</script>
+
+<template>
+  <div class="flex flex-col gap-6">
+    <div class="flex items-center gap-3">
+      <Checkbox id="terms" v-model="terms" />
+      <Label for="terms">Accept terms and conditions</Label>
+    </div>
+    <div class="flex items-start gap-3">
+      <Checkbox id="terms-2" v-model="notifications" />
+      <div class="grid gap-2">
+        <Label for="terms-2">Enable notifications</Label>
+        <p class="text-sm text-muted-foreground">You can enable or disable notifications at any time.</p>
+      </div>
+    </div>
+    <div class="flex items-start gap-3">
+      <Checkbox id="toggle" disabled />
+      <Label for="toggle">Enable notifications (disabled)</Label>
+    </div>
+  </div>
+</template>

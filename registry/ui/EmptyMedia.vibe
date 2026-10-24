@@ -1,0 +1,21 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, variant = 'default' } = defineProps<{
+  class?: ClassValue;
+  variant?: 'default' | 'icon';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const variants = {
+  default: 'bg-transparent',
+  icon: 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*=\'size-\'])]:size-6',
+};
+</script>
+
+<template>
+  <div data-slot="empty-icon" :data-variant="variant" v-bind="$attrs" :class="cn('mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0', variants[variant], className)"><slot /></div>
+</template>

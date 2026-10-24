@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Slider from '@/components/ui/Slider.vibe';
+
+const volume = ref([50]);
+const price = ref([25, 75]);
+</script>
+
+<template>
+  <div class="grid w-full max-w-sm gap-8">
+    <div class="grid gap-3">
+      <div class="flex justify-between text-sm"><span class="font-medium">Volume</span><span class="text-muted-foreground tabular-nums">{{ volume[0] }}%</span></div>
+      <Slider v-model="volume" :labels="['Volume']" />
+    </div>
+    <div class="grid gap-3">
+      <div class="flex justify-between text-sm"><span class="font-medium">Price range</span><span class="text-muted-foreground tabular-nums">${{ price[0] }} – ${{ price[1] }}</span></div>
+      <Slider v-model="price" :step="5" :labels="['Minimum price', 'Maximum price']" />
+    </div>
+  </div>
+</template>

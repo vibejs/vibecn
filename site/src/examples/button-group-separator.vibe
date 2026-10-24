@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+import ButtonGroup from '@/components/ui/ButtonGroup.vibe';
+import ButtonGroupSeparator from '@/components/ui/ButtonGroupSeparator.vibe';
+import ButtonGroupText from '@/components/ui/ButtonGroupText.vibe';
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-4">
+    <ButtonGroup>
+      <Button variant="secondary" size="sm">Copy</Button>
+      <ButtonGroupSeparator />
+      <Button variant="secondary" size="sm">Paste</Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <ButtonGroupText>https://</ButtonGroupText>
+      <Button variant="outline">vibejs.org</Button>
+    </ButtonGroup>
+  </div>
+</template>

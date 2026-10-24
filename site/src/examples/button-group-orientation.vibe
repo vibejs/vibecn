@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+import ButtonGroup from '@/components/ui/ButtonGroup.vibe';
+</script>
+
+<template>
+  <ButtonGroup orientation="vertical" aria-label="Media controls" class="h-fit">
+    <Button variant="outline" size="icon" aria-label="Increase">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+    </Button>
+    <Button variant="outline" size="icon" aria-label="Decrease">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+    </Button>
+  </ButtonGroup>
+</template>

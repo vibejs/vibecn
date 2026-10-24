@@ -10,7 +10,7 @@ export default defineConfig({
         test: {
           name: 'components',
           environment: 'jsdom',
-          include: ['test/components.vibe.test.ts'],
+          include: ['test/*.vibe.test.ts'],
           setupFiles: ['test/setup.ts'],
         },
       },

@@ -1,0 +1,80 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import Field from '@/components/ui/Field.vibe';
+import FieldDescription from '@/components/ui/FieldDescription.vibe';
+import FieldGroup from '@/components/ui/FieldGroup.vibe';
+import FieldLabel from '@/components/ui/FieldLabel.vibe';
+import FieldLegend from '@/components/ui/FieldLegend.vibe';
+import FieldSeparator from '@/components/ui/FieldSeparator.vibe';
+import FieldSet from '@/components/ui/FieldSet.vibe';
+import Input from '@/components/ui/Input.vibe';
+import NativeSelect from '@/components/ui/NativeSelect.vibe';
+import NativeSelectOption from '@/components/ui/NativeSelectOption.vibe';
+import Textarea from '@/components/ui/Textarea.vibe';
+
+const name = ref('');
+const card = ref('');
+const month = ref('');
+const year = ref('');
+const sameAsShipping = ref(true);
+const comments = ref('');
+</script>
+
+<template>
+  <form class="w-full max-w-md" @submit.prevent>
+    <FieldGroup>
+      <FieldSet>
+        <FieldLegend>Payment method</FieldLegend>
+        <FieldDescription>All transactions are secure and encrypted.</FieldDescription>
+        <FieldGroup>
+          <Field>
+            <FieldLabel for="checkout-name">Name on card</FieldLabel>
+            <Input id="checkout-name" v-model="name" placeholder="Evil Rabbit" autocomplete="cc-name" required />
+          </Field>
+          <Field>
+            <FieldLabel for="checkout-card">Card number</FieldLabel>
+            <Input id="checkout-card" v-model="card" placeholder="1234 5678 9012 3456" autocomplete="cc-number" aria-describedby="checkout-card-hint" required />
+            <FieldDescription id="checkout-card-hint">Enter your 16-digit card number.</FieldDescription>
+          </Field>
+          <div class="grid grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel for="checkout-month">Month</FieldLabel>
+              <NativeSelect id="checkout-month" v-model="month" class="w-full" autocomplete="cc-exp-month">
+                <NativeSelectOption value="">MM</NativeSelectOption>
+                <NativeSelectOption v-for="index in 12" :key="index" :value="String(index).padStart(2, '0')">{{ String(index).padStart(2, '0') }}</NativeSelectOption>
+              </NativeSelect>
+            </Field>
+            <Field>
+              <FieldLabel for="checkout-year">Year</FieldLabel>
+              <NativeSelect id="checkout-year" v-model="year" class="w-full" autocomplete="cc-exp-year">
+                <NativeSelectOption value="">YYYY</NativeSelectOption>
+                <NativeSelectOption v-for="index in 6" :key="index" :value="String(2025 + index)">{{ 2025 + index }}</NativeSelectOption>
+              </NativeSelect>
+            </Field>
+          </div>
+        </FieldGroup>
+      </FieldSet>
+      <FieldSeparator />
+      <FieldSet>
+        <FieldLegend>Billing address</FieldLegend>
+        <FieldDescription>The billing address associated with your payment method.</FieldDescription>
+        <Field orientation="horizontal">
+          <Checkbox id="checkout-same" v-model="sameAsShipping" />
+          <FieldLabel for="checkout-same" class="font-normal">Same as shipping address</FieldLabel>
+        </Field>
+      </FieldSet>
+      <FieldSet>
+        <Field>
+          <FieldLabel for="checkout-comments">Comments</FieldLabel>
+          <Textarea id="checkout-comments" v-model="comments" placeholder="Add any additional comments" class="resize-none" />
+        </Field>
+      </FieldSet>
+      <Field orientation="horizontal">
+        <Button type="submit">Submit</Button>
+        <Button variant="outline">Cancel</Button>
+      </Field>
+    </FieldGroup>
+  </form>
+</template>

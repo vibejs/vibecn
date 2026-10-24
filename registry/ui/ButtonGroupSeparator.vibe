@@ -1,0 +1,17 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Separator from './Separator.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, orientation = 'vertical' } = defineProps<{
+  class?: ClassValue;
+  orientation?: 'horizontal' | 'vertical';
+}>();
+</script>
+
+<template>
+  <Separator data-slot="button-group-separator" :orientation="orientation" v-bind="$attrs" :class="cn('relative m-0! self-stretch bg-input data-[orientation=vertical]:h-auto', className)" />
+</template>

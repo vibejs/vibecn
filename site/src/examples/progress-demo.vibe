@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { onMounted, onUnmounted, ref } from '@usevibejs/ui';
+import Progress from '@/components/ui/Progress.vibe';
+
+const progress = ref(13);
+let timer: ReturnType<typeof setTimeout> | undefined;
+onMounted(() => (timer = setTimeout(() => (progress.value = 66), 500)));
+onUnmounted(() => clearTimeout(timer));
+</script>
+
+<template>
+  <Progress :value="progress" aria-label="Upload progress" class="w-[60%]" />
+</template>

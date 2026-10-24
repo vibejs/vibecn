@@ -24,7 +24,7 @@ it('installs from a packed artifact outside the checkout with full license notic
     execFileSync(process.execPath, [bin, ...args], { cwd: root, encoding: 'utf8' });
   const manifest = JSON.parse(readFileSync(join(pkg, 'package.json'), 'utf8'));
   expect(execute(['--version']).trim()).toBe(manifest.version);
-  expect(JSON.parse(execute(['list', '--json'])).components).toHaveLength(8);
+  expect(JSON.parse(execute(['list', '--json'])).components).toHaveLength(registry.length - 1);
   expect(JSON.parse(execute(['init', '--dry-run', '--json'])).dryRun).toBe(true);
   expect(existsSync(join(root, 'vibecn.json'))).toBe(false);
   execute(['init']);

@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import Breadcrumb from '@/components/ui/Breadcrumb.vibe';
+import BreadcrumbItem from '@/components/ui/BreadcrumbItem.vibe';
+import BreadcrumbLink from '@/components/ui/BreadcrumbLink.vibe';
+import BreadcrumbList from '@/components/ui/BreadcrumbList.vibe';
+import BreadcrumbPage from '@/components/ui/BreadcrumbPage.vibe';
+import BreadcrumbSeparator from '@/components/ui/BreadcrumbSeparator.vibe';
+</script>
+
+<template>
+  <Breadcrumb>
+    <BreadcrumbList>
+      <BreadcrumbItem><BreadcrumbLink href="#">Home</BreadcrumbLink></BreadcrumbItem>
+      <BreadcrumbSeparator>/</BreadcrumbSeparator>
+      <BreadcrumbItem><BreadcrumbLink href="#">Components</BreadcrumbLink></BreadcrumbItem>
+      <BreadcrumbSeparator>/</BreadcrumbSeparator>
+      <BreadcrumbItem><BreadcrumbPage>Breadcrumb</BreadcrumbPage></BreadcrumbItem>
+    </BreadcrumbList>
+  </Breadcrumb>
+</template>

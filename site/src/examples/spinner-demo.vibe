@@ -1,0 +1,15 @@
+<script setup lang="ts">
+import Badge from '@/components/ui/Badge.vibe';
+import Button from '@/components/ui/Button.vibe';
+import Spinner from '@/components/ui/Spinner.vibe';
+</script>
+
+<template>
+  <div class="flex flex-wrap items-center gap-4">
+    <Spinner />
+    <Spinner class="size-6" />
+    <Button disabled size="sm"><Spinner />Loading...</Button>
+    <Button variant="outline" disabled size="sm"><Spinner />Please wait</Button>
+    <Badge><Spinner />Syncing</Badge>
+  </div>
+</template>

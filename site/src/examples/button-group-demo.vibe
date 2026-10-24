@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+import ButtonGroup from '@/components/ui/ButtonGroup.vibe';
+</script>
+
+<template>
+  <ButtonGroup aria-label="Message actions">
+    <ButtonGroup class="hidden sm:flex">
+      <Button variant="outline" size="icon" aria-label="Go back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+      </Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button variant="outline">Archive</Button>
+      <Button variant="outline">Report</Button>
+    </ButtonGroup>
+    <ButtonGroup>
+      <Button variant="outline">Snooze</Button>
+      <Button variant="outline">Mark as read</Button>
+    </ButtonGroup>
+  </ButtonGroup>
+</template>

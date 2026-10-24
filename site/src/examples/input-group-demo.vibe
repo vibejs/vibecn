@@ -1,0 +1,44 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import InputGroup from '@/components/ui/InputGroup.vibe';
+import InputGroupAddon from '@/components/ui/InputGroupAddon.vibe';
+import InputGroupButton from '@/components/ui/InputGroupButton.vibe';
+import InputGroupInput from '@/components/ui/InputGroupInput.vibe';
+import InputGroupText from '@/components/ui/InputGroupText.vibe';
+import InputGroupTextarea from '@/components/ui/InputGroupTextarea.vibe';
+
+const search = ref('');
+const site = ref('');
+const prompt = ref('');
+const amount = ref('');
+</script>
+
+<template>
+  <div class="grid w-full max-w-sm gap-6">
+    <InputGroup>
+      <InputGroupInput v-model="search" type="search" placeholder="Search..." aria-label="Search" />
+      <InputGroupAddon>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+      </InputGroupAddon>
+      <InputGroupAddon align="inline-end">12 results</InputGroupAddon>
+    </InputGroup>
+    <InputGroup>
+      <InputGroupInput v-model="site" placeholder="example.com" aria-label="Website" class="!pl-0.5" />
+      <InputGroupAddon><InputGroupText>https://</InputGroupText></InputGroupAddon>
+    </InputGroup>
+    <InputGroup>
+      <InputGroupAddon><InputGroupText>$</InputGroupText></InputGroupAddon>
+      <InputGroupInput v-model="amount" placeholder="0.00" aria-label="Amount" />
+      <InputGroupAddon align="inline-end"><InputGroupText>USD</InputGroupText></InputGroupAddon>
+    </InputGroup>
+    <InputGroup>
+      <InputGroupTextarea v-model="prompt" placeholder="Ask, search or chat..." aria-label="Prompt" />
+      <InputGroupAddon align="block-end">
+        <InputGroupText>{{ prompt.length }} characters</InputGroupText>
+        <InputGroupButton variant="default" size="icon-xs" class="ml-auto rounded-full" aria-label="Send" :disabled="!prompt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
+  </div>
+</template>
