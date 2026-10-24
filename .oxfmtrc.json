@@ -1,5 +1,5 @@
 {
   "singleQuote": true,
   "printWidth": 100,
-  "ignorePatterns": ["dist/**", "public/**", "coverage/**", "playground/dist/**"]
+  "ignorePatterns": ["dist/**", "public/**", "coverage/**", "site/dist/**"]
 }

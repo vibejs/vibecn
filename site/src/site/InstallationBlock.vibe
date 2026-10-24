@@ -1,0 +1,64 @@
+<script setup lang="ts">
+import { computed, ref } from '@usevibejs/ui';
+import CopyButton from './CopyButton.vibe';
+import Toggle from './Toggle.vibe';
+
+const { command, dependencies, files } = defineProps<{
+  command: string;
+  dependencies: string[];
+  files: { path: string; html: string; code: string }[];
+}>();
+const view = ref('cli');
+const manager = ref('pnpm');
+const runners: Record<string, string> = {
+  pnpm: 'pnpm dlx',
+  npm: 'npx',
+  yarn: 'yarn dlx',
+  bun: 'bunx --bun',
+};
+const installers: Record<string, string> = {
+  pnpm: 'pnpm add',
+  npm: 'npm install',
+  yarn: 'yarn add',
+  bun: 'bun add',
+};
+const managers = Object.keys(runners).map((value) => ({ value, label: value }));
+const cli = computed(() => `${runners[manager.value]} @usevibejs/vibecn@latest ${command}`);
+const install = computed(() => `${installers[manager.value]} ${dependencies.join(' ')}`);
+</script>
+
+<template>
+  <div class="mt-6 flex flex-col gap-4">
+    <Toggle v-model="view" label="Installation method" :options="[{ value: 'cli', label: 'CLI' }, { value: 'manual', label: 'Manual' }]" />
+    <div v-if="view === 'cli'" class="rounded-lg border border-border bg-muted/40">
+      <div class="flex items-center justify-between border-b border-border px-2 py-1.5">
+        <Toggle v-model="manager" label="Package manager" :options="managers" />
+        <CopyButton :value="cli" label="Copy command" />
+      </div>
+      <pre class="overflow-x-auto px-4 py-3.5 font-mono text-[0.8125rem]"><code>{{ cli }}</code></pre>
+    </div>
+    <ol v-else class="flex flex-col gap-6 border-l border-border pl-6 [counter-reset:step]">
+      <li class="relative [counter-increment:step] before:absolute before:-left-[2.3rem] before:grid before:size-7 before:place-items-center before:rounded-full before:border before:border-border before:bg-background before:text-xs before:font-medium before:content-[counter(step)]">
+        <p class="font-medium">Install the dependencies.</p>
+        <div class="mt-3 flex items-center justify-between rounded-lg border border-border bg-muted/40 pr-2">
+          <pre class="overflow-x-auto px-4 py-3 font-mono text-[0.8125rem]"><code>{{ install }}</code></pre>
+          <CopyButton :value="install" label="Copy command" />
+        </div>
+      </li>
+      <li class="relative [counter-increment:step] before:absolute before:-left-[2.3rem] before:grid before:size-7 before:place-items-center before:rounded-full before:border before:border-border before:bg-background before:text-xs before:font-medium before:content-[counter(step)]">
+        <p class="font-medium">Copy the source into your project.</p>
+        <p class="mt-1 text-sm text-muted-foreground">Paths are relative to your source directory. The class utility lives in <code class="rounded bg-muted px-1 font-mono text-xs">lib/utils.ts</code>.</p>
+        <div v-for="file in files" :key="file.path" class="mt-3 rounded-lg border border-border bg-muted/40">
+          <div class="flex items-center justify-between border-b border-border py-1.5 pr-2 pl-4 font-mono text-xs text-muted-foreground">
+            {{ file.path }}
+            <CopyButton :value="file.code" :label="'Copy ' + file.path" />
+          </div>
+          <div class="max-h-96 overflow-auto" v-html="file.html" />
+        </div>
+      </li>
+      <li class="relative [counter-increment:step] before:absolute before:-left-[2.3rem] before:grid before:size-7 before:place-items-center before:rounded-full before:border before:border-border before:bg-background before:text-xs before:font-medium before:content-[counter(step)]">
+        <p class="font-medium">Update the import paths to match your project.</p>
+      </li>
+    </ol>
+  </div>
+</template>

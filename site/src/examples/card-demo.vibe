@@ -1,0 +1,45 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardAction from '@/components/ui/CardAction.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardFooter from '@/components/ui/CardFooter.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+
+const email = ref('');
+const password = ref('');
+</script>
+
+<template>
+  <Card class="w-full max-w-sm">
+    <CardHeader>
+      <CardTitle>Login to your account</CardTitle>
+      <CardDescription>Enter your email below to login to your account.</CardDescription>
+      <CardAction><Button variant="link">Sign up</Button></CardAction>
+    </CardHeader>
+    <CardContent>
+      <form id="login" class="flex flex-col gap-6" @submit.prevent>
+        <div class="grid gap-2">
+          <Label for="login-email">Email</Label>
+          <Input id="login-email" v-model="email" type="email" placeholder="m@example.com" autocomplete="email" required />
+        </div>
+        <div class="grid gap-2">
+          <div class="flex items-center">
+            <Label for="login-password">Password</Label>
+            <a href="#" class="ml-auto text-sm underline-offset-4 hover:underline">Forgot your password?</a>
+          </div>
+          <Input id="login-password" v-model="password" type="password" autocomplete="current-password" required />
+        </div>
+      </form>
+    </CardContent>
+    <CardFooter class="flex-col gap-2">
+      <Button type="submit" form="login" class="w-full">Login</Button>
+      <Button variant="outline" class="w-full">Login with Google</Button>
+    </CardFooter>
+  </Card>
+</template>

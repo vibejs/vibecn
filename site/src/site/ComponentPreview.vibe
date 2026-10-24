@@ -1,0 +1,42 @@
+<script setup lang="ts">
+import { ref, shallowRef, watch } from '@usevibejs/ui';
+import type { Component } from '@usevibejs/ui';
+import CopyButton from './CopyButton.vibe';
+import Toggle from './Toggle.vibe';
+
+const { name, html, code, align = 'center' } = defineProps<{
+  name: string;
+  html: string;
+  code: string;
+  align?: string;
+}>();
+const examples = import.meta.glob<{ default: Component }>('../examples/*.vibe');
+const demo = shallowRef<Component>();
+const view = ref('preview');
+const alignment: Record<string, string> = { start: 'items-start', center: 'items-center', end: 'items-end' };
+
+watch(
+  () => name,
+  async (current) => {
+    demo.value = undefined;
+    const load = examples[`../examples/${current}.vibe`];
+    if (load) demo.value = (await load()).default;
+  },
+  { immediate: true },
+);
+</script>
+
+<template>
+  <div class="not-prose mt-6 flex flex-col gap-2" :data-example="name">
+    <div class="flex items-center justify-between">
+      <Toggle v-model="view" label="View" :options="[{ value: 'preview', label: 'Preview' }, { value: 'code', label: 'Code' }]" />
+    </div>
+    <div v-show="view === 'preview'" :class="['flex min-h-[22rem] w-full justify-center overflow-x-auto rounded-lg border border-border p-6 sm:p-10', alignment[align]]">
+      <component :is="demo" v-if="demo" />
+    </div>
+    <div v-show="view === 'code'" class="relative rounded-lg border border-border bg-muted/40">
+      <div class="max-h-[32rem] overflow-auto" v-html="html" />
+      <CopyButton :value="code" label="Copy code" class="absolute top-2 right-2" />
+    </div>
+  </div>
+</template>

@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import Separator from '@/components/ui/Separator.vibe';
+</script>
+
+<template>
+  <div class="w-full max-w-sm">
+    <div class="space-y-1">
+      <h4 class="text-sm leading-none font-medium">vibecn</h4>
+      <p class="text-sm text-muted-foreground">Components for vibe.js, as source you own.</p>
+    </div>
+    <Separator class="my-4" />
+    <div class="flex h-5 items-center gap-4 text-sm">
+      <span>Blog</span>
+      <Separator orientation="vertical" />
+      <span>Docs</span>
+      <Separator orientation="vertical" />
+      <span>Source</span>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import Button from '@/components/ui/Button.vibe';
+</script>
+
+<template>
+  <div class="flex flex-wrap items-center gap-2">
+    <Button>Button</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="ghost">Ghost</Button>
+  </div>
+</template>

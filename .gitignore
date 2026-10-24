@@ -4,10 +4,11 @@ public/
 coverage/
 .tsbuild/
 *.tgz
-playground/dist/
-playground/src/components/
-playground/src/lib/
-playground/src/vibecn.css
-playground/vibecn.json
-playground/vibecn.LICENSE
+site/dist/
+site/src/components/
+site/src/lib/
+site/src/vibecn.css
+site/vibecn.json
+site/vibecn.LICENSE
 .DS_Store
+.claude/

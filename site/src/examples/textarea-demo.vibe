@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Textarea from '@/components/ui/Textarea.vibe';
+
+const message = ref('');
+</script>
+
+<template>
+  <Textarea v-model="message" placeholder="Type your message here." aria-label="Message" class="max-w-md" />
+</template>

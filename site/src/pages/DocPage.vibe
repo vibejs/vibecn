@@ -1,0 +1,87 @@
+<script setup lang="ts">
+import { shallowRef, watch, watchEffect } from '@usevibejs/ui';
+import { RouterLink, useRouter } from '@usevibejs/ui/router';
+import ComponentPreview from '../site/ComponentPreview.vibe';
+import DocsNav from '../site/DocsNav.vibe';
+import InstallationBlock from '../site/InstallationBlock.vibe';
+import Pager from '../site/Pager.vibe';
+import TableOfContents from '../site/TableOfContents.vibe';
+import type { DocPage } from '../site/types.ts';
+import NotFound from './NotFound.vibe';
+
+const { page } = defineProps<{ page: string }>();
+const modules = import.meta.glob<{ default: DocPage }>('../content/**/*.md');
+const doc = shallowRef<DocPage>();
+const missing = shallowRef(false);
+const router = useRouter();
+
+watch(
+  () => page,
+  async (current) => {
+    const load = modules[`../content/${current}.md`];
+    missing.value = !load;
+    doc.value = load ? (await load()).default : undefined;
+  },
+  { immediate: true },
+);
+watchEffect(() => {
+  if (doc.value) document.title = `${doc.value.frontmatter.title} · vibecn`;
+});
+
+/** Copies code blocks and routes internal links rendered from Markdown. */
+async function onContentClick(event: MouseEvent): Promise<void> {
+  const target = event.target as HTMLElement;
+  const copy = target.closest<HTMLButtonElement>('[data-copy]');
+  if (copy) {
+    try {
+      await navigator.clipboard.writeText(decodeURIComponent(copy.dataset.copy!));
+      copy.textContent = 'Copied';
+      copy.toggleAttribute('data-copied', true);
+      setTimeout(() => {
+        copy.textContent = 'Copy';
+        copy.toggleAttribute('data-copied', false);
+      }, 2000);
+    } catch {
+      copy.textContent = 'Copy failed';
+    }
+    return;
+  }
+  const link = target.closest<HTMLAnchorElement>('a[href^="/"]');
+  if (link && !event.metaKey && !event.ctrlKey && !event.shiftKey && event.button === 0) {
+    event.preventDefault();
+    await router.push(link.getAttribute('href')!);
+  }
+}
+const href = (current: string): string => (current === 'docs/introduction' ? '/docs' : current.startsWith('docs/') ? `/${current}` : `/docs/${current}`);
+</script>
+
+<template>
+  <NotFound v-if="missing" />
+  <div v-else class="mx-auto flex w-full max-w-screen-2xl flex-1 px-4 md:px-6">
+    <aside class="sticky top-14 hidden h-[calc(100svh-3.5rem)] w-56 shrink-0 overflow-y-auto border-r border-border/60 py-8 pr-4 md:block">
+      <DocsNav />
+    </aside>
+    <div v-if="doc" class="flex min-w-0 flex-1 gap-10 py-8 md:pl-10 xl:gap-16">
+      <article class="mx-auto w-full max-w-3xl min-w-0">
+        <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <RouterLink to="/docs" class="hover:text-foreground">Docs</RouterLink>
+          <template v-if="page.startsWith('components/')"><span aria-hidden="true">/</span><span>Components</span></template>
+          <span aria-hidden="true">/</span><span class="text-foreground">{{ doc.frontmatter.title }}</span>
+        </div>
+        <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ doc.frontmatter.title }}</h1>
+        <p class="mt-3 text-lg text-balance text-muted-foreground">{{ doc.frontmatter.description }}</p>
+        <div class="mt-8" @click="onContentClick">
+          <template v-for="(block, index) in doc.blocks" :key="page + index">
+            <div v-if="block.type === 'html'" class="prose" v-html="block.html" />
+            <ComponentPreview v-else-if="block.type === 'example'" :name="block.name" :html="block.html" :code="block.code" :align="block.align" />
+            <InstallationBlock v-else :command="block.command" :dependencies="block.dependencies" :files="block.files" />
+          </template>
+        </div>
+        <Pager :href="href(page)" />
+      </article>
+      <aside class="sticky top-22 hidden h-fit w-52 shrink-0 xl:block">
+        <TableOfContents :items="doc.toc" />
+      </aside>
+    </div>
+  </div>
+</template>

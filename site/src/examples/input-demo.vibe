@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Input from '@/components/ui/Input.vibe';
+
+const email = ref('');
+</script>
+
+<template>
+  <Input v-model="email" type="email" placeholder="Email" aria-label="Email" class="max-w-sm" />
+</template>

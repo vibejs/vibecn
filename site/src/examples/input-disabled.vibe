@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import Input from '@/components/ui/Input.vibe';
+</script>
+
+<template>
+  <Input model-value="hello@example.com" type="email" aria-label="Email" disabled class="max-w-sm" />
+</template>

@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+
+const sent = ref(false);
+</script>
+
+<template>
+  <form class="flex flex-col items-center gap-3" @submit.prevent="sent = true">
+    <Button type="submit" :disabled="sent">{{ sent ? 'Sent' : 'Send invitation' }}</Button>
+    <Button v-if="sent" variant="link" size="sm" @click="sent = false">Reset</Button>
+  </form>
+</template>

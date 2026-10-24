@@ -1,19 +1,19 @@
 import { mount } from '@usevibejs/ui/testing';
 import { describe, expect, it, vi } from 'vitest';
-import Badge from '../playground/src/components/ui/Badge.vibe';
-import Button from '../playground/src/components/ui/Button.vibe';
-import Card from '../playground/src/components/ui/Card.vibe';
-import CardAction from '../playground/src/components/ui/CardAction.vibe';
-import CardContent from '../playground/src/components/ui/CardContent.vibe';
-import CardDescription from '../playground/src/components/ui/CardDescription.vibe';
-import CardFooter from '../playground/src/components/ui/CardFooter.vibe';
-import CardHeader from '../playground/src/components/ui/CardHeader.vibe';
-import CardTitle from '../playground/src/components/ui/CardTitle.vibe';
-import Input from '../playground/src/components/ui/Input.vibe';
-import Label from '../playground/src/components/ui/Label.vibe';
-import Separator from '../playground/src/components/ui/Separator.vibe';
-import Skeleton from '../playground/src/components/ui/Skeleton.vibe';
-import Textarea from '../playground/src/components/ui/Textarea.vibe';
+import Badge from '../site/src/components/ui/Badge.vibe';
+import Button from '../site/src/components/ui/Button.vibe';
+import Card from '../site/src/components/ui/Card.vibe';
+import CardAction from '../site/src/components/ui/CardAction.vibe';
+import CardContent from '../site/src/components/ui/CardContent.vibe';
+import CardDescription from '../site/src/components/ui/CardDescription.vibe';
+import CardFooter from '../site/src/components/ui/CardFooter.vibe';
+import CardHeader from '../site/src/components/ui/CardHeader.vibe';
+import CardTitle from '../site/src/components/ui/CardTitle.vibe';
+import Input from '../site/src/components/ui/Input.vibe';
+import Label from '../site/src/components/ui/Label.vibe';
+import Separator from '../site/src/components/ui/Separator.vibe';
+import Skeleton from '../site/src/components/ui/Skeleton.vibe';
+import Textarea from '../site/src/components/ui/Textarea.vibe';
 import Fields from './Fields.vibe';
 
 describe('Button', () => {

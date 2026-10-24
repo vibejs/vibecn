@@ -1,0 +1,23 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Icon from './Icon.vibe';
+
+const dark = ref(document.documentElement.classList.contains('dark'));
+
+function toggle(): void {
+  dark.value = !dark.value;
+  document.documentElement.classList.toggle('dark', dark.value);
+  try {
+    localStorage.setItem('theme', dark.value ? 'dark' : 'light');
+  } catch {
+    // Storage can be unavailable; the choice still applies to this page.
+  }
+}
+</script>
+
+<template>
+  <Button variant="ghost" size="icon" class="size-8" :aria-label="dark ? 'Switch to light theme' : 'Switch to dark theme'" @click="toggle">
+    <Icon :name="dark ? 'sun' : 'moon'" />
+  </Button>
+</template>

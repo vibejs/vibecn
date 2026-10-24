@@ -1,14 +1,45 @@
 # vibecn
 
-An independent port of [shadcn/ui](https://ui.shadcn.com) components for [vibe.js](https://vibejs.org).
+Accessible, beautifully designed components for [vibe.js](https://vibejs.org), adapted from [shadcn/ui](https://ui.shadcn.com).
 
-The CLI copies `.vibe` component source into your application. You own the files and compile them with your application's vibe.js compiler. No React runtime or compiled component package is required.
+vibecn is not a component library you import from `node_modules`. The CLI copies `.vibe` source into your application, where you own it: read it, change it, keep it. Your app compiles the components with its own vibe.js compiler, so there is no runtime to install.
 
-**Preview.** Published on npm as `@usevibejs/vibecn`. This project is not affiliated with or endorsed by shadcn/ui.
+**Documentation:** https://vibecn.monsterorigin.workers.dev
 
-## Try the playground
+This project is independent and not affiliated with or endorsed by shadcn/ui.
 
-The playground is live at https://vibecn.monsterorigin.workers.dev. To run it locally:
+## Quick start
+
+From the root of a vibe.js application that uses Tailwind CSS v4:
+
+```sh
+pnpm dlx @usevibejs/vibecn@latest init
+pnpm add clsx tailwind-merge
+pnpm dlx @usevibejs/vibecn@latest add button card input
+```
+
+Import the theme after Tailwind in your stylesheet:
+
+```css
+@import 'tailwindcss';
+@import './vibecn.css';
+```
+
+Then use the components:
+
+```vibe
+<script setup lang="ts">
+import Button from './components/ui/Button.vibe';
+</script>
+
+<template>
+  <Button variant="outline">Hello vibecn</Button>
+</template>
+```
+
+The [installation guide](https://vibecn.monsterorigin.workers.dev/docs/installation) covers the requirements, the import alias and dark mode. The [CLI reference](https://vibecn.monsterorigin.workers.dev/docs/cli) lists every command and option.
+
+## Development
 
 Use Node `^24.15.0 || >=26` and pnpm 12.14.0.
 
@@ -17,123 +48,35 @@ pnpm install
 pnpm dev
 ```
 
-The playground uses components installed by the same CLI as a consumer app. It includes a live form, all button and badge variants, class overrides, light/dark themes and accent colors. It does not send form data to a server.
+`pnpm dev` starts the documentation site in `site/`. It installs every registry component into the site with the same installer a consumer app uses, so the docs always render the current source.
 
-## Add components to a vibe.js application
+| Path                                | Contents                                                                                                                                                        |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `registry/ui/`                      | The component sources, one `.vibe` file per part.                                                                                                               |
+| `registry/lib/`, `registry/styles/` | The `cn()` utility and the theme.                                                                                                                               |
+| `src/`                              | The CLI and installer.                                                                                                                                          |
+| `site/src/content/`                 | Documentation pages in Markdown. `<Example name="..." />` embeds a live example from `site/src/examples/`; `<Installation />` renders the install instructions. |
+| `site/src/examples/`                | Example components. Each one is rendered live and shown as code.                                                                                                |
 
-From your application's root:
+### Adding a component
 
-```sh
-pnpm dlx @usevibejs/vibecn init
-pnpm dlx @usevibejs/vibecn list
-pnpm dlx @usevibejs/vibecn add button card input label textarea
-```
+1. Add the source to `registry/ui/` and its entry to `src/registry.ts`.
+2. Add examples to `site/src/examples/` and a page to `site/src/content/components/`.
+3. Cover its behavior in `test/components.vibe.test.ts` and its page in `test/site.integration.test.ts`.
+4. Run `pnpm changeset` to describe the change.
 
-`npx @usevibejs/vibecn` works the same way. You can also pass `--cwd <application-directory>` from another directory.
-
-Install the shared utility dependencies with your application's package manager. In a catalog-managed workspace, add their versions to your catalog and use `catalog:` in the app manifest.
-
-```sh
-pnpm add clsx tailwind-merge
-```
-
-The application needs matching `@usevibejs/ui` and `@usevibejs/compiler` versions, the vibe.js Vite plugin, and Tailwind CSS v4 with its Vite plugin. `init` checks for a declared `@usevibejs/ui` dependency; it does not install or configure these tools.
-
-Import the generated theme after Tailwind in your application's main stylesheet:
-
-```css
-@import 'tailwindcss';
-@import './vibecn.css';
-```
-
-Then import components directly. In a `.vibe` file:
-
-```html
-<script setup lang="ts">
-  import { ref } from '@usevibejs/ui';
-  import Button from './components/ui/Button.vibe';
-  import Input from './components/ui/Input.vibe';
-  import Label from './components/ui/Label.vibe';
-
-  const name = ref('');
-  const saved = ref(false);
-</script>
-
-<template>
-  <form @submit.prevent="saved = true">
-    <label for="name">Name</label>
-    <input id="name" v-model="name" autocomplete="name" required />
-    <button type="submit">Save changes</button>
-    <p v-if="saved" role="status">Saved locally for {{ name }}.</p>
-  </form>
-</template>
-```
-
-For a full-stack app with a `ui` directory, paths start at `ui/src`. For a standalone app they start at `src`. Review `vibecn.json` after initialization to choose other component and utility directories. If you change the stylesheet path, move the generated stylesheet too. Paths must remain inside the application and cannot pass through symlinks.
-
-The theme uses `:root` defaults and a `.dark` ancestor. It adds no CSS reset beyond the application's existing Tailwind setup. Review token names if your application already has a theme. Tailwind must scan the generated component sources; add an explicit `@source` if your application restricts source detection.
-
-## CLI
-
-```sh
-vibecn init --dry-run
-vibecn add button card --dry-run --json
-vibecn add --all
-vibecn add button --overwrite
-```
-
-These short commands assume the CLI is installed, for example as a dev dependency. Otherwise prefix them with `pnpm dlx @usevibejs/vibecn`.
-
-- `init` writes configuration, theme tokens and full license notices.
-- `list` shows the eight available component groups.
-- `add` copies selected components, their shared utility, and license notices. It never fetches remote registry code.
-- `--dry-run` checks conflicts and reports the plan without writes.
-- Existing identical files are skipped. Different contents require an explicit `--overwrite`; review your customizations first.
-- `init`, `list` and `add` accept `--json` to produce one JSON result. Success exits 0; usage or installation failures exit 1.
-
-The CLI does not edit existing stylesheets, change dependency manifests, or execute package managers. It checks the entire plan before writes, and rechecks before applying. An unexpected filesystem failure can still leave a partial installation; it is not a transactional filesystem.
-
-## Components
-
-| Group     | API                                                                                                                                                                                        |
-| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Button    | `variant`: default, secondary, destructive, outline, ghost, link. `size`: default, sm, lg, icon. Defaults to `type="button"`; set `type="submit"` for forms.                               |
-| Badge     | `variant`: default, secondary, destructive, outline.                                                                                                                                       |
-| Card      | Card, CardHeader, CardTitle, CardDescription, CardAction, CardContent, CardFooter. Each is a separate import. CardTitle renders an `h3`.                                                   |
-| Input     | String `v-model`; text, email, password, search, tel and url types; native attributes; exposed `focus()`.                                                                                  |
-| Textarea  | String `v-model`; rows and native constraints; exposed `focus()`.                                                                                                                          |
-| Label     | Native label with `for`.                                                                                                                                                                   |
-| Separator | `orientation`: horizontal or vertical. Decorative by default, like shadcn/ui; set `:decorative="false"` for a semantic separator. Vertical separators need a parent with a defined height. |
-| Skeleton  | Decorative placeholder, hidden from assistive technology. Animation respects reduced motion.                                                                                               |
-
-Components forward native attributes and event listeners. `class` accepts strings, arrays and conditional objects; conflicting Tailwind utilities are merged with consumer classes last. Button and Badge do not support React/Radix `asChild`. `CardAction` can be positioned by adding `grid-cols-[1fr_auto]` to its CardHeader.
-
-## Registry and packaging
-
-`pnpm build` produces:
-
-- `dist/`: the Node CLI and installer API, with TypeScript declarations.
-- `public/r/`: registry JSON with embedded source and license notices.
-- `playground/dist/`: the static playground, including `/r/` payloads. `npx wrangler deploy` publishes it as the `vibecn` Cloudflare Worker configured in `wrangler.jsonc`.
-
-The registry payloads use shadcn's registry schema. The bundled CLI is the supported installer; compatibility with shadcn's CLI or arbitrary remote registries has not been established.
-
-The npm artifact contains the CLI, source registry and license texts. Releases are versioned with changesets and published by `.github/workflows/release.yml` through npm trusted publishing with provenance.
-
-## Development
+### Checks
 
 ```sh
 pnpm check
 pnpm test:integration
 ```
 
-Checks cover formatting, lint, TypeScript, per-file 100% V8 coverage of the installer and utility code, and compiled component behavior. Integration tests pack and extract the actual npm artifact, install it into a temporary app, validate registry payloads and exercise the built playground in Chromium, including mobile layout, keyboard focus and reduced motion.
+`pnpm check` runs formatting, lint, TypeScript and the unit and component tests with 100% per-file coverage of the CLI. `pnpm test:integration` builds everything, installs the packed npm artifact into a temporary app, validates the registry payloads and drives the documentation site in Chromium.
 
-The CLI uses TypeScript 7.0.2. The playground uses the pinned 7.1 nightly and `--runExternalCode` for vibe.js content mappers. `pnpm dev`, `pnpm build` and `pnpm check` regenerate the ignored playground component copies from the registry.
+### Releases and deployment
 
-## Next
-
-Dialog, Dropdown Menu, Select, Combobox and other composite widgets need a native vibe.js behavior layer, with focus management, keyboard navigation, dismissal and assistive technology verification. They are not included yet. SSR and hydration follow vibe.js's future support. A compiled npm component library depends on a supported framework packaging contract.
+Releases use changesets and `.github/workflows/release.yml`, which publishes to npm through trusted publishing with provenance. `pnpm build` writes the site to `site/dist/`, including the registry JSON under `/r/`; `npx wrangler deploy` publishes it as the `vibecn` Cloudflare Worker configured in `wrangler.jsonc`.
 
 ## License
 
