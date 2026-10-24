@@ -12,6 +12,11 @@ const menu = useTemplateRef<HTMLDialogElement>('menu');
 const close = (): void => menu.value?.close();
 const open = (): void => menu.value?.showModal();
 // A click on the dialog element itself lands on its backdrop.
+const links = [
+  { to: '/docs', label: 'Docs' },
+  { to: '/docs/components', label: 'Components' },
+  { to: '/examples', label: 'Examples' },
+];
 const closeOnBackdrop = (event: MouseEvent): void => {
   if (event.target === menu.value) close();
 };
@@ -19,18 +24,16 @@ const closeOnBackdrop = (event: MouseEvent): void => {
 
 <template>
   <header class="sticky top-0 z-40 w-full border-b border-border/60 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-    <div class="mx-auto flex h-14 max-w-screen-2xl items-center gap-2 px-4 md:gap-6 md:px-6">
-      <Button variant="ghost" size="icon" class="size-8 md:hidden" aria-label="Open menu" aria-haspopup="dialog" @click="open"><Icon name="menu" /></Button>
-      <RouterLink to="/" aria-label="vibecn home" class="flex items-center font-semibold tracking-tight"><Brand /></RouterLink>
-      <nav aria-label="Main" class="hidden items-center gap-5 text-sm text-foreground/70 md:flex">
-        <RouterLink to="/docs" class="transition-colors hover:text-foreground">Docs</RouterLink>
-        <RouterLink to="/docs/components" class="transition-colors hover:text-foreground">Components</RouterLink>
-        <RouterLink to="/examples" class="transition-colors hover:text-foreground">Examples</RouterLink>
+    <div class="mx-auto flex h-14 max-w-screen-2xl items-center gap-2 px-4 md:px-6 lg:gap-6">
+      <Button variant="ghost" size="sm" class="-ml-2 gap-2 px-2 lg:hidden" aria-label="Open menu" aria-haspopup="dialog" @click="open"><Icon name="menu" /><span class="hidden text-sm sm:inline">Menu</span></Button>
+      <RouterLink to="/" aria-label="vibecn home" class="flex shrink-0 items-center font-semibold tracking-tight"><Brand /></RouterLink>
+      <nav aria-label="Main" class="hidden items-center gap-5 text-sm text-foreground/60 lg:flex">
+        <RouterLink v-for="link in links" :key="link.to" :to="link.to" class="transition-colors hover:text-foreground [&.router-link-exact-active]:font-medium [&.router-link-exact-active]:text-foreground">{{ link.label }}</RouterLink>
         <a href="https://vibejs.org" class="transition-colors hover:text-foreground">vibe.js</a>
       </nav>
-      <div class="ml-auto flex flex-1 items-center justify-end gap-1 md:flex-none">
+      <div class="ml-auto flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-1 lg:flex-none">
         <SiteSearch />
-        <a href="https://github.com/vibejs/vibecn" class="inline-flex size-8 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground" aria-label="vibecn on GitHub"><Icon name="github" /></a>
+        <a href="https://github.com/vibejs/vibecn" class="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-foreground/80 transition-colors hover:bg-accent hover:text-foreground" aria-label="vibecn on GitHub"><Icon name="github" /></a>
         <ThemeToggle />
       </div>
     </div>
@@ -39,6 +42,11 @@ const closeOnBackdrop = (event: MouseEvent): void => {
         <RouterLink to="/" aria-label="vibecn home" class="font-semibold" @click="close"><Brand /></RouterLink>
         <Button variant="ghost" size="icon" class="size-8" aria-label="Close menu" @click="close"><Icon name="close" /></Button>
       </div>
+      <nav aria-label="Site" class="mb-6 flex flex-col gap-1 border-b pb-4 text-base">
+        <RouterLink to="/" class="rounded-md px-2 py-2 font-medium hover:bg-accent [&.router-link-exact-active]:bg-accent" @click="close">Home</RouterLink>
+        <RouterLink v-for="link in links" :key="link.to" :to="link.to" class="rounded-md px-2 py-2 font-medium hover:bg-accent [&.router-link-exact-active]:bg-accent" @click="close">{{ link.label }}</RouterLink>
+        <a href="https://vibejs.org" class="rounded-md px-2 py-2 font-medium hover:bg-accent">vibe.js</a>
+      </nav>
       <DocsNav @navigate="close" />
     </dialog>
   </header>

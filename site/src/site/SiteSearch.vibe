@@ -34,12 +34,12 @@ async function go(href: string): Promise<void> {
   <button
     type="button"
     aria-haspopup="dialog"
-    class="inline-flex h-8 w-full items-center gap-2 rounded-md border bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted md:w-56 lg:w-64"
+    aria-label="Search documentation"
+    class="inline-flex size-8 shrink-0 items-center justify-center gap-2 rounded-md text-sm whitespace-nowrap text-foreground/80 transition-colors hover:bg-accent sm:h-8 sm:w-full sm:max-w-56 sm:min-w-0 sm:shrink sm:justify-start sm:border sm:bg-muted/40 sm:px-3 sm:text-muted-foreground sm:hover:bg-muted lg:w-56 xl:w-64 xl:max-w-none"
     @click="open = true"
   >
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" class="size-4"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-    <span class="hidden sm:inline">Search documentation...</span>
-    <span class="sm:hidden">Search</span>
+    <span class="hidden truncate sm:inline"><span class="hidden xl:inline">Search documentation...</span><span class="xl:hidden">Search...</span></span>
     <Kbd class="ml-auto hidden sm:inline-flex">⌘K</Kbd>
   </button>
   <CommandDialog v-model:open="open" v-model:search="search" title="Search documentation" description="Search for a page or a component">
