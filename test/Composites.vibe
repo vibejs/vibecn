@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import InputOTP from '../site/src/components/ui/InputOTP.vibe';
+import InputOTPGroup from '../site/src/components/ui/InputOTPGroup.vibe';
+import InputOTPSlot from '../site/src/components/ui/InputOTPSlot.vibe';
+import ResizableHandle from '../site/src/components/ui/ResizableHandle.vibe';
+import ResizablePanel from '../site/src/components/ui/ResizablePanel.vibe';
+import ResizablePanelGroup from '../site/src/components/ui/ResizablePanelGroup.vibe';
+import ScrollArea from '../site/src/components/ui/ScrollArea.vibe';
+import ScrollBar from '../site/src/components/ui/ScrollBar.vibe';
+import Tabs from '../site/src/components/ui/Tabs.vibe';
+import TabsContent from '../site/src/components/ui/TabsContent.vibe';
+import TabsList from '../site/src/components/ui/TabsList.vibe';
+import TabsTrigger from '../site/src/components/ui/TabsTrigger.vibe';
+import ToggleGroup from '../site/src/components/ui/ToggleGroup.vibe';
+import ToggleGroupItem from '../site/src/components/ui/ToggleGroupItem.vibe';
+
+const { manual = false, horizontal = true } = defineProps<{ manual?: boolean; horizontal?: boolean }>();
+const tab = ref('one');
+const single = ref('');
+const multiple = ref<string[]>([]);
+const code = ref('');
+const completed = ref('');
+const layout = ref<number[]>([]);
+</script>
+
+<template>
+  <div>
+    <Tabs v-model="tab" :activation-mode="manual ? 'manual' : 'automatic'">
+      <TabsList>
+        <TabsTrigger value="one">One</TabsTrigger>
+        <TabsTrigger value="two disabled" disabled>Two</TabsTrigger>
+        <TabsTrigger value="three">Three</TabsTrigger>
+      </TabsList>
+      <TabsContent value="one">First</TabsContent>
+      <TabsContent value="three">Third</TabsContent>
+    </Tabs>
+    <ToggleGroup v-model="single" class="single" aria-label="Single">
+      <ToggleGroupItem value="a">A</ToggleGroupItem>
+      <ToggleGroupItem value="b">B</ToggleGroupItem>
+    </ToggleGroup>
+    <ToggleGroup v-model:values="multiple" type="multiple" class="multiple" aria-label="Multiple" disabled>
+      <ToggleGroupItem value="x">X</ToggleGroupItem>
+    </ToggleGroup>
+    <ToggleGroup v-model:values="multiple" type="multiple" class="enabled" aria-label="Enabled">
+      <ToggleGroupItem value="x">X</ToggleGroupItem>
+      <ToggleGroupItem value="y">Y</ToggleGroupItem>
+    </ToggleGroup>
+    <InputOTP v-model="code" :maxlength="4" aria-label="Code" @complete="completed = $event">
+      <InputOTPGroup>
+        <InputOTPSlot v-for="index in 4" :key="index" :index="index - 1" />
+      </InputOTPGroup>
+    </InputOTP>
+    <ResizablePanelGroup :direction="horizontal ? 'horizontal' : 'vertical'" @layout="layout = $event">
+      <ResizablePanel :default-size="30" :min-size="20" :max-size="60">A</ResizablePanel>
+      <ResizableHandle with-handle aria-label="Resize" />
+      <ResizablePanel>B</ResizablePanel>
+    </ResizablePanelGroup>
+    <ScrollArea v-if="horizontal" class="scroll"><ScrollBar orientation="horizontal" />Content</ScrollArea>
+    <ScrollArea v-else class="scroll"><ScrollBar />Content</ScrollArea>
+    <output>{{ JSON.stringify({ tab, single, multiple, code, completed, layout }) }}</output>
+  </div>
+</template>

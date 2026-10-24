@@ -1,0 +1,38 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject } from '@usevibejs/ui';
+import type { ClassValue, Ref } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+import Toggle from './Toggle.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, value, disabled = false } = defineProps<{
+  class?: ClassValue;
+  value: string;
+  disabled?: boolean;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const group = inject<{
+  variant: Ref<'default' | 'outline'>;
+  size: Ref<'default' | 'sm' | 'lg'>;
+  spacing: Ref<number>;
+  disabled: Ref<boolean>;
+  isPressed: (value: string) => boolean;
+  toggle: (value: string) => void;
+}>(Symbol.for('vibecn.toggle-group'))!;
+</script>
+
+<template>
+  <Toggle
+    data-slot="toggle-group-item"
+    :data-spacing="group.spacing.value"
+    :variant="group.variant.value"
+    :size="group.size.value"
+    :disabled="disabled || group.disabled.value"
+    :pressed="group.isPressed(value)"
+    v-bind="$attrs"
+    :class="cn('w-auto min-w-0 shrink-0 px-3 focus:z-10 focus-visible:z-10 data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-md data-[spacing=0]:last:rounded-r-md data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l', className)"
+    @update:pressed="group.toggle(value)"
+  ><slot /></Toggle>
+</template>

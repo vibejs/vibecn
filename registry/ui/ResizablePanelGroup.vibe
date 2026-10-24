@@ -1,0 +1,45 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { provide, reactive, toRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, direction = 'horizontal' } = defineProps<{
+  class?: ClassValue;
+  direction?: 'horizontal' | 'vertical';
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+/** Panel sizes in percent of the group, by panel id. */
+const sizes = reactive(new Map<string, { size: number; min: number; max: number }>());
+const emit = defineEmits<{ layout: [sizes: number[]] }>();
+
+provide(Symbol.for('vibecn.resizable'), {
+  direction: toRef(() => direction),
+  sizes,
+  register(id: string, size: number | undefined, min: number, max: number) {
+    sizes.set(id, { size: size ?? NaN, min, max });
+    // Panels without a default size share the space that the others leave.
+    const unset = [...sizes.values()].filter((panel) => Number.isNaN(panel.size));
+    const used = [...sizes.values()].reduce((sum, panel) => sum + (Number.isNaN(panel.size) ? 0 : panel.size), 0);
+    for (const panel of unset) panel.size = Math.max(0, 100 - used) / unset.length;
+  },
+  unregister: (id: string) => sizes.delete(id),
+  /** Moves the boundary between two panels by \`delta\` percent, within their limits. */
+  resize(before: string, after: string, delta: number) {
+    const a = sizes.get(before);
+    const b = sizes.get(after);
+    if (!a || !b) return;
+    const total = a.size + b.size;
+    const next = Math.min(a.max, total - b.min, Math.max(a.min, total - b.max, a.size + delta));
+    a.size = next;
+    b.size = total - next;
+    emit('layout', [...sizes.values()].map((panel) => panel.size));
+  },
+});
+</script>
+
+<template>
+  <div data-slot="resizable-panel-group" :data-panel-group-direction="direction" :aria-orientation="direction" v-bind="$attrs" :class="cn('flex h-full w-full data-[panel-group-direction=vertical]:flex-col', className)"><slot /></div>
+</template>

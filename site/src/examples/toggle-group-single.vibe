@@ -1,0 +1,18 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import ToggleGroup from '@/components/ui/ToggleGroup.vibe';
+import ToggleGroupItem from '@/components/ui/ToggleGroupItem.vibe';
+
+const view = ref('list');
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-3">
+    <ToggleGroup v-model="view" variant="outline" :spacing="2" size="sm" aria-label="View">
+      <ToggleGroupItem value="list">List</ToggleGroupItem>
+      <ToggleGroupItem value="board">Board</ToggleGroupItem>
+      <ToggleGroupItem value="calendar">Calendar</ToggleGroupItem>
+    </ToggleGroup>
+    <p class="text-sm text-muted-foreground" role="status">View: {{ view || 'none' }}</p>
+  </div>
+</template>

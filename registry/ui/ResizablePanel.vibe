@@ -1,0 +1,35 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onUnmounted, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, defaultSize, minSize = 0, maxSize = 100 } = defineProps<{
+  class?: ClassValue;
+  /** The initial size in percent. Panels without one share the remaining space. */
+  defaultSize?: number;
+  minSize?: number;
+  maxSize?: number;
+}>();
+defineSlots<{ default?: (props: {}) => unknown }>();
+const group = inject<{
+  sizes: Map<string, { size: number }>;
+  register: (id: string, size: number | undefined, min: number, max: number) => void;
+  unregister: (id: string) => void;
+}>(Symbol.for('vibecn.resizable'))!;
+const id = useId();
+group.register(id, defaultSize, minSize, maxSize);
+onUnmounted(() => group.unregister(id));
+</script>
+
+<template>
+  <div
+    data-slot="resizable-panel"
+    :data-panel-id="id"
+    :style="{ flex: (group.sizes.get(id)?.size ?? 0) + ' 1 0px' }"
+    v-bind="$attrs"
+    :class="cn('min-h-0 min-w-0 overflow-hidden', className)"
+  ><slot /></div>
+</template>

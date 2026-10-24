@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import { toast } from '@/lib/toast.ts';
+import InputOTP from '@/components/ui/InputOTP.vibe';
+import InputOTPGroup from '@/components/ui/InputOTPGroup.vibe';
+import InputOTPSeparator from '@/components/ui/InputOTPSeparator.vibe';
+import InputOTPSlot from '@/components/ui/InputOTPSlot.vibe';
+
+const code = ref('');
+</script>
+
+<template>
+  <div class="flex flex-col items-center gap-3">
+    <InputOTP v-model="code" :maxlength="6" aria-label="One-time password" @complete="toast.success(`Verified ${code}`)">
+      <InputOTPGroup>
+        <InputOTPSlot :index="0" />
+        <InputOTPSlot :index="1" />
+        <InputOTPSlot :index="2" />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
+        <InputOTPSlot :index="3" />
+        <InputOTPSlot :index="4" />
+        <InputOTPSlot :index="5" />
+      </InputOTPGroup>
+    </InputOTP>
+    <p class="text-sm text-muted-foreground" role="status">{{ code.length === 6 ? 'Code entered.' : 'Enter your one-time password.' }}</p>
+  </div>
+</template>

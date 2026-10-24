@@ -1,0 +1,16 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import InputOTP from '@/components/ui/InputOTP.vibe';
+import InputOTPGroup from '@/components/ui/InputOTPGroup.vibe';
+import InputOTPSlot from '@/components/ui/InputOTPSlot.vibe';
+
+const code = ref('');
+</script>
+
+<template>
+  <InputOTP v-model="code" :maxlength="4" pattern="[A-Za-z0-9]" inputmode="text" aria-label="Invite code">
+    <InputOTPGroup>
+      <InputOTPSlot v-for="index in 4" :key="index" :index="index - 1" class="uppercase" />
+    </InputOTPGroup>
+  </InputOTP>
+</template>

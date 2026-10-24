@@ -1,0 +1,15 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { inject, onMounted, onUnmounted } from '@usevibejs/ui';
+import type { Ref } from '@usevibejs/ui';
+
+const { orientation = 'vertical' } = defineProps<{ orientation?: 'vertical' | 'horizontal' }>();
+const horizontal = inject<Ref<boolean>>(Symbol.for('vibecn.scroll-area'))!;
+// The browser draws the scrollbars; this part only enables horizontal scrolling.
+onMounted(() => (horizontal.value ||= orientation === 'horizontal'));
+onUnmounted(() => (horizontal.value &&= orientation !== 'horizontal'));
+</script>
+
+<template>
+  <span data-slot="scroll-area-scrollbar" :data-orientation="orientation" hidden />
+</template>

@@ -1,0 +1,59 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Button from '@/components/ui/Button.vibe';
+import Card from '@/components/ui/Card.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardFooter from '@/components/ui/CardFooter.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Label from '@/components/ui/Label.vibe';
+import Tabs from '@/components/ui/Tabs.vibe';
+import TabsContent from '@/components/ui/TabsContent.vibe';
+import TabsList from '@/components/ui/TabsList.vibe';
+import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
+
+const tab = ref('account');
+const name = ref('Pedro Duarte');
+const username = ref('@peduarte');
+const current = ref('');
+const next = ref('');
+</script>
+
+<template>
+  <div class="flex w-full max-w-sm flex-col gap-6">
+    <Tabs v-model="tab">
+      <TabsList>
+        <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="password">Password</TabsTrigger>
+      </TabsList>
+      <TabsContent value="account">
+        <Card>
+          <CardHeader>
+            <CardTitle>Account</CardTitle>
+            <CardDescription>Make changes to your account here. Click save when you're done.</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-6">
+            <div class="grid gap-3"><Label for="tabs-name">Name</Label><Input id="tabs-name" v-model="name" /></div>
+            <div class="grid gap-3"><Label for="tabs-username">Username</Label><Input id="tabs-username" v-model="username" /></div>
+          </CardContent>
+          <CardFooter><Button>Save changes</Button></CardFooter>
+        </Card>
+      </TabsContent>
+      <TabsContent value="password">
+        <Card>
+          <CardHeader>
+            <CardTitle>Password</CardTitle>
+            <CardDescription>Change your password here. After saving, you'll be logged out.</CardDescription>
+          </CardHeader>
+          <CardContent class="grid gap-6">
+            <div class="grid gap-3"><Label for="tabs-current">Current password</Label><Input id="tabs-current" v-model="current" type="password" /></div>
+            <div class="grid gap-3"><Label for="tabs-new">New password</Label><Input id="tabs-new" v-model="next" type="password" /></div>
+          </CardContent>
+          <CardFooter><Button>Save password</Button></CardFooter>
+        </Card>
+      </TabsContent>
+    </Tabs>
+  </div>
+</template>
