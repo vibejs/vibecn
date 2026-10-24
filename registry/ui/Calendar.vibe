@@ -3,6 +3,7 @@
 import { computed, nextTick, onMounted, onUnmounted, ref, useId, useTemplateRef, watch } from '@usevibejs/ui';
 import type { ClassValue } from '@usevibejs/ui';
 import { addDays, addMonths, dateKey, firstWeekday, parseDate } from '__VIBECN_LIB__/calendar.ts';
+import { logicalKey } from '__VIBECN_LIB__/collection.ts';
 import { cn } from '__VIBECN_UTILS__';
 import Button from './Button.vibe';
 
@@ -88,8 +89,10 @@ function choose(date: string): void {
 function onKeydown(event: KeyboardEvent, date: Date): void {
   const offset = (date.getDay() - weekStart.value + 7) % 7;
   const days: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7, Home: -offset, End: 6 - offset };
+  // In right-to-left text the week runs from right to left.
+  const key = logicalKey(event.key, event.currentTarget as Element);
   let target: Date;
-  if (event.key in days) target = addDays(date, days[event.key]);
+  if (key in days) target = addDays(date, days[key]);
   else if (event.key === 'PageUp' || event.key === 'PageDown') target = addMonths(date, (event.key === 'PageUp' ? -1 : 1) * (event.shiftKey ? 12 : 1));
   else return;
   event.preventDefault();

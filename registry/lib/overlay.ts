@@ -188,6 +188,13 @@ export function place(
   return { x, y, side };
 }
 
+const sides: Record<Side, Side> = { left: 'right', right: 'left', top: 'top', bottom: 'bottom' };
+const aligns: Record<Align, Align> = { start: 'end', end: 'start', center: 'center' };
+
+/** In right-to-left text, `start` and `end` and the left and right sides swap. */
+export const mirror = (placement: Placement, rtl: boolean): Placement =>
+  rtl ? { ...placement, side: sides[placement.side], align: aligns[placement.align] } : placement;
+
 /**
  * Keeps a fixed-position floating element next to its anchor while `open` is true, following
  * scrolling and resizing. Returns the side it was placed on, for `data-side` styles.
@@ -208,7 +215,7 @@ export function useFloating(
       target instanceof Element ? target.getBoundingClientRect() : target,
       { width: element.offsetWidth, height: element.offsetHeight },
       { width: window.innerWidth, height: window.innerHeight },
-      placement(),
+      mirror(placement(), element.closest('[dir]')?.getAttribute('dir') === 'rtl'),
     );
     element.style.left = `${result.x}px`;
     element.style.top = `${result.y}px`;

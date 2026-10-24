@@ -1,0 +1,55 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import DirectionProvider from '@/components/ui/DirectionProvider.vibe';
+import DropdownMenu from '@/components/ui/DropdownMenu.vibe';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vibe';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vibe';
+import DropdownMenuSub from '@/components/ui/DropdownMenuSub.vibe';
+import DropdownMenuSubContent from '@/components/ui/DropdownMenuSubContent.vibe';
+import DropdownMenuSubTrigger from '@/components/ui/DropdownMenuSubTrigger.vibe';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vibe';
+import Tabs from '@/components/ui/Tabs.vibe';
+import TabsContent from '@/components/ui/TabsContent.vibe';
+import TabsList from '@/components/ui/TabsList.vibe';
+import TabsTrigger from '@/components/ui/TabsTrigger.vibe';
+
+const dir = ref<'ltr' | 'rtl'>('rtl');
+const tab = ref('account');
+</script>
+
+<template>
+  <div class="flex w-full max-w-md flex-col gap-6">
+    <label class="flex items-center gap-2 text-sm">
+      <input v-model="dir" type="checkbox" true-value="rtl" false-value="ltr" class="size-4 accent-primary" />
+      Right to left
+    </label>
+    <DirectionProvider :dir="dir">
+      <div class="flex flex-col items-start gap-6">
+        <Tabs v-model="tab">
+          <TabsList>
+            <TabsTrigger value="account">الحساب</TabsTrigger>
+            <TabsTrigger value="password">كلمة المرور</TabsTrigger>
+            <TabsTrigger value="settings">الإعدادات</TabsTrigger>
+          </TabsList>
+          <TabsContent value="account" class="text-sm text-muted-foreground">إدارة حسابك.</TabsContent>
+          <TabsContent value="password" class="text-sm text-muted-foreground">غيّر كلمة المرور.</TabsContent>
+          <TabsContent value="settings" class="text-sm text-muted-foreground">اضبط تفضيلاتك.</TabsContent>
+        </Tabs>
+        <DropdownMenu>
+          <DropdownMenuTrigger variant="outline">القائمة</DropdownMenuTrigger>
+          <DropdownMenuContent class="w-48">
+            <DropdownMenuItem>الملف الشخصي</DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>مشاركة</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>البريد</DropdownMenuItem>
+                <DropdownMenuItem>الرسائل</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem>تسجيل الخروج</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </DirectionProvider>
+  </div>
+</template>

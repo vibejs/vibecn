@@ -1,6 +1,6 @@
 // Shared behavior of dropdown menus, context menus and menubars.
 import { ref, watch, type Ref, type ShallowRef } from '@usevibejs/ui';
-import { createTypeahead, nextItem } from './collection.ts';
+import { createTypeahead, logicalKey, nextItem } from './collection.ts';
 import {
   anchorOf,
   injectOverlay,
@@ -100,9 +100,9 @@ export function useMenuContent(
     // Typed characters belong to the innermost menu, even without a match.
     if (event.key.length === 1 && event.key !== ' ') event.stopPropagation();
     const list = items();
+    const key = logicalKey(event.key, content.value);
     const active = document.activeElement;
-    const next =
-      nextItem(list, active, event.key, 'vertical', false) ?? typeahead(event.key, list, active);
+    const next = nextItem(list, active, key, 'vertical', false) ?? typeahead(key, list, active);
     const handled = (): void => {
       event.preventDefault();
       event.stopPropagation();
@@ -110,19 +110,15 @@ export function useMenuContent(
     if (next) {
       handled();
       next.focus();
-    } else if (event.key === 'Escape' || (event.key === 'ArrowLeft' && menu.parent)) {
+    } else if (key === 'Escape' || (key === 'ArrowLeft' && menu.parent)) {
       handled();
       menu.open.value = false;
       focusTrigger(menu);
-    } else if (event.key === 'Tab') {
+    } else if (key === 'Tab') {
       rootOf(menu).open.value = false;
-    } else if (
-      menu.menubar &&
-      !menu.parent &&
-      (event.key === 'ArrowLeft' || event.key === 'ArrowRight')
-    ) {
+    } else if (menu.menubar && !menu.parent && (key === 'ArrowLeft' || key === 'ArrowRight')) {
       handled();
-      menu.menubar.move(menu.id, event.key === 'ArrowRight' ? 1 : -1);
+      menu.menubar.move(menu.id, key === 'ArrowRight' ? 1 : -1);
     }
   };
   return { onToggle, onKeydown, side };

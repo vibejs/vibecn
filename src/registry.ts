@@ -77,14 +77,14 @@ export const registry: readonly RegistryItem[] = [
     'Calendar',
     'A locale-aware date grid with single, multiple and range selection.',
     ['Calendar'],
-    ['button', 'calendar-utils'],
+    ['button', 'calendar-utils', 'collection'],
   ),
   component(
     'carousel',
     'Carousel',
     'A scroll-snap carousel with keyboard navigation and a slide index.',
     ['Carousel', 'CarouselContent', 'CarouselItem', 'CarouselPrevious', 'CarouselNext'],
-    ['button'],
+    ['button', 'collection'],
   ),
   component('chart', 'Chart', 'Accessible SVG bar, line, area and pie charts.'),
   component(
@@ -400,11 +400,13 @@ export const registry: readonly RegistryItem[] = [
     'Accessible one-time password input with copy paste and autofill.',
     ['InputOTP', 'InputOTPGroup', 'InputOTPSlot', 'InputOTPSeparator'],
   ),
-  component('resizable', 'Resizable', 'Resizable panel groups and layouts with keyboard support.', [
-    'ResizablePanelGroup',
-    'ResizablePanel',
-    'ResizableHandle',
-  ]),
+  component(
+    'resizable',
+    'Resizable',
+    'Resizable panel groups and layouts with keyboard support.',
+    ['ResizablePanelGroup', 'ResizablePanel', 'ResizableHandle'],
+    ['collection'],
+  ),
   component('scroll-area', 'Scroll Area', 'A scrollable region with slim, themed scrollbars.', [
     'ScrollArea',
     'ScrollBar',
@@ -607,6 +609,12 @@ export const registry: readonly RegistryItem[] = [
       'MessageScrollerButton',
     ],
     ['button'],
+  ),
+  component(
+    'direction',
+    'Direction',
+    'Sets the text direction, left to right or right to left, for the components inside it.',
+    ['DirectionProvider'],
   ),
 ];
 
