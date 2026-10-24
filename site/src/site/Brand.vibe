@@ -2,4 +2,4 @@
 import logo from '../assets/vibecn-logo.webp';
 const { compact = false } = defineProps<{ compact?: boolean }>();
 </script>
-<template><span class="inline-flex items-center gap-2.5"><img :src="logo" alt="" width="32" height="32" class="size-8 shrink-0 dark:invert" decoding="async" /><span v-if="!compact" class="text-[1.2rem] font-bold tracking-[-0.065em]">vibecn.</span></span></template>
+<template><span class="inline-flex items-center gap-2.5"><img :src="logo" alt="" width="32" height="32" class="size-8 shrink-0" decoding="async" /><span v-if="!compact" class="text-[1.2rem] font-bold tracking-[-0.065em]">vibecn.</span></span></template>
