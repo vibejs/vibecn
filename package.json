@@ -59,6 +59,7 @@
     "@types/node": "catalog:",
     "@usevibejs/compiler": "catalog:",
     "@usevibejs/language-tools": "catalog:",
+    "@usevibejs/table": "catalog:",
     "@usevibejs/ui": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "clsx": "catalog:",
