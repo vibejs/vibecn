@@ -81,3 +81,5 @@ Releases use changesets and `.github/workflows/release.yml`, which publishes to 
 ## License
 
 MIT. See [LICENSE](LICENSE), [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) and the upstream revision recorded there. Source installation includes both project and upstream MIT notices in `vibecn.LICENSE`.
+
+The `data-table` registry item adds a VibeTable-powered composition with native reactivity, typed `.vibe` cells, sorting, faceted filters, pagination, selection and column controls. Install with `vibecn add data-table`; the CLI reports the adapter dependency and copies editable source with the existing primitives. See the Data Table documentation for the working payments example.

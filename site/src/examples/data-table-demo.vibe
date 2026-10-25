@@ -1,56 +1,190 @@
 <script setup lang="ts">
-import { computed, ref, watch } from '@usevibejs/ui';
+import { computed, ref, shallowRef } from '@usevibejs/ui';
+import { componentRenderer, useTable } from '@usevibejs/table';
 import Button from '@/components/ui/Button.vibe';
-import Checkbox from '@/components/ui/Checkbox.vibe';
-import DropdownMenu from '@/components/ui/DropdownMenu.vibe';
-import DropdownMenuCheckboxItem from '@/components/ui/DropdownMenuCheckboxItem.vibe';
-import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vibe';
-import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vibe';
-import Input from '@/components/ui/Input.vibe';
-import Table from '@/components/ui/Table.vibe';
-import TableBody from '@/components/ui/TableBody.vibe';
-import TableCaption from '@/components/ui/TableCaption.vibe';
-import TableCell from '@/components/ui/TableCell.vibe';
-import TableHead from '@/components/ui/TableHead.vibe';
-import TableHeader from '@/components/ui/TableHeader.vibe';
-import TableRow from '@/components/ui/TableRow.vibe';
-
-const rows = [
-  { id: 'p1', email: 'alex@example.com', status: 'Success', amount: 316 },
-  { id: 'p2', email: 'blair@example.com', status: 'Success', amount: 242 },
-  { id: 'p3', email: 'casey@example.com', status: 'Processing', amount: 837 },
-  { id: 'p4', email: 'drew@example.com', status: 'Success', amount: 874 },
-  { id: 'p5', email: 'ellis@example.com', status: 'Failed', amount: 721 },
-  { id: 'p6', email: 'frankie@example.com', status: 'Processing', amount: 150 },
-  { id: 'p7', email: 'gray@example.com', status: 'Success', amount: 529 },
-];
-const filter = ref('');
-const ascending = ref(true);
-const page = ref(0);
-const selected = ref<string[]>([]);
-const showStatus = ref(true);
-const showAmount = ref(true);
-const pageSize = 3;
-const filtered = computed(() => rows.filter((row) => row.email.toLowerCase().includes(filter.value.toLowerCase())).sort((a, b) => (ascending.value ? 1 : -1) * a.email.localeCompare(b.email)));
-const pageCount = computed(() => Math.max(1, Math.ceil(filtered.value.length / pageSize)));
-const visible = computed(() => filtered.value.slice(page.value * pageSize, (page.value + 1) * pageSize));
-const allChecked = computed(() => visible.value.length > 0 && visible.value.every((row) => selected.value.includes(row.id)));
-const someChecked = computed(() => visible.value.some((row) => selected.value.includes(row.id)) && !allChecked.value);
-const selectedCount = computed(() => filtered.value.filter((row) => selected.value.includes(row.id)).length);
-watch(filter, () => { page.value = 0; });
-watch(ascending, () => { page.value = 0; });
-function selectRow(id: string, checked: boolean): void { selected.value = checked ? [...new Set([...selected.value, id])] : selected.value.filter((value) => value !== id); }
-function selectPage(checked: boolean): void { for (const row of visible.value) selectRow(row.id, checked); }
-const money = (value: number): string => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+import DataTable from '@/components/ui/DataTable.vibe';
+import DataTableToolbar from '@/components/ui/DataTableToolbar.vibe';
+import DataTablePagination from '@/components/ui/DataTablePagination.vibe';
+import DataTableFacetedFilter from '@/components/ui/DataTableFacetedFilter.vibe';
+import DataTableSelectionActions from '@/components/ui/DataTableSelectionActions.vibe';
+import SelectionHeader from './payments/SelectionHeader.vibe';
+import SelectionCell from './payments/SelectionCell.vibe';
+import CustomerCell from './payments/CustomerCell.vibe';
+import StatusCell from './payments/StatusCell.vibe';
+import AmountCell from './payments/AmountCell.vibe';
+import ActionsCell from './payments/ActionsCell.vibe';
+import {
+  initialPayments,
+  paymentColumns as helper,
+  paymentFeatures,
+  formatMoney,
+} from './payments/model.ts';
+const rows = shallowRef(initialPayments);
+const density = ref<'compact' | 'comfortable'>('comfortable');
+const feedback = ref('');
+const columns = helper.columns([
+  helper.display({
+    id: 'select',
+    size: 48,
+    minSize: 48,
+    maxSize: 48,
+    enableHiding: false,
+    enableResizing: false,
+    header: componentRenderer(SelectionHeader),
+    cell: componentRenderer(SelectionCell),
+  }),
+  helper.accessor('id', { header: 'Payment', size: 125, cell: (context) => context.getValue() }),
+  helper.accessor('email', {
+    header: 'Customer',
+    size: 260,
+    sortFn: 'text',
+    filterFn: 'includesString',
+    cell: componentRenderer(CustomerCell),
+  }),
+  helper.accessor('status', {
+    header: 'Status',
+    size: 140,
+    cell: componentRenderer(StatusCell),
+    filterFn: (row, id, values: string[]) => values.includes(row.getValue<string>(id)),
+  }),
+  helper.accessor('amount', {
+    header: 'Amount',
+    size: 140,
+    sortFn: 'basic',
+    cell: componentRenderer(AmountCell),
+  }),
+  helper.accessor('date', {
+    header: 'Date',
+    size: 145,
+    sortFn: 'datetime',
+    cell: (context) =>
+      new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).format(context.getValue()),
+  }),
+  helper.display({
+    id: 'actions',
+    header: 'Actions',
+    size: 70,
+    enableHiding: false,
+    enableResizing: false,
+    cell: componentRenderer(ActionsCell),
+  }),
+]);
+function updateStatus(ids: string[], status: 'Paid' | 'Refunded'): void {
+  rows.value = rows.value.map((row) => (ids.includes(row.id) ? { ...row, status } : row));
+  feedback.value = `${ids.length} payment${ids.length === 1 ? '' : 's'} ${status === 'Paid' ? 'marked as paid' : 'refunded'}.`;
+}
+const table = useTable({
+  features: paymentFeatures,
+  data: rows,
+  columns,
+  getRowId: (row) => row.id,
+  columnResizeMode: 'onEnd',
+  initialState: { pagination: { pageIndex: 0, pageSize: 5 } },
+  meta: {
+    markPaid: (id) => updateStatus([id], 'Paid'),
+    refund: (id) => updateStatus([id], 'Refunded'),
+    remove: (id) => {
+      rows.value = rows.value.filter((row) => row.id !== id);
+      table.resetRowSelection();
+      feedback.value = `${id} removed.`;
+    },
+  },
+});
+const paid = computed(() => rows.value.filter((row) => row.status === 'Paid'));
+const total = computed(() => paid.value.reduce((sum, row) => sum + row.amount, 0));
+const csv = computed(
+  () =>
+    'data:text/csv;charset=utf-8,' +
+    encodeURIComponent(
+      [
+        'ID,Customer,Status,Amount',
+        ...table
+          .getFilteredRowModel()
+          .rows.map((row) =>
+            [row.original.id, row.original.email, row.original.status, row.original.amount].join(
+              ',',
+            ),
+          ),
+      ].join('\n'),
+    ),
+);
+function markSelected(): void {
+  updateStatus(table.getSelectedRowIds(), 'Paid');
+  table.resetRowSelection();
+}
 </script>
 <template>
-  <div class="w-full min-w-0 space-y-4">
-    <div class="flex gap-2"><Input v-model="filter" aria-label="Filter emails" placeholder="Filter emails..." class="max-w-sm" /><DropdownMenu><DropdownMenuTrigger variant="outline">Columns</DropdownMenuTrigger><DropdownMenuContent align="end" aria-label="Visible columns"><DropdownMenuCheckboxItem v-model:checked="showStatus" @select="$event.preventDefault()">Status</DropdownMenuCheckboxItem><DropdownMenuCheckboxItem v-model:checked="showAmount" @select="$event.preventDefault()">Amount</DropdownMenuCheckboxItem></DropdownMenuContent></DropdownMenu></div>
-    <div class="rounded-md border"><Table>
-      <TableCaption class="sr-only">Payments</TableCaption>
-      <TableHeader><TableRow><TableHead><Checkbox :model-value="allChecked" :indeterminate="someChecked" :disabled="!visible.length" aria-label="Select all rows on this page" @update:model-value="selectPage" /></TableHead><TableHead v-if="showStatus" scope="col">Status</TableHead><TableHead scope="col" :aria-sort="ascending ? 'ascending' : 'descending'"><Button variant="ghost" class="-ml-3" @click="ascending = !ascending">Email {{ ascending ? '↑' : '↓' }}</Button></TableHead><TableHead v-if="showAmount" scope="col" class="text-right">Amount</TableHead></TableRow></TableHeader>
-      <TableBody><TableRow v-for="row in visible" :key="row.id" :data-state="selected.includes(row.id) ? 'selected' : undefined"><TableCell><Checkbox :model-value="selected.includes(row.id)" :aria-label="'Select ' + row.email" @update:model-value="selectRow(row.id, $event)" /></TableCell><TableCell v-if="showStatus">{{ row.status }}</TableCell><TableCell>{{ row.email }}</TableCell><TableCell v-if="showAmount" class="text-right font-medium">{{ money(row.amount) }}</TableCell></TableRow><TableRow v-if="!visible.length"><TableCell :colspan="2 + Number(showStatus) + Number(showAmount)" class="h-24 text-center">No results.</TableCell></TableRow></TableBody>
-    </Table></div>
-    <div class="flex flex-wrap items-center justify-between gap-3 text-sm"><p aria-live="polite" class="text-muted-foreground">{{ selectedCount }} of {{ filtered.length }} row(s) selected.</p><div class="flex items-center gap-2"><span>Page {{ page + 1 }} of {{ pageCount }}</span><Button variant="outline" size="sm" :disabled="page === 0" @click="page--">Previous</Button><Button variant="outline" size="sm" :disabled="page + 1 >= pageCount" @click="page++">Next</Button></div></div>
-  </div>
+  <section aria-label="Payments dashboard" class="w-full min-w-0 space-y-5">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div class="mb-1 flex items-center gap-2">
+          <h2 class="text-lg font-semibold tracking-tight">Payments</h2>
+          <span
+            class="rounded-md border bg-muted px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground"
+            >{{ rows.length }}</span
+          >
+        </div>
+        <p class="text-sm text-muted-foreground">A clear view of every customer payment.</p>
+      </div>
+      <a
+        :href="csv"
+        download="payments.csv"
+        class="inline-flex h-8 items-center gap-2 rounded-md border bg-background px-3 text-xs font-medium shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+        >↓ Export payments</a
+      >
+    </div>
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div class="rounded-lg border bg-muted/20 px-4 py-3">
+        <p class="text-xs text-muted-foreground">Collected</p>
+        <p class="mt-1 font-mono text-xl font-semibold tracking-tight tabular-nums">
+          {{ formatMoney(total) }}
+        </p>
+      </div>
+      <div class="rounded-lg border bg-muted/20 px-4 py-3">
+        <p class="text-xs text-muted-foreground">Successful payments</p>
+        <p class="mt-1 font-mono text-xl font-semibold tabular-nums">
+          {{ paid.length
+          }}<span class="ml-2 font-sans text-xs font-normal text-muted-foreground"
+            >of {{ rows.length }} payments</span
+          >
+        </p>
+      </div>
+      <div class="rounded-lg border bg-muted/20 px-4 py-3">
+        <p class="text-xs text-muted-foreground">Processing</p>
+        <p class="mt-1 font-mono text-xl font-semibold tabular-nums">
+          {{ rows.filter((row) => row.status === 'Processing').length }}
+        </p>
+      </div>
+    </div>
+    <DataTableToolbar :table="table" placeholder="Search payments..." label="Search payments"
+      ><template #filters
+        ><DataTableFacetedFilter
+          :column="table.getColumn('status')!"
+          title="Status"
+          :options="
+            ['Paid', 'Processing', 'Failed', 'Refunded'].map((value) => ({ value, label: value }))
+          " /></template
+      ><template #actions
+        ><Button
+          variant="ghost"
+          size="sm"
+          @click="density = density === 'compact' ? 'comfortable' : 'compact'"
+          >{{ density === 'compact' ? 'Comfortable rows' : 'Compact rows' }}</Button
+        ></template
+      ></DataTableToolbar
+    >
+    <DataTableSelectionActions :table="table"
+      ><Button variant="outline" size="sm" @click="markSelected"
+        >Mark as paid</Button
+      ></DataTableSelectionActions
+    >
+    <DataTable :table="table" caption="Customer payments" :density="density" />
+    <DataTablePagination :table="table" :page-sizes="[5, 10, 20, 50]" />
+    <p v-if="feedback" role="status" class="text-xs text-muted-foreground">{{ feedback }}</p>
+  </section>
 </template>
