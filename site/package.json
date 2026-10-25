@@ -5,6 +5,7 @@
   "dependencies": {
     "@fontsource-variable/geist": "catalog:",
     "@fontsource-variable/geist-mono": "catalog:",
+    "@usevibejs/form": "catalog:",
     "@usevibejs/table": "catalog:",
     "@usevibejs/ui": "catalog:",
     "clsx": "catalog:",
