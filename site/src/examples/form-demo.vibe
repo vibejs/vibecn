@@ -1,0 +1,37 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import { useField, useForm } from '@usevibejs/form';
+import Checkbox from '@/components/ui/Checkbox.vibe';
+import FormErrorSummary from '@/components/ui/FormErrorSummary.vibe';
+import FormField from '@/components/ui/FormField.vibe';
+import Input from '@/components/ui/Input.vibe';
+import Switch from '@/components/ui/Switch.vibe';
+
+const saved = ref('');
+const form = useForm({
+  defaultValues: { email: '', newsletter: false, alerts: true },
+  onSubmit: ({ value }) => {
+    saved.value = value.email;
+  },
+});
+const email = useField(form, 'email', {
+  validators: {
+    onBlur: ({ value }) => (value.includes('@') ? undefined : 'Enter an email'),
+  },
+});
+const newsletter = useField(form, 'newsletter');
+const alerts = useField(form, 'alerts');
+</script>
+
+<template>
+  <form class="grid max-w-sm gap-4" @submit="form.submit">
+    <FormErrorSummary :messages="form.isSubmitted && !form.isValid ? ['Check the highlighted fields.'] : []" />
+    <FormField :field="email" label="Email" description="Used for sign-in." required v-slot="{ id, invalid, describedBy }">
+      <Input :id="id" type="email" autocomplete="username" v-model="email.value" :aria-invalid="invalid || undefined" :aria-describedby="describedBy" :disabled="form.isSubmitting" @blur="email.handleBlur" />
+    </FormField>
+    <label class="flex items-center gap-2 text-sm"><Checkbox v-model="newsletter.value" /> Product newsletter</label>
+    <label class="flex items-center gap-2 text-sm"><Switch v-model="alerts.value" /> Security alerts</label>
+    <button type="submit" class="h-9 rounded-md bg-primary px-3 text-sm text-primary-foreground" :disabled="form.isSubmitting">Create account</button>
+    <p v-if="saved" role="status" class="text-sm text-muted-foreground">Saved {{ saved }}</p>
+  </form>
+</template>

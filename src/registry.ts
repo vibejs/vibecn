@@ -214,6 +214,14 @@ export const registry: readonly RegistryItem[] = [
     ],
     ['label', 'separator'],
   ),
+  {
+    name: 'form',
+    title: 'Form',
+    description: 'VibeForm bindings for labels, descriptions, errors and existing controls.',
+    files: ['lib/form.ts', 'ui/FormField.vibe', 'ui/FormErrorSummary.vibe'],
+    registryDependencies: ['utils', 'field'],
+    dependencies: ['@usevibejs/form@0.1.0'],
+  },
   component(
     'input-group',
     'Input Group',

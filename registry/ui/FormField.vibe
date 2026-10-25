@@ -1,0 +1,47 @@
+<!-- Adapted for VibeForm. Field primitives remain the shadcn/ui port. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { controlIds, controlProps, fieldErrorItems } from '@usevibejs/form';
+import { cn } from '__VIBECN_UTILS__';
+import Field from './Field.vibe';
+import FieldDescription from './FieldDescription.vibe';
+import FieldError from './FieldError.vibe';
+import FieldLabel from './FieldLabel.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  field,
+  label,
+  description = '',
+  required = false,
+  disabled = false,
+} = defineProps<{
+  class?: ClassValue;
+  field: { name: string; invalid: boolean; messages: readonly string[] };
+  label: string;
+  description?: string;
+  required?: boolean;
+  disabled?: boolean;
+}>();
+defineSlots<{
+  default?: (props: { id: string; invalid: boolean; describedBy: string | undefined }) => unknown;
+}>();
+
+const ids = controlIds(useId() || field.name);
+const describedBy = computed(
+  () => controlProps(field, ids, { required, described: description.length > 0 })['aria-describedby'],
+);
+const errors = computed(() => fieldErrorItems(field.messages));
+</script>
+
+<template>
+  <Field :data-invalid="field.invalid || undefined" :data-disabled="disabled || undefined" :class="cn(className)">
+    <FieldLabel :for="ids.input">{{ label }}<span v-if="required" aria-hidden="true"> *</span></FieldLabel>
+    <slot :id="ids.input" :invalid="field.invalid" :describedBy="describedBy" />
+    <FieldDescription v-if="description" :id="ids.description">{{ description }}</FieldDescription>
+    <FieldError v-if="field.invalid" :id="ids.error" :errors="errors" />
+  </Field>
+</template>
