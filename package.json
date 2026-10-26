@@ -1,6 +1,6 @@
 {
   "name": "@usevibejs/vibecn",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An independent port of shadcn/ui components for vibe.js, distributed as source code.",
   "keywords": [
     "cli",
