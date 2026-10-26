@@ -81,6 +81,8 @@ it('switches the homepage showcase screens and previews other themes', async () 
       .last()
       .evaluate((element) => getComputedStyle(element).getPropertyValue('--primary').trim()),
   ).not.toBe(primary);
+  // A click while the list is still closing only dismisses it, so wait until it is gone.
+  await list.waitFor({ state: 'hidden' });
   await showcase.getByRole('tab', { name: 'Chat' }).click();
   await showcase.getByText('A new idea for the homepage', { exact: true }).waitFor();
 });
