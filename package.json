@@ -58,6 +58,7 @@
     "@tailwindcss/vite": "catalog:",
     "@types/node": "catalog:",
     "@usevibejs/compiler": "catalog:",
+    "@usevibejs/dnd": "catalog:",
     "@usevibejs/form": "catalog:",
     "@usevibejs/language-tools": "catalog:",
     "@usevibejs/table": "catalog:",

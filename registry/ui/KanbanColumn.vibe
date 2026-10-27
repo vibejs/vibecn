@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import { useDroppable } from '@usevibejs/dnd';
+import type { KanbanColumn } from '__VIBECN_LIB__/dnd.ts';
+import SortableItem from './SortableItem.vibe';
+import Badge from './Badge.vibe';
+import Empty from './Empty.vibe';
+const props=defineProps<{column:KanbanColumn}>();
+const element=useTemplateRef<HTMLElement>('element');
+const drop=useDroppable({id:()=>`container:${props.column.id}`,group:()=>props.column.id,index:()=>props.column.items.length,element,accept:'vibecn:item',collisionPriority:0});
+</script>
+<template><section ref="element" data-slot="kanban-column" :data-over="drop.isOver.value" class="w-72 shrink-0 rounded-xl border bg-muted/40 p-3 data-[over=true]:outline-2 data-[over=true]:outline-ring"><header class="mb-4 flex items-center justify-between px-1"><h3 class="text-sm font-semibold">{{ column.title }}</h3><Badge variant="secondary">{{ column.items.length }}</Badge></header><ul class="flex min-h-24 flex-col gap-2"><SortableItem v-for="(item,index) in column.items" :key="item.id" :item="item" :index="index" :group="column.id"/></ul><Empty v-if="!column.items.length" class="p-4 text-sm">Move a card here</Empty></section></template>

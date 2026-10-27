@@ -1,0 +1,10 @@
+<script setup lang="ts">
+import { useTemplateRef, type ClassValue } from '@usevibejs/ui';
+import { useDroppable, type Identifier, type Type } from '@usevibejs/dnd';
+import { cn } from '__VIBECN_UTILS__';
+const props=defineProps<{id:Identifier;accept?:Type|Type[];disabled?:boolean;class?:ClassValue}>();
+defineSlots<{default?:(props:{isOver:boolean;isEligible:boolean})=>unknown}>();
+const element=useTemplateRef<HTMLElement>('element');
+const drop=useDroppable({id:()=>props.id,element,accept:source=>props.accept===undefined || (Array.isArray(props.accept) ? props.accept.includes(source.type!) : props.accept===source.type),disabled:()=>props.disabled ?? false});
+</script>
+<template><div ref="element" data-slot="drop-zone" :data-over="drop.isOver.value" :data-eligible="drop.isEligible.value" :class="cn('flex min-h-32 items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/20 p-6 text-sm text-muted-foreground data-[over=true]:border-ring data-[over=true]:bg-accent',props.class)"><slot :isOver="drop.isOver.value" :isEligible="drop.isEligible.value">Move an item here</slot></div></template>

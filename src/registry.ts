@@ -24,6 +24,41 @@ const component = (
 
 export const registry: readonly RegistryItem[] = [
   {
+    name: 'dnd-types',
+    title: 'Drag and drop types',
+    description: 'Types for copy-and-own drag and drop compositions.',
+    files: ['lib/dnd.ts'],
+    registryDependencies: [],
+    dependencies: ['@usevibejs/dnd@0.1.0'],
+  },
+  component('drag-handle', 'DragHandle', 'A keyboard-accessible native drag handle.'),
+  component(
+    'sortable-list',
+    'SortableList',
+    'A controlled sortable list powered by VibeDND.',
+    ['SortableList', 'SortableItem'],
+    ['dnd-types', 'drag-handle'],
+  ),
+  component(
+    'sortable-grid',
+    'SortableGrid',
+    'A controlled sortable grid.',
+    ['SortableGrid'],
+    ['sortable-list'],
+  ),
+  component(
+    'kanban-board',
+    'KanbanBoard',
+    'Controlled Kanban columns and immutable card transfers.',
+    ['KanbanBoard', 'KanbanColumn'],
+    ['sortable-list', 'badge', 'card', 'empty'],
+  ),
+  {
+    ...component('drop-zone', 'DropZone', 'An eligible drag target with explicit type acceptance.'),
+    dependencies: ['@usevibejs/dnd@0.1.0'],
+  },
+
+  {
     name: 'utils',
     title: 'Class utilities',
     description: 'Conditional classes with Tailwind conflict resolution.',

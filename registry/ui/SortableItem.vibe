@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import { useSortable } from '@usevibejs/dnd';
+import type { SortableEntry } from '__VIBECN_LIB__/dnd.ts';
+import DragHandle from './DragHandle.vibe';
+const props=defineProps<{item:SortableEntry;index:number;group:string;disabled?:boolean}>();
+defineSlots<{default?:(props:{item:SortableEntry})=>unknown}>();
+const element=useTemplateRef<HTMLElement>('element');
+const handle=useTemplateRef<{element:HTMLButtonElement|null}>('handle');
+const drag=useSortable({id:()=>props.item.id,index:()=>props.index,group:()=>props.group,element,handle:()=>handle.value?.element,disabled:()=>props.disabled || !!props.item.disabled,data:()=>props.item,type:'vibecn:item',accept:'vibecn:item'});
+</script>
+<template><li ref="element" data-slot="sortable-item" :data-dragging="drag.isDragging.value" :data-over="drag.isOver.value" class="flex items-center gap-2 rounded-lg border bg-card p-3 text-card-foreground shadow-xs data-[dragging=true]:opacity-40 data-[over=true]:outline-2 data-[over=true]:outline-ring"><DragHandle ref="handle" :label="'Move '+item.label" :disabled="disabled || item.disabled"/><slot :item="item"><span>{{ item.label }}</span></slot></li></template>

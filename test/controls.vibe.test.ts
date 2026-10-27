@@ -170,7 +170,9 @@ describe('every component', () => {
   // Roots render only their slot, and parts that read their root's state, directly or through
   // another part, are covered with their root.
   const contextual = new Set(
-    Object.keys(sources).filter((path) => /\b(inject|provide)\w*[<(]/.test(sources[path])),
+    Object.keys(sources).filter((path) =>
+      /\b(inject|provide|useSortable|useDroppable|useForm)\w*[<(]/.test(sources[path]),
+    ),
   );
   for (let grew = true; grew;) {
     grew = false;
@@ -191,6 +193,11 @@ describe('every component', () => {
   it.each(elementRenderers)('%s renders with its documented inputs', (path, module) => {
     const props: Record<string, unknown> = { class: 'custom-class' };
     if (path.endsWith('/DataTableLoadingState.vibe')) props.columns = 2;
+    if (path.endsWith('/FormField.vibe')) {
+      props.field = { name: 'title', invalid: false, messages: [] };
+      props.label = 'Title';
+    }
+    if (path.endsWith('/FormErrorSummary.vibe')) props.messages = ['Required'];
     if (
       path.endsWith('/DataTablePagination.vibe') ||
       path.endsWith('/DataTableSelectionActions.vibe')

@@ -46,3 +46,15 @@ const email = useField(form, 'email', {
 ```
 
 VibeForm remains headless. This registry item does not store field values.
+
+## API Reference
+
+| Export             | Inputs                                                                                                                               | Result                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| `FormField`        | Required `field` with `name`, `invalid` and `messages`; required `label`; optional `description`, `required`, `disabled` and `class` | Label, description and error markup; default slot receives `id`, `invalid` and `describedBy`. |
+| `FormErrorSummary` | Optional `messages` and `class`                                                                                                      | An alert when messages exist; exposes `focus()`.                                              |
+| `useFormControl`   | A field and optional `{ required, described }` options                                                                               | Stable `ids`, computed `inputProps` and computed `errors`. Call during component setup.       |
+
+## Accessibility
+
+Pass the slot's `id`, `invalid` and `describedBy` values to the actual control so its label and validation messages remain associated. `required` and `disabled` on FormField describe the surrounding field; apply the corresponding native properties to the input as needed. FormErrorSummary exposes a focus method for submission failures and renders nothing when its message array is empty.

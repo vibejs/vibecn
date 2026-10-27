@@ -4,6 +4,7 @@ packages:
 
 catalogMode: strict
 catalog:
+  '@usevibejs/dnd': 0.1.0
   '@usevibejs/form': 0.1.0
   '@usevibejs/table': 0.1.0
   '@changesets/cli': 3.0.3
@@ -38,5 +39,6 @@ minimumReleaseAgeExclude:
   - '@usevibejs/ui@0.1.0'
 
 overrides:
+  '@usevibejs/dnd': link:../vibednd
   '@usevibejs/form': link:../vibeform
   '@usevibejs/table': link:../vibetable

@@ -1,0 +1,13 @@
+<script setup lang="ts">
+import { computed } from '@usevibejs/ui';
+import { useDnd, useSortableList } from '@usevibejs/dnd';
+import type { SortableEntry } from '__VIBECN_LIB__/dnd.ts';
+import SortableItem from './SortableItem.vibe';
+const items=defineModel<SortableEntry[]>({default:()=>[]});
+const {group='items',orientation='vertical',disabled=false}=defineProps<{group?:string;orientation?:'vertical'|'horizontal'|'grid';disabled?:boolean}>();
+defineSlots<{item?:(props:{item:SortableEntry})=>unknown}>();
+const context=useDnd();
+const model=computed({get:()=>items.value,set:(value:readonly SortableEntry[])=>{items.value=[...value]}});
+useSortableList({model,getId:item=>item.id,group,context});
+</script>
+<template><ul data-slot="sortable-list" :class="orientation==='grid' ? 'grid grid-cols-2 gap-3 sm:grid-cols-3' : orientation==='horizontal' ? 'flex gap-3 overflow-x-auto' : 'flex flex-col gap-2'"><SortableItem v-for="(item,index) in items" :key="item.id" :item="item" :index="index" :group="group" :disabled="disabled"><template #default="{item}"><slot name="item" :item="item">{{ item.label }}</slot></template></SortableItem></ul></template>

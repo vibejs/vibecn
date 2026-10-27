@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import {ref} from '@usevibejs/ui';
+import type {SortableEntry} from '@/lib/dnd.ts';
+import SortableGrid from '@/components/ui/SortableGrid.vibe';
+const items=ref<SortableEntry[]>([{id:'one',label:'Revenue'},{id:'two',label:'Retention'},{id:'three',label:'Activity'},{id:'four',label:'Sessions'}]);
+</script>
+<template><SortableGrid v-model="items" class="w-full max-w-lg"/></template>
