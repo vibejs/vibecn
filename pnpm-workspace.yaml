@@ -37,8 +37,4 @@ minimumReleaseAgeExclude:
   - '@usevibejs/errors@0.1.0'
   - '@usevibejs/language-tools@0.1.0'
   - '@usevibejs/ui@0.1.0'
-
-overrides:
-  '@usevibejs/dnd': link:../vibednd
-  '@usevibejs/form': link:../vibeform
-  '@usevibejs/table': link:../vibetable
+  - '@usevibejs/dnd@0.1.0'
