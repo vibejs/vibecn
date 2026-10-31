@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import {ref} from '@usevibejs/ui';
+import type {KanbanColumn} from '@/lib/dnd.ts';
+import KanbanBoard from '@/components/ui/KanbanBoard.vibe';
+const columns=ref<KanbanColumn[]>([{id:'todo',title:'To do',items:[{id:'task-a',label:'Design the interaction'},{id:'task-b',label:'Test the keyboard flow'}]},{id:'done',title:'Done',items:[]}]);
+</script>
+<template><KanbanBoard v-model="columns" class="w-full"/></template>

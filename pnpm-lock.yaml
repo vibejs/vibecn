@@ -207,7 +207,16 @@ catalogs:
     '@usevibejs/compiler':
       specifier: 0.1.0
       version: 0.1.0
+    '@usevibejs/dnd':
+      specifier: 0.1.0
+      version: 0.1.0
+    '@usevibejs/form':
+      specifier: 0.1.0
+      version: 0.1.0
     '@usevibejs/language-tools':
+      specifier: 0.1.0
+      version: 0.1.0
+    '@usevibejs/table':
       specifier: 0.1.0
       version: 0.1.0
     '@usevibejs/ui':
@@ -276,9 +285,18 @@ importers:
       '@usevibejs/compiler':
         specifier: 'catalog:'
         version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
+      '@usevibejs/dnd':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
+      '@usevibejs/form':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
       '@usevibejs/language-tools':
         specifier: 'catalog:'
         version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
+      '@usevibejs/table':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
       '@usevibejs/ui':
         specifier: 'catalog:'
         version: 0.1.0(vitest@5.0.5)
@@ -327,6 +345,15 @@ importers:
       '@fontsource-variable/geist-mono':
         specifier: 'catalog:'
         version: 5.3.0
+      '@usevibejs/dnd':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
+      '@usevibejs/form':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
+      '@usevibejs/table':
+        specifier: 'catalog:'
+        version: 0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))
       '@usevibejs/ui':
         specifier: 'catalog:'
         version: 0.1.0(vitest@5.0.5)
@@ -489,6 +516,24 @@ packages:
   '@csstools/css-tokenizer@4.0.2':
     resolution: {integrity: sha512-OoKoR0f76dCY666JlcbhmVTs2drYj1GUXZTYTcbUgJjh9Nv41aFfZ21bPQTERm5+L5cBDo466NltB2lplS5GBw==}
     engines: {node: '>=20.19.0'}
+
+  '@dnd-kit/abstract@0.5.1':
+    resolution: {integrity: sha512-XI13sUYRvRgggMocjHlQhLRgENm/2GF94KF7mk+c0uxse7sbn75r0BgxoNPDlzLTDPWx6PkS0YHoeXN9JWhnOA==}
+
+  '@dnd-kit/collision@0.5.1':
+    resolution: {integrity: sha512-exQmBlWWQ6calIup4KNQudiEF8Do61Lpzw/F0M3UOhqdKi9dx0ZXGf+qfdfmew8rJzPMj3MzKeGqNMEbCKA22g==}
+
+  '@dnd-kit/dom@0.5.1':
+    resolution: {integrity: sha512-r7/l4D+nsH1mFXWkplXCkZC9JlY7UjxsVuTu4yCqzC00XgX+SXiK3Oazp42KKG3mshfBNVtm15BI9rKNlkw2fA==}
+
+  '@dnd-kit/geometry@0.5.1':
+    resolution: {integrity: sha512-7X/Ro2U5qW96SihIukMitnc3pYc5n/PmHmJ28oApLBIJRfLxPLgrL6X0ZbQT7qUEfdUIqXnehobJ3jXAc4hdAA==}
+
+  '@dnd-kit/helpers@0.5.1':
+    resolution: {integrity: sha512-/nH5fpWuQmmc2FlwNAlxgZVQfAiMHeh+riGUZS69vj1Oq/MPc98APHgvjsVy7rN9MFd1XCgGYVcmb2pKvfYzNA==}
+
+  '@dnd-kit/state@0.5.1':
+    resolution: {integrity: sha512-SN0BZ0d/ob9dK8sTqk/0z3eNBWV6xPSrLbHUBbiCo9Sj3xfhPFk6ej2oZpDcqk7LWaujT57ocgdtznY7wQ2yFw==}
 
   '@exodus/bytes@1.16.0':
     resolution: {integrity: sha512-IcpW84uEn3N7ETtNZMlxKhfl6Pec8rUNGOTBtWbK1FKhJxIFAptZyVrvVRVBimAJxJCgc3PxepxkdWWG4DVzfA==}
@@ -909,6 +954,9 @@ packages:
     resolution: {integrity: sha512-pOr5+q1fLYKwFN3LAJuGZEnfXDcQ73zqgDHMtGy+K+uIoUqyY+6MeDCWFwfu+4EFuq76I5EPFofoNAI+Bmmq4A==}
     engines: {node: '>=22.13'}
 
+  '@preact/signals-core@1.14.5':
+    resolution: {integrity: sha512-vcRv7Ityz5JVmeiVqIluLFzT/PDS/AlhHUpw3/aUWqcVUs6bDGIPXE/6RSC4evBNWYvnniozg5Syfj33al3gkg==}
+
   '@quansync/fs@1.1.0':
     resolution: {integrity: sha512-qAPG/t3HqML1TlN7sY/pTbEjzFVAKsMjNNMGheyDosro+kT4iw2KCUoHcVdmliwWjorm4elZbgNQyU2eD97eDg==}
 
@@ -1136,6 +1184,25 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
 
+  '@tanstack/devtools-event-client@0.4.4':
+    resolution: {integrity: sha512-6T5Yop/793YI+H+5J8Hsyj4kCih9sl4t3ElLgKioW5hk3ocn+ZdSJ94tT7vL7uabxSugWYBZlOTMPzEw2puvQw==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  '@tanstack/form-core@1.33.5':
+    resolution: {integrity: sha512-3dfx9MBP0aq5sXKteikG629X9oviptrQj0IFRk9YGcb+lB7Kv5x8S17oOSk1wUWgjQZ4xVJEMbKwOAODymocgA==}
+
+  '@tanstack/pacer-lite@0.1.1':
+    resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
+    engines: {node: '>=18'}
+
+  '@tanstack/store@0.11.2':
+    resolution: {integrity: sha512-sJ4mjol8uQsHV0gOJzzjwXfh2Fwm+Sz0+8deqiTm4jGbMdjzNSW+xZCFm0kUa870uhd8yi+DpKnZb5Kc4apa0Q==}
+
+  '@tanstack/table-core@9.3.1':
+    resolution: {integrity: sha512-zQvlxSNi2qGM3L4jh85Z6hqMfdIR5qOfD9KHOU32nuKFJGN0RlJ7UvV1lsPb1fPVhpFYI0VP3jJGxLdLDpTKjQ==}
+    engines: {node: '>=20'}
+
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
@@ -1334,15 +1401,33 @@ packages:
       vite:
         optional: true
 
+  '@usevibejs/dnd@0.1.0':
+    resolution: {integrity: sha512-Y0G0+N2AhUHLSVromC5XXk5YlFAt1rcX9t7ZKVOH9WBlXKRxF13wZNmd8fGIFFBXvndMp7BLy90T12dQiO2kng==}
+    engines: {node: ^24.15.0 || >=26}
+    peerDependencies:
+      '@usevibejs/ui': ^0.1.0
+
   '@usevibejs/errors@0.1.0':
     resolution: {integrity: sha512-GZyeZCRMBNPvcVAEZAUHU0ft4vVlWXgrVNdecloCYs1IIUPC4kQXGimiOzi2dHvytyjBAw4QcOIMmnUI2tLRoA==}
     engines: {node: ^24.15.0 || >=26}
+
+  '@usevibejs/form@0.1.0':
+    resolution: {integrity: sha512-dm5unLRMGMRqedVeopHSYVZUPkYJY2H1dVSxR0DeGx4JK/tUuWKYC704hYdPVC4E2vfcnnLGubuF+lVyzKqhCg==}
+    engines: {node: ^24.15.0 || >=26}
+    peerDependencies:
+      '@usevibejs/ui': ^0.1.0
 
   '@usevibejs/language-tools@0.1.0':
     resolution: {integrity: sha512-WR5M7eKmr0FEICCdQHqnftm4U+7m2C+YTT7lG5a3ib8iS9KSkE39IB/5/8675xYUEkB3HX8qSrvuTKCYcoghnw==}
     engines: {node: ^24.15.0 || >=26}
     peerDependencies:
       '@usevibejs/ui': 0.1.0
+
+  '@usevibejs/table@0.1.0':
+    resolution: {integrity: sha512-CWO9gb/7erCDyCmLByBCmgWUb7SaoifGJI2Ggt5gjx3dImziakALxPMdi9I5wUCjkJPhYNP90TOoMLk1J7Rkjg==}
+    engines: {node: ^24.15.0 || >=26}
+    peerDependencies:
+      '@usevibejs/ui': ^0.1.0
 
   '@usevibejs/ui@0.1.0':
     resolution: {integrity: sha512-LzbrTAg96yZCKkkJfz1xaIB+dt2BOMgHY4z70byBHSze3g6cREpH4e7wtZ/9352DL/WvRBV6fLHVO22TA4v/Gw==}
@@ -2074,6 +2159,9 @@ packages:
       unrun:
         optional: true
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
     engines: {node: '>=16.20.0'}
@@ -2438,6 +2526,41 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.2': {}
 
+  '@dnd-kit/abstract@0.5.1':
+    dependencies:
+      '@dnd-kit/geometry': 0.5.1
+      '@dnd-kit/state': 0.5.1
+      tslib: 2.8.1
+
+  '@dnd-kit/collision@0.5.1':
+    dependencies:
+      '@dnd-kit/abstract': 0.5.1
+      '@dnd-kit/geometry': 0.5.1
+      tslib: 2.8.1
+
+  '@dnd-kit/dom@0.5.1':
+    dependencies:
+      '@dnd-kit/abstract': 0.5.1
+      '@dnd-kit/collision': 0.5.1
+      '@dnd-kit/geometry': 0.5.1
+      '@dnd-kit/state': 0.5.1
+      tslib: 2.8.1
+
+  '@dnd-kit/geometry@0.5.1':
+    dependencies:
+      '@dnd-kit/state': 0.5.1
+      tslib: 2.8.1
+
+  '@dnd-kit/helpers@0.5.1':
+    dependencies:
+      '@dnd-kit/abstract': 0.5.1
+      tslib: 2.8.1
+
+  '@dnd-kit/state@0.5.1':
+    dependencies:
+      '@preact/signals-core': 1.14.5
+      tslib: 2.8.1
+
   '@exodus/bytes@1.16.0': {}
 
   '@fontsource-variable/geist-mono@5.3.0': {}
@@ -2655,6 +2778,8 @@ snapshots:
 
   '@pnpm/deps.graph-sequencer@1100.0.1': {}
 
+  '@preact/signals-core@1.14.5': {}
+
   '@quansync/fs@1.1.0':
     dependencies:
       quansync: 1.0.0
@@ -2814,6 +2939,22 @@ snapshots:
       tailwindcss: 4.3.3
       vite: 8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)
 
+  '@tanstack/devtools-event-client@0.4.4': {}
+
+  '@tanstack/form-core@1.33.5':
+    dependencies:
+      '@tanstack/devtools-event-client': 0.4.4
+      '@tanstack/pacer-lite': 0.1.1
+      '@tanstack/store': 0.11.2
+
+  '@tanstack/pacer-lite@0.1.1': {}
+
+  '@tanstack/store@0.11.2': {}
+
+  '@tanstack/table-core@9.3.1':
+    dependencies:
+      '@tanstack/store': 0.11.2
+
   '@types/chai@5.2.3':
     dependencies:
       '@types/deep-eql': 4.0.2
@@ -2933,7 +3074,21 @@ snapshots:
       '@usevibejs/ui': 0.1.0(vitest@5.0.5)
       vite: 8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1)
 
+  '@usevibejs/dnd@0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))':
+    dependencies:
+      '@dnd-kit/abstract': 0.5.1
+      '@dnd-kit/collision': 0.5.1
+      '@dnd-kit/dom': 0.5.1
+      '@dnd-kit/helpers': 0.5.1
+      '@usevibejs/ui': 0.1.0(vitest@5.0.5)
+
   '@usevibejs/errors@0.1.0': {}
+
+  '@usevibejs/form@0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))':
+    dependencies:
+      '@tanstack/form-core': 1.33.5
+      '@tanstack/store': 0.11.2
+      '@usevibejs/ui': 0.1.0(vitest@5.0.5)
 
   '@usevibejs/language-tools@0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))(vite@8.3.4(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))':
     dependencies:
@@ -2943,6 +3098,12 @@ snapshots:
       vscode-jsonrpc: 9.0.3
     transitivePeerDependencies:
       - vite
+
+  '@usevibejs/table@0.1.0(@usevibejs/ui@0.1.0(vitest@5.0.5))':
+    dependencies:
+      '@tanstack/store': 0.11.2
+      '@tanstack/table-core': 9.3.1
+      '@usevibejs/ui': 0.1.0(vitest@5.0.5)
 
   '@usevibejs/ui@0.1.0(vitest@5.0.5)':
     dependencies:
@@ -3592,6 +3753,8 @@ snapshots:
       - '@vue/language-core'
       - oxc-resolver
       - vue-tsc
+
+  tslib@2.8.1: {}
 
   typescript@7.0.2:
     optionalDependencies:

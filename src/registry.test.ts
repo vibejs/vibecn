@@ -16,3 +16,12 @@ describe('registry dependencies', () => {
     expect(() => resolveItems(['button', '../../escape'])).toThrow('Unknown component');
   });
 });
+
+it('adds DND only to the optional DND compositions', () => {
+  const dnd = resolveItems(['sortable-list', 'sortable-grid', 'kanban-board', 'drop-zone']);
+  expect(dnd.flatMap((item) => item.dependencies)).toContain('@usevibejs/dnd@0.1.0');
+  expect(
+    resolveItems(['button', 'card', 'dialog']).flatMap((item) => item.dependencies),
+  ).not.toContain('@usevibejs/dnd@0.1.0');
+  expect(dnd.flatMap((item) => item.files)).toContain('ui/DragHandle.vibe');
+});

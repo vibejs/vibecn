@@ -24,6 +24,41 @@ const component = (
 
 export const registry: readonly RegistryItem[] = [
   {
+    name: 'dnd-types',
+    title: 'Drag and drop types',
+    description: 'Types for copy-and-own drag and drop compositions.',
+    files: ['lib/dnd.ts'],
+    registryDependencies: [],
+    dependencies: ['@usevibejs/dnd@0.1.0'],
+  },
+  component('drag-handle', 'DragHandle', 'A keyboard-accessible native drag handle.'),
+  component(
+    'sortable-list',
+    'SortableList',
+    'A controlled sortable list powered by VibeDND.',
+    ['SortableList', 'SortableItem'],
+    ['dnd-types', 'drag-handle'],
+  ),
+  component(
+    'sortable-grid',
+    'SortableGrid',
+    'A controlled sortable grid.',
+    ['SortableGrid'],
+    ['sortable-list'],
+  ),
+  component(
+    'kanban-board',
+    'KanbanBoard',
+    'Controlled Kanban columns and immutable card transfers.',
+    ['KanbanBoard', 'KanbanColumn'],
+    ['sortable-list', 'badge', 'card', 'empty'],
+  ),
+  {
+    ...component('drop-zone', 'DropZone', 'An eligible drag target with explicit type acceptance.'),
+    dependencies: ['@usevibejs/dnd@0.1.0'],
+  },
+
+  {
     name: 'utils',
     title: 'Class utilities',
     description: 'Conditional classes with Tailwind conflict resolution.',
@@ -214,6 +249,14 @@ export const registry: readonly RegistryItem[] = [
     ],
     ['label', 'separator'],
   ),
+  {
+    name: 'form',
+    title: 'Form',
+    description: 'VibeForm bindings for labels, descriptions, errors and existing controls.',
+    files: ['lib/form.ts', 'ui/FormField.vibe', 'ui/FormErrorSummary.vibe'],
+    registryDependencies: ['utils', 'field'],
+    dependencies: ['@usevibejs/form@0.1.0'],
+  },
   component(
     'input-group',
     'Input Group',
@@ -291,6 +334,33 @@ export const registry: readonly RegistryItem[] = [
     'TableCell',
     'TableCaption',
   ]),
+  {
+    name: 'data-table-utils',
+    title: 'Data Table types',
+    description: 'Feature-optional structural types for reusable VibeTable components.',
+    files: ['lib/data-table.ts'],
+    registryDependencies: [],
+    dependencies: ['@usevibejs/table@0.1.0'],
+  },
+  component(
+    'data-table',
+    'Data Table',
+    'Reactive VibeTable composition with sorting, filters, selection, pagination and custom cells.',
+    [
+      'DataTable',
+      'DataTableContent',
+      'DataTableColumnHeader',
+      'DataTablePagination',
+      'DataTableToolbar',
+      'DataTableViewOptions',
+      'DataTableRowActions',
+      'DataTableFacetedFilter',
+      'DataTableEmptyState',
+      'DataTableLoadingState',
+      'DataTableSelectionActions',
+    ],
+    ['data-table-utils', 'table', 'button', 'input', 'checkbox', 'dropdown-menu', 'skeleton'],
+  ),
   component('toggle', 'Toggle', 'A two-state button that can be either on or off.'),
   component(
     'alert-dialog',

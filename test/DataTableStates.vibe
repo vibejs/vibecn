@@ -1,0 +1,39 @@
+<script setup lang="ts">
+import {
+  useTable,
+  tableFeatures,
+  columnSizingFeature,
+  columnResizingFeature,
+} from '@usevibejs/table';
+import DataTable from '../site/src/components/ui/DataTable.vibe';
+const {
+  loading = false,
+  error,
+  empty = false,
+  density = 'comfortable',
+} = defineProps<{
+  loading?: boolean;
+  error?: string;
+  empty?: boolean;
+  density?: 'compact' | 'comfortable';
+}>();
+const table = useTable({
+  features: tableFeatures({ columnSizingFeature, columnResizingFeature }),
+  data: () => (empty ? [] : [{ id: 'a', name: 'Ada' }]),
+  columns: [{ accessorKey: 'name', header: 'Customer' }],
+  getRowId: (row) => row.id,
+});
+</script>
+<template>
+  <DataTable
+    :table="table"
+    caption="Test customers"
+    :loading="loading"
+    :error="error"
+    :density="density"
+    ><template #error><button type="button">Retry request</button></template
+    ><template #cell="{ row }"
+      ><span>{{ row.id }}</span></template
+    ></DataTable
+  >
+</template>

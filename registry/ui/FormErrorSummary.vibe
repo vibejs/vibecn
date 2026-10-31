@@ -1,0 +1,24 @@
+<!-- Adapted for VibeForm. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { useTemplateRef } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, messages = [] } = defineProps<{
+  class?: ClassValue;
+  messages?: readonly string[];
+}>();
+const summary = useTemplateRef<HTMLElement>('summary');
+defineExpose({ focus: () => summary.value?.focus() });
+</script>
+
+<template>
+  <div v-if="messages.length" ref="summary" tabindex="-1" role="alert" data-slot="form-error-summary" v-bind="$attrs" :class="cn('rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive', className)">
+    <p class="font-medium">Please fix the following:</p>
+    <ul class="mt-2 list-disc pl-5">
+      <li v-for="message in messages" :key="message">{{ message }}</li>
+    </ul>
+  </div>
+</template>

@@ -1,0 +1,4 @@
+<script setup lang="ts">
+import DragHandle from '@/components/ui/DragHandle.vibe';
+</script>
+<template><DragHandle label="Move task"/></template>

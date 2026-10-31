@@ -1,0 +1,6 @@
+<script setup lang="ts">
+import {useDnd} from '@usevibejs/dnd';
+import DropZone from '@/components/ui/DropZone.vibe';
+useDnd();
+</script>
+<template><DropZone id="demo-zone" class="w-full max-w-sm">Drop an accepted item here</DropZone></template>

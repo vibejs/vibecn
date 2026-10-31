@@ -1,0 +1,14 @@
+<script setup lang="ts">
+import {ref} from '@usevibejs/ui';
+import type {SortableEntry,KanbanColumn} from '../registry/lib/dnd.ts';
+import {useDnd} from '@usevibejs/dnd';
+import SortableList from '../site/src/components/ui/SortableList.vibe';
+import SortableGrid from '../site/src/components/ui/SortableGrid.vibe';
+import KanbanBoard from '../site/src/components/ui/KanbanBoard.vibe';
+import DropZone from '../site/src/components/ui/DropZone.vibe';
+useDnd();
+const list=ref<SortableEntry[]>([{id:'a',label:'Design'},{id:'b',label:'Build'}]);
+const grid=ref<SortableEntry[]>([{id:'c',label:'Test'},{id:'d',label:'Ship'}]);
+const columns=ref<KanbanColumn[]>([{id:'todo',title:'To do',items:[{id:'task',label:'A task'}]},{id:'done',title:'Done',items:[]}]);
+</script>
+<template><div><SortableList v-model="list"/><SortableGrid v-model="grid"/><KanbanBoard v-model="columns"/><DropZone id="destination"/></div></template>

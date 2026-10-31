@@ -388,33 +388,35 @@ describe('Sidebar', () => {
   });
 });
 
-describe('Data Table pattern', () => {
+describe('VibeTable payments dashboard', () => {
   it('filters, sorts, paginates, selects across pages and hides columns', async () => {
     const wrapper = render(DataTable);
-    expect(wrapper.findAll('tbody tr')).toHaveLength(3);
+    expect(wrapper.findAll('tbody tr')).toHaveLength(5);
     const checks = wrapper.findAll('input[type="checkbox"]');
     await checks[1].setValue(true);
     expect(checks[0].element.indeterminate).toBe(true);
     await checks[0].setValue(true);
-    expect(wrapper.text()).toContain('3 of 7 row(s) selected.');
-    const buttons = () => wrapper.findAll('button');
-    await buttons()
-      .find((button) => button.text() === 'Next')!
-      .trigger('click');
-    expect(wrapper.text()).toContain('drew@example.com');
-    expect(wrapper.text()).toContain('3 of 7 row(s) selected.');
-    await buttons()
-      .find((button) => button.text().startsWith('Email'))!
-      .trigger('click');
+    expect(wrapper.text()).toContain('5 selected');
+    await wrapper.get('[aria-label="Next page"]').trigger('click');
+    expect(wrapper.text()).toContain('natali.craig@example.com');
+    expect(wrapper.text()).toContain('5 selected');
+    const sort = wrapper
+      .findAll('[data-slot="dropdown-menu-item"]')
+      .find((item) => item.text() === 'Sort descending')!;
+    await sort.trigger('click');
     expect(wrapper.get('[aria-sort]').attributes('aria-sort')).toBe('descending');
-    expect(wrapper.text()).toContain('gray@example.com');
-    await wrapper.get('input[type="text"]').setValue('blair');
-    expect(wrapper.findAll('tbody tr')).toHaveLength(1);
-    expect(wrapper.text()).toContain('1 of 1 row(s) selected.');
-    await wrapper.get('[data-slot="dropdown-menu-checkbox-item"]').trigger('click');
-    expect(wrapper.findAll('thead th')).toHaveLength(3);
-    await wrapper.get('input[type="text"]').setValue('missing');
-    expect(wrapper.text()).toContain('No results.');
-    expect(wrapper.get('input[type="checkbox"]').element.disabled).toBe(true);
+    await wrapper.get('input[type="search"]').setValue('olivia');
+    expect(wrapper.findAll('tbody tr')).toHaveLength(3);
+    expect(wrapper.text()).toContain('olivia.rhye@example.com');
+    const hideAmount = wrapper
+      .findAll('[data-slot="dropdown-menu-checkbox-item"]')
+      .find((item) => item.text() === 'Amount')!;
+    await hideAmount.trigger('click');
+    expect(wrapper.findAll('thead th')).toHaveLength(6);
+    await wrapper.get('input[type="search"]').setValue('missing');
+    expect(wrapper.text()).toContain('No results');
+    expect(wrapper.get('[aria-label="Select all payments on this page"]').element.disabled).toBe(
+      true,
+    );
   });
 });

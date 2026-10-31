@@ -338,23 +338,23 @@ it('shows all chart types and uses themed colors', async () => {
   ).not.toBe('rgb(0, 0, 0)');
 });
 
-it('sorts, filters, selects and paginates the data table pattern', async () => {
+it('sorts, filters, selects and paginates the VibeTable payments dashboard', async () => {
   await page.goto(`${origin}/docs/components/data-table`);
   const example = page.locator('[data-example="data-table-demo"]');
-  await example.getByRole('checkbox', { name: 'Select alex@example.com' }).check();
+  await example.getByRole('checkbox', { name: 'Select olivia.rhye@example.com' }).check();
   expect(
     await example
-      .getByRole('checkbox', { name: 'Select all rows on this page' })
+      .getByRole('checkbox', { name: 'Select all payments on this page' })
       .evaluate((element: HTMLInputElement) => element.indeterminate),
   ).toBe(true);
-  await example.getByRole('button', { name: 'Next', exact: true }).click();
-  await example.getByText('drew@example.com', { exact: true }).waitFor();
-  await example.getByRole('button', { name: /Email/ }).click();
-  await example.getByText('gray@example.com', { exact: true }).waitFor();
-  await example.getByRole('textbox', { name: 'Filter emails' }).fill('alex');
-  await example.getByText('1 of 1 row(s) selected.', { exact: true }).waitFor();
-  await example.getByRole('button', { name: 'Columns' }).click();
-  await example.getByRole('menuitemcheckbox', { name: 'Amount' }).click();
+  await example.getByRole('button', { name: 'Next page', exact: true }).click();
+  await example.getByText('natali.craig@example.com', { exact: true }).waitFor();
+  await example.getByRole('button', { name: 'Sort Customer', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Sort descending', exact: true }).click();
+  await example.getByRole('searchbox', { name: 'Search payments' }).fill('olivia');
+  await expect.poll(() => example.locator('tbody tr').count()).toBe(3);
+  await example.getByRole('button', { name: 'View', exact: true }).click();
+  await page.getByRole('menuitemcheckbox', { name: 'Amount', exact: true }).click();
   expect(await example.getByRole('columnheader', { name: 'Amount' }).count()).toBe(0);
   await page.keyboard.press('Escape');
 });

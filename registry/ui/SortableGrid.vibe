@@ -1,0 +1,7 @@
+<script setup lang="ts">
+import type { SortableEntry } from '__VIBECN_LIB__/dnd.ts';
+import SortableList from './SortableList.vibe';
+const items=defineModel<SortableEntry[]>({default:()=>[]});
+const {group='grid'}=defineProps<{group?:string}>();
+</script>
+<template><SortableList v-model="items" :group="group" orientation="grid"/></template>

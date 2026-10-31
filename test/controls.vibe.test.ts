@@ -1,6 +1,13 @@
+import { effectScope } from '@usevibejs/ui';
 import type { Component } from '@usevibejs/ui';
+import {
+  rowPaginationFeature,
+  rowSelectionFeature,
+  tableFeatures,
+  useTable,
+} from '@usevibejs/table';
 import { mount } from '@usevibejs/ui/testing';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, onTestFinished } from 'vitest';
 import Checkbox from '../site/src/components/ui/Checkbox.vibe';
 import FieldError from '../site/src/components/ui/FieldError.vibe';
 import NativeSelect from '../site/src/components/ui/NativeSelect.vibe';
@@ -163,7 +170,9 @@ describe('every component', () => {
   // Roots render only their slot, and parts that read their root's state, directly or through
   // another part, are covered with their root.
   const contextual = new Set(
-    Object.keys(sources).filter((path) => /\b(inject|provide)\w*[<(]/.test(sources[path])),
+    Object.keys(sources).filter((path) =>
+      /\b(inject|provide|useSortable|useDroppable|useForm)\w*[<(]/.test(sources[path]),
+    ),
   );
   for (let grew = true; grew;) {
     grew = false;
@@ -175,8 +184,37 @@ describe('every component', () => {
   const standalone = Object.entries(components).filter(
     ([path]) => !contextual.has(path) && !path.endsWith('/FieldError.vibe'),
   );
-  it.each(standalone)('%s renders a slotted element and merges classes', (_, module) => {
-    const wrapper = mount(module.default, { props: { class: 'custom-class' } });
+  const textRenderers = standalone.filter(([path]) => path.endsWith('/DataTableContent.vibe'));
+  it.each(textRenderers)('%s renders text with a context', (_, module) => {
+    const wrapper = mount(module.default, { props: { template: 'Cell content', context: {} } });
+    expect(wrapper.text()).toBe('Cell content');
+  });
+  const elementRenderers = standalone.filter(([path]) => !path.endsWith('/DataTableContent.vibe'));
+  it.each(elementRenderers)('%s renders with its documented inputs', (path, module) => {
+    const props: Record<string, unknown> = { class: 'custom-class' };
+    if (path.endsWith('/DataTableLoadingState.vibe')) props.columns = 2;
+    if (path.endsWith('/FormField.vibe')) {
+      props.field = { name: 'title', invalid: false, messages: [] };
+      props.label = 'Title';
+    }
+    if (path.endsWith('/FormErrorSummary.vibe')) props.messages = ['Required'];
+    if (
+      path.endsWith('/DataTablePagination.vibe') ||
+      path.endsWith('/DataTableSelectionActions.vibe')
+    ) {
+      const scope = effectScope();
+      onTestFinished(() => scope.stop());
+      const table = scope.run(() =>
+        useTable({
+          features: tableFeatures({ rowPaginationFeature, rowSelectionFeature }),
+          data: [{ name: 'Ada' }],
+          columns: [{ accessorKey: 'name' }],
+        }),
+      )!;
+      table.getRow('0').toggleSelected();
+      props.table = table;
+    }
+    const wrapper = mount(module.default, { props });
     // SVG roots such as Spinner cannot carry data-slot in vibe.js's SVG attribute types.
     expect(wrapper.find('[data-slot], svg').exists()).toBe(true);
     expect(wrapper.find('.custom-class').exists()).toBe(true);

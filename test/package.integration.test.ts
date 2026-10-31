@@ -30,6 +30,17 @@ it('installs from a packed artifact outside the checkout with full license notic
   expect(JSON.parse(execute(['init', '--dry-run', '--json'])).dryRun).toBe(true);
   expect(existsSync(join(root, 'vibecn.json'))).toBe(false);
   execute(['init']);
+  const beforeManifest = readFileSync(join(root, 'package.json'), 'utf8');
+  const table = JSON.parse(execute(['add', 'data-table', '--json']));
+  expect(table.ok).toBe(true);
+  expect(table.dependencies).toContain('@usevibejs/table@0.1.0');
+  expect(existsSync(join(root, 'src/components/ui/DataTable.vibe'))).toBe(true);
+  expect(readFileSync(join(root, 'src/components/ui/DataTable.vibe'), 'utf8')).not.toContain(
+    '__VIBECN_',
+  );
+  expect(readFileSync(join(root, 'src/lib/data-table.ts'), 'utf8')).toContain('DataTableInstance');
+  expect(readFileSync(join(root, 'package.json'), 'utf8')).toBe(beforeManifest);
+  expect(JSON.stringify(manifest)).not.toMatch(/catalog:|workspace:|link:|file:|\/Users\//);
   const result = JSON.parse(execute(['add', '--all', '--json']));
   expect(result.ok).toBe(true);
   expect(existsSync(join(root, 'src/components/ui/Button.vibe'))).toBe(true);

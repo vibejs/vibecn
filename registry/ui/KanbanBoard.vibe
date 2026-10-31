@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { computed } from '@usevibejs/ui';
+import { useDnd, useSortableGroup } from '@usevibejs/dnd';
+import type { KanbanColumn, SortableEntry } from '__VIBECN_LIB__/dnd.ts';
+import KanbanColumnView from './KanbanColumn.vibe';
+const columns=defineModel<KanbanColumn[]>({default:()=>[]});
+const context=useDnd();
+const containers=computed({get:()=>Object.fromEntries(columns.value.map(column=>[column.id,column.items])),set:(value:Readonly<Record<string,readonly SortableEntry[]>>)=>{columns.value=columns.value.map(column=>({...column,items:[...value[column.id] ?? []]}))}});
+useSortableGroup({containers,getId:item=>item.id,context});
+</script>
+<template><div data-slot="kanban-board" class="flex items-start gap-4 overflow-x-auto pb-4"><KanbanColumnView v-for="column in columns" :key="column.id" :column="column"/></div></template>
