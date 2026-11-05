@@ -1,5 +1,15 @@
 # @usevibejs/vibecn
 
+## 0.3.1
+
+### Patch Changes
+
+- fdd3b08: Point the npm homepage link to the documentation at https://vibecn.dev/docs.
+- 91cadc7: Make the documentation header responsive: an icon-only search on phones, a labelled menu
+  button until the full navigation fits, highlighted current links and the main pages at the
+  top of the mobile menu.
+- c748557: Add a "Made for vibe.js" section to the documentation homepage that links to vibejs.org and its tutorial.
+
 ## 0.3.0
 
 ### Minor Changes
