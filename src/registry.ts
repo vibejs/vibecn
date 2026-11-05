@@ -13,13 +13,14 @@ const component = (
   description: string,
   files = [title],
   registryDependencies: string[] = [],
+  dependencies: string[] = [],
 ): RegistryItem => ({
   name,
   title,
   description,
   files: files.map((file) => `ui/${file}.vibe`),
   registryDependencies: ['utils', ...registryDependencies],
-  dependencies: [],
+  dependencies,
 });
 
 export const registry: readonly RegistryItem[] = [
@@ -615,6 +616,35 @@ export const registry: readonly RegistryItem[] = [
     'Direction',
     'Sets the text direction, left to right or right to left, for the components inside it.',
     ['DirectionProvider'],
+  ),
+  component(
+    'data-table',
+    'Data Table',
+    'A sortable, paged table rendered with @usevibejs/table.',
+    ['DataTable', 'DataTableContent'],
+    ['table', 'button'],
+    ['@usevibejs/table'],
+  ),
+  component(
+    'login-form',
+    'Login Form',
+    'Email and password fields with a submit callback for your auth client.',
+    ['LoginForm'],
+    ['field', 'input', 'button'],
+    ['@usevibejs/form', '@usevibejs/auth'],
+  ),
+  component(
+    'dropzone',
+    'Dropzone',
+    'An accessible file drop area with the files() size, count and type limits.',
+  ),
+  component(
+    'language-switcher',
+    'Language Switcher',
+    'Selects a locale with the combobox and @usevibejs/i18n.',
+    ['LanguageSwitcher'],
+    ['combobox'],
+    ['@usevibejs/i18n'],
   ),
 ];
 

@@ -97,6 +97,32 @@ describe('source installation', () => {
     expect(planAdd(root, ['button']).files.every((file) => file.action === 'skip')).toBe(true);
     expect(planAdd(root, []).dependencies).toEqual([]);
   });
+  it('installs table, sign-in, upload and locale blocks with their npm dependencies', () => {
+    const root = initialized();
+    const plan = planAdd(root, ['data-table', 'login-form', 'dropzone', 'language-switcher']);
+    expect(plan.dependencies).toEqual([
+      'clsx',
+      'tailwind-merge',
+      '@usevibejs/table',
+      '@usevibejs/form',
+      '@usevibejs/auth',
+      '@usevibejs/i18n',
+    ]);
+    applyPlan(plan);
+    const read = (file: string): string =>
+      readFileSync(join(root, 'src/components/ui', file), 'utf8');
+    expect(read('DataTable.vibe')).toContain("from '@usevibejs/table'");
+    expect(read('DataTable.vibe')).not.toContain('@tanstack/');
+    expect(read('LoginForm.vibe')).toContain("from '@usevibejs/form'");
+    expect(read('LoginForm.vibe')).not.toMatch(/from ['"]@usevibejs\/auth['"]/);
+    expect(read('LoginForm.vibe')).not.toMatch(/from ['"]better-auth/);
+    expect(read('Dropzone.vibe')).not.toMatch(/from ['"]@usevibejs\/server/);
+    expect(read('LanguageSwitcher.vibe')).toContain("from './Combobox.vibe'");
+    expect(existsSync(join(root, 'src/components/ui/Combobox.vibe'))).toBe(true);
+    expect(readFileSync(join(root, 'vibecn.LICENSE'), 'utf8')).toContain(
+      'Copyright (c) 2026 vibecn',
+    );
+  });
   it('supports a utility in the same directory as the components', () => {
     const root = initialized();
     config(root, { components: 'src/ui', lib: 'src/ui', styles: 'src/vibecn.css' });

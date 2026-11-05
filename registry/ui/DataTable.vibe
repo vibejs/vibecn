@@ -1,0 +1,211 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import type { ClassValue } from '@usevibejs/ui';
+import {
+  createPaginatedRowModel,
+  createSortedRowModel,
+  rowPaginationFeature,
+  rowSortingFeature,
+  sortFns,
+  tableFeatures,
+  useTable,
+} from '@usevibejs/table';
+import type { TextContent } from '@usevibejs/table';
+import { cn } from '__VIBECN_UTILS__';
+import Button from './Button.vibe';
+import DataTableContent from './DataTableContent.vibe';
+import Table from './Table.vibe';
+import TableBody from './TableBody.vibe';
+import TableCaption from './TableCaption.vibe';
+import TableCell from './TableCell.vibe';
+import TableHead from './TableHead.vibe';
+import TableHeader from './TableHeader.vibe';
+import TableRow from './TableRow.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  data = [],
+  columns = [],
+  caption = 'Data',
+  pageSize = 10,
+} = defineProps<{
+  class?: ClassValue;
+  /** Rows sorted and paged by @usevibejs/table. This shell does not reimplement TanStack Table. */
+  data?: readonly object[];
+  /** Column defs. header and cell are text or componentRenderer() output. */
+  columns?: readonly object[];
+  caption?: string;
+  /** Initial client page size. Sorting returns to the first page. */
+  pageSize?: number;
+}>();
+
+const features = tableFeatures({
+  rowSortingFeature,
+  rowPaginationFeature,
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortFns,
+});
+
+function rowId(row: object, index: number): string {
+  if ('id' in row) {
+    const id = row.id;
+    if (typeof id === 'string' || typeof id === 'number') return String(id);
+  }
+  return String(index);
+}
+
+const table = useTable(() => ({
+  features,
+  data,
+  columns: columns as never,
+  getRowId: rowId,
+  autoResetPageIndex: true,
+  initialState: {
+    pagination: { pageIndex: 0, pageSize: Math.max(1, Math.floor(pageSize) || 1) },
+  },
+}));
+
+defineExpose({ table });
+
+type SortState = false | 'asc' | 'desc';
+type CellTemplate = TextContent | ((context: object) => unknown);
+type ColumnLike = {
+  columnDef: { header?: CellTemplate; cell?: CellTemplate };
+  getCanSort: () => boolean;
+  getIsSorted: () => SortState;
+  toggleSorting: (desc?: boolean) => void;
+};
+type HeaderLike = {
+  id: string;
+  isPlaceholder: boolean;
+  colSpan: number;
+  rowSpan: number;
+  column: ColumnLike;
+  getContext: () => object;
+};
+type CellLike = {
+  id: string;
+  column: { columnDef: { cell?: CellTemplate } };
+  getContext: () => object;
+};
+type RowLike = {
+  id: string;
+  getAllCells: () => CellLike[];
+  getVisibleCells?: () => CellLike[];
+};
+
+function groups(): { id: string; headers: HeaderLike[] }[] {
+  return table.getHeaderGroups() as { id: string; headers: HeaderLike[] }[];
+}
+function bodyRows(): RowLike[] {
+  return table.getRowModel().rows as RowLike[];
+}
+function cellsOf(row: RowLike): CellLike[] {
+  return row.getVisibleCells?.() ?? row.getAllCells();
+}
+function columnCount(): number {
+  return Math.max(1, table.getAllLeafColumns().length);
+}
+function ariaSort(column: ColumnLike): 'ascending' | 'descending' | 'none' | undefined {
+  if (!column.getCanSort()) return undefined;
+  const sorted = column.getIsSorted();
+  if (sorted === 'asc') return 'ascending';
+  if (sorted === 'desc') return 'descending';
+  return 'none';
+}
+function sortMark(sorted: SortState): string {
+  if (sorted === 'asc') return '↑';
+  if (sorted === 'desc') return '↓';
+  return '↕';
+}
+function headerLabel(header: unknown): string {
+  return typeof header === 'string' && header ? header : 'column';
+}
+function pageLabel(): string {
+  const pages = table.getPageCount();
+  const index = table.atoms.pagination.get().pageIndex;
+  if (pages < 1) return 'Page 0 of 0';
+  return `Page ${index + 1} of ${pages}`;
+}
+const sortButton =
+  'inline-flex items-center gap-1 rounded-md px-2 py-1 text-left font-medium hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring';
+</script>
+
+<template>
+  <div data-slot="data-table" v-bind="$attrs" :class="cn('flex w-full flex-col gap-4', className)">
+    <Table>
+      <TableCaption>{{ caption }}</TableCaption>
+      <TableHeader>
+        <TableRow v-for="group in groups()" :key="group.id">
+          <TableHead
+            v-for="header in group.headers"
+            :key="header.id"
+            :scope="header.colSpan > 1 ? 'colgroup' : 'col'"
+            :colspan="header.colSpan"
+            :rowspan="header.rowSpan || undefined"
+            :aria-sort="ariaSort(header.column)"
+          >
+            <template v-if="!header.isPlaceholder">
+              <button
+                v-if="header.column.getCanSort()"
+                type="button"
+                :class="sortButton"
+                :aria-label="'Sort ' + headerLabel(header.column.columnDef.header)"
+                @click="header.column.toggleSorting()"
+              >
+                <DataTableContent
+                  :template="header.column.columnDef.header"
+                  :context="header.getContext()"
+                />
+                <span aria-hidden="true">{{ sortMark(header.column.getIsSorted()) }}</span>
+              </button>
+              <DataTableContent
+                v-else
+                :template="header.column.columnDef.header"
+                :context="header.getContext()"
+              />
+            </template>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="row in bodyRows()" :key="row.id">
+          <TableCell v-for="cell in cellsOf(row)" :key="cell.id">
+            <DataTableContent :template="cell.column.columnDef.cell" :context="cell.getContext()" />
+          </TableCell>
+        </TableRow>
+        <TableRow v-if="bodyRows().length === 0">
+          <TableCell :colspan="columnCount()" class="h-24 text-center text-muted-foreground">
+            No results.
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+    <nav aria-label="Pagination" class="flex flex-wrap items-center justify-between gap-3 px-1">
+      <p role="status" class="text-sm text-muted-foreground">{{ pageLabel() }}</p>
+      <div class="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          aria-label="Previous page"
+          :disabled="!table.getCanPreviousPage()"
+          @click="table.previousPage()"
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          aria-label="Next page"
+          :disabled="!table.getCanNextPage()"
+          @click="table.nextPage()"
+        >
+          Next
+        </Button>
+      </div>
+    </nav>
+  </div>
+</template>

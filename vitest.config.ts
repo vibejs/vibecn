@@ -26,6 +26,8 @@ export default defineConfig({
           environment: 'jsdom',
           include: ['test/*.vibe.test.ts'],
           setupFiles: ['test/setup.ts'],
+          // Calendar keyboard walks are a few seconds; coverage can push them past the default.
+          testTimeout: 15_000,
         },
       },
       {

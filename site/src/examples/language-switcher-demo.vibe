@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { createLocaleContext } from '@usevibejs/i18n';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vibe';
+
+const i18n = createLocaleContext({
+  locale: 'en',
+  messages: {
+    en: { ready: 'Ready' },
+    tr: { ready: 'Hazır' },
+  },
+});
+const locales = [
+  { value: 'en', label: 'English' },
+  { value: 'tr', label: 'Türkçe' },
+];
+</script>
+
+<template>
+  <div class="grid gap-3">
+    <LanguageSwitcher
+      :locales="locales"
+      label="Language"
+      empty-label="No language"
+      loading-label="Switching language"
+      retry-label="Try again"
+    />
+    <p role="status">{{ i18n.locale.value }}</p>
+  </div>
+</template>
