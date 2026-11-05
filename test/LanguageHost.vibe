@@ -1,0 +1,38 @@
+<script setup lang="ts">
+import { createLocaleContext } from '@usevibejs/i18n';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher.vibe';
+
+const { change } = defineProps<{
+  change?: (locale: string) => Promise<unknown>;
+}>();
+const i18n = createLocaleContext({
+  locale: 'en',
+  messages: {
+    en: { ready: 'Ready' },
+    tr: { ready: 'Hazır' },
+    de: { ready: 'Bereit' },
+  },
+});
+const locales = [
+  { value: 'en', label: 'English' },
+  { value: 'tr', label: 'Türkçe' },
+  { value: 'de', label: 'Deutsch' },
+];
+async function apply(value: string): Promise<unknown> {
+  if (change) await change(value);
+  return i18n.setLocale(value);
+}
+</script>
+
+<template>
+  <LanguageSwitcher
+    :locales="locales"
+    label="Language"
+    empty-label="No language"
+    loading-label="Switching language"
+    retry-label="Try again"
+    :change="apply"
+    class="max-w-full"
+  />
+  <output>{{ i18n.locale.value }}</output>
+</template>

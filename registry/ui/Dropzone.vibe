@@ -1,0 +1,192 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed, ref, useId } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  maxBytes,
+  maxFiles,
+  types = [],
+  upload,
+  name = 'files',
+  label = 'Upload files',
+  description = 'Drop files here, or choose them.',
+  disabled = false,
+} = defineProps<{
+  class?: ClassValue;
+  /** Same limit as vibe.js files({ maxBytes }). Omitted means this component does not cap size. */
+  maxBytes?: number;
+  /** Same limit as vibe.js files({ maxFiles }). Omitted means this component does not cap count. */
+  maxFiles?: number;
+  /**
+   * MIME types (image/png, image/*) or extensions (.txt), matching files({ types }).
+   * A file is accepted when any entry matches. An empty list accepts every type.
+   */
+  types?: readonly string[];
+  /** Receives the accepted files. Omit it to only build FormData for the caller. */
+  upload?: (files: File[]) => Promise<void>;
+  /** FormData field name. One part is appended per file. */
+  name?: string;
+  label?: string;
+  description?: string;
+  disabled?: boolean;
+}>();
+
+const formData = defineModel<FormData | null>('formData', { default: () => null });
+const reasons = ref<string[]>([]);
+const status = ref('');
+const busy = ref(false);
+const dragging = ref(false);
+const inputId = useId();
+const reasonsId = useId();
+let depth = 0;
+
+const limits = computed(() => {
+  const parts: string[] = [];
+  if (maxFiles !== undefined)
+    parts.push(`Up to ${maxFiles} ${maxFiles === 1 ? 'file' : 'files'}.`);
+  if (maxBytes !== undefined) parts.push(`Up to ${maxBytes} bytes each.`);
+  if (types.length) parts.push(`Accepted: ${types.join(', ')}.`);
+  return parts.join(' ');
+});
+const zone =
+  'flex cursor-pointer flex-col gap-2 rounded-lg border border-dashed border-input bg-background p-6 text-sm transition-colors focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 data-[drag=true]:border-ring data-[drag=true]:bg-accent/40 aria-disabled:pointer-events-none aria-disabled:opacity-50';
+
+function allowed(file: File): boolean {
+  if (!types.length) return true;
+  const filename = file.name.toLowerCase();
+  return types.some((type) => {
+    const token = type.toLowerCase();
+    if (token.startsWith('.')) return filename.endsWith(token);
+    if (token.endsWith('/*')) return file.type.toLowerCase().startsWith(token.slice(0, -1));
+    return file.type.toLowerCase() === token;
+  });
+}
+
+function review(list: readonly File[]): { accepted: File[]; reasons: string[] } {
+  if (maxFiles !== undefined && list.length > maxFiles) {
+    return {
+      accepted: [],
+      reasons: [`Choose at most ${maxFiles} ${maxFiles === 1 ? 'file' : 'files'}.`],
+    };
+  }
+  const accepted: File[] = [];
+  const rejected: string[] = [];
+  for (const file of list) {
+    if (maxBytes !== undefined && file.size > maxBytes) {
+      rejected.push(`${file.name} is larger than ${maxBytes} bytes.`);
+      continue;
+    }
+    if (!allowed(file)) {
+      rejected.push(`${file.name} is not an accepted type.`);
+      continue;
+    }
+    accepted.push(file);
+  }
+  if (rejected.length) return { accepted: [], reasons: rejected };
+  return { accepted, reasons: [] };
+}
+
+function bodyFor(files: readonly File[]): FormData {
+  const body = new FormData();
+  for (const file of files) body.append(name, file, file.name);
+  return body;
+}
+
+async function take(list: readonly File[]): Promise<void> {
+  if (!list.length || disabled || busy.value) return;
+  const result = review(list);
+  reasons.value = result.reasons;
+  if (!result.accepted.length) {
+    formData.value = null;
+    status.value = '';
+    return;
+  }
+  formData.value = bodyFor(result.accepted);
+  const ready = `${result.accepted.length} ${result.accepted.length === 1 ? 'file' : 'files'} ready.`;
+  if (!upload) {
+    status.value = ready;
+    return;
+  }
+  busy.value = true;
+  status.value = 'Uploading…';
+  try {
+    await upload(result.accepted);
+    status.value = ready;
+  } catch (error) {
+    status.value = '';
+    reasons.value = [
+      error instanceof Error && error.message ? error.message : 'Upload failed.',
+    ];
+  } finally {
+    busy.value = false;
+  }
+}
+
+function onDragEnter(event: DragEvent): void {
+  event.preventDefault();
+  if (disabled || busy.value) return;
+  depth += 1;
+  dragging.value = true;
+}
+function onDragOver(event: DragEvent): void {
+  event.preventDefault();
+}
+function onDragLeave(event: DragEvent): void {
+  event.preventDefault();
+  depth = Math.max(0, depth - 1);
+  if (depth === 0) dragging.value = false;
+}
+async function onDrop(event: DragEvent): Promise<void> {
+  event.preventDefault();
+  depth = 0;
+  dragging.value = false;
+  if (disabled || busy.value) return;
+  await take(Array.from(event.dataTransfer?.files ?? []));
+}
+async function onChange(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement;
+  const files = Array.from(input.files ?? []);
+  input.value = '';
+  await take(files);
+}
+</script>
+
+<template>
+  <div
+    data-slot="dropzone"
+    v-bind="$attrs"
+    :data-drag="dragging || undefined"
+    :aria-disabled="disabled || busy || undefined"
+    :class="cn(zone, className)"
+    @dragenter="onDragEnter"
+    @dragover="onDragOver"
+    @dragleave="onDragLeave"
+    @drop="onDrop"
+  >
+    <input
+      :id="inputId"
+      type="file"
+      class="sr-only"
+      :accept="types.length ? types.join(',') : undefined"
+      :multiple="maxFiles !== 1"
+      :disabled="disabled || busy"
+      :aria-invalid="reasons.length ? true : undefined"
+      :aria-describedby="reasons.length ? reasonsId : undefined"
+      @change="onChange"
+    />
+    <label :for="inputId" class="flex flex-col gap-1">
+      <span class="font-medium">{{ label }}</span>
+      <span class="text-muted-foreground">{{ description }}</span>
+    </label>
+    <p v-if="limits" class="text-xs text-muted-foreground">{{ limits }}</p>
+    <p v-if="status" role="status" class="text-sm text-muted-foreground">{{ status }}</p>
+    <ul v-if="reasons.length" :id="reasonsId" role="alert" class="list-disc pl-4 text-sm text-destructive">
+      <li v-for="(reason, index) in reasons" :key="index">{{ reason }}</li>
+    </ul>
+  </div>
+</template>

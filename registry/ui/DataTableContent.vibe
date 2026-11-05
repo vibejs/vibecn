@@ -1,0 +1,31 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { computed } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { isComponentContent, renderContent } from '@usevibejs/table';
+import type { TextContent } from '@usevibejs/table';
+import { cn } from '__VIBECN_UTILS__';
+
+defineOptions({ inheritAttrs: false });
+
+const { class: className, template, context = {} } = defineProps<{
+  class?: ClassValue;
+  template?: TextContent | ((context: object) => unknown);
+  context?: object;
+}>();
+
+const content = computed(() =>
+  template === undefined ? '' : renderContent(template, context),
+);
+</script>
+
+<template>
+  <span data-slot="data-table-content" v-bind="$attrs" :class="cn(className)">
+    <component
+      v-if="isComponentContent(content)"
+      :is="content.component"
+      :context="content.context"
+    />
+    <template v-else>{{ content }}</template>
+  </span>
+</template>

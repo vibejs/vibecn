@@ -1,0 +1,18 @@
+<script setup lang="ts">
+import DataTable from '@/components/ui/DataTable.vibe';
+
+const rows = [
+  { id: 'c', email: 'casey@example.com', amount: 30 },
+  { id: 'a', email: 'ada@example.com', amount: 10 },
+  { id: 'b', email: 'blair@example.com', amount: 20 },
+  { id: 'd', email: 'drew@example.com', amount: 40 },
+];
+const columns = [
+  { accessorKey: 'email', header: 'Email' },
+  { accessorKey: 'amount', header: 'Amount' },
+];
+</script>
+
+<template>
+  <DataTable class="w-full" :data="rows" :columns="columns" caption="Invoices" :page-size="2" />
+</template>

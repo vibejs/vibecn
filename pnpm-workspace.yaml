@@ -10,7 +10,10 @@ catalog:
   '@tailwindcss/vite': 4.3.3
   '@types/node': 24.19.2
   '@usevibejs/compiler': 0.1.0
+  '@usevibejs/form': 0.1.1
+  '@usevibejs/i18n': 0.1.0
   '@usevibejs/language-tools': 0.1.0
+  '@usevibejs/table': 0.1.1
   '@usevibejs/ui': 0.1.0
   '@vitest/coverage-v8': 5.0.5
   clsx: 2.1.1

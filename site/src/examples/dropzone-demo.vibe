@@ -1,0 +1,29 @@
+<script setup lang="ts">
+import { ref, watch } from '@usevibejs/ui';
+import Dropzone from '@/components/ui/Dropzone.vibe';
+
+const status = ref('No files');
+const body = ref<FormData | null>(null);
+watch(body, (value) => {
+  if (!value) status.value = 'No files';
+});
+async function upload(files: File[]): Promise<void> {
+  status.value = `Uploaded ${files.map((file) => file.name).join(', ')}`;
+}
+</script>
+
+<template>
+  <div class="grid w-full max-w-md gap-3">
+    <Dropzone
+      v-model:form-data="body"
+      :max-bytes="8"
+      :max-files="2"
+      :types="['text/plain', '.txt']"
+      :upload="upload"
+      label="Upload notes"
+      description="Drop a text file here, or choose one."
+    />
+    <p role="status">{{ status }}</p>
+    <p>{{ body ? 'FormData ready' : 'No FormData' }}</p>
+  </div>
+</template>

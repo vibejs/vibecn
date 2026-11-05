@@ -1,0 +1,7 @@
+<script setup lang="ts">
+const { context } = defineProps<{ context: { getValue: () => number } }>();
+</script>
+
+<template>
+  <strong data-amount>{{ context.getValue() }}</strong>
+</template>

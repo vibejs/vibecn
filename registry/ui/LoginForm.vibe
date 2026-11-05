@@ -1,0 +1,117 @@
+<!-- Adapted from shadcn/ui under MIT. See vibecn.LICENSE. -->
+<script setup lang="ts">
+import { ref, useId, watch } from '@usevibejs/ui';
+import type { ClassValue } from '@usevibejs/ui';
+import { useField, useForm } from '@usevibejs/form';
+import { cn } from '__VIBECN_UTILS__';
+import Button from './Button.vibe';
+import Field from './Field.vibe';
+import FieldError from './FieldError.vibe';
+import FieldLabel from './FieldLabel.vibe';
+import Input from './Input.vibe';
+
+defineOptions({ inheritAttrs: false });
+
+const {
+  class: className,
+  submit,
+  emailLabel = 'Email',
+  passwordLabel = 'Password',
+  submitLabel = 'Sign in',
+  pendingLabel = 'Signing in…',
+} = defineProps<{
+  class?: ClassValue;
+  /**
+   * Called with the email and password after field validation.
+   * The application uses this to call its auth client. This component does not import one.
+   */
+  submit?: (value: { email: string; password: string }) => Promise<void> | void;
+  emailLabel?: string;
+  passwordLabel?: string;
+  submitLabel?: string;
+  pendingLabel?: string;
+}>();
+
+const uid = useId();
+const emailId = `${uid}-email`;
+const passwordId = `${uid}-password`;
+const emailErrorId = `${uid}-email-error`;
+const passwordErrorId = `${uid}-password-error`;
+const formError = ref('');
+const form = useForm({
+  defaultValues: { email: '', password: '' },
+  onSubmit: async ({ value }) => {
+    formError.value = '';
+    try {
+      await submit?.(value);
+    } catch (error) {
+      formError.value =
+        error instanceof Error && error.message ? error.message : 'Sign in failed.';
+    }
+  },
+});
+const email = useField(form, 'email', {
+  validators: {
+    onBlur: ({ value }) =>
+      value === '' || value.includes('@') ? undefined : 'Enter an email address.',
+    onSubmit: ({ value }) => (value.includes('@') ? undefined : 'Enter an email address.'),
+  },
+});
+const password = useField(form, 'password', {
+  validators: {
+    onSubmit: ({ value }) => (value.length > 0 ? undefined : 'Enter a password.'),
+  },
+});
+watch([() => email.value, () => password.value], () => {
+  formError.value = '';
+});
+</script>
+
+<template>
+  <form
+    data-slot="login-form"
+    novalidate
+    v-bind="$attrs"
+    :aria-busy="form.isSubmitting"
+    :class="cn('grid w-full gap-4', className)"
+    @submit="form.submit"
+  >
+    <Field :data-invalid="email.invalid || undefined">
+      <FieldLabel :for="emailId">{{ emailLabel }}</FieldLabel>
+      <Input
+        :id="emailId"
+        v-model="email.value"
+        name="email"
+        type="email"
+        autocomplete="email"
+        :disabled="form.isSubmitting"
+        :aria-invalid="email.invalid || undefined"
+        :aria-describedby="email.invalid ? emailErrorId : undefined"
+        @blur="email.handleBlur"
+      />
+      <FieldError :id="emailErrorId" :errors="email.messages.map((message) => ({ message }))" />
+    </Field>
+    <Field :data-invalid="password.invalid || undefined">
+      <FieldLabel :for="passwordId">{{ passwordLabel }}</FieldLabel>
+      <Input
+        :id="passwordId"
+        v-model="password.value"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        :disabled="form.isSubmitting"
+        :aria-invalid="password.invalid || undefined"
+        :aria-describedby="password.invalid ? passwordErrorId : undefined"
+        @blur="password.handleBlur"
+      />
+      <FieldError
+        :id="passwordErrorId"
+        :errors="password.messages.map((message) => ({ message }))"
+      />
+    </Field>
+    <p v-if="formError" role="alert" class="text-sm text-destructive">{{ formError }}</p>
+    <Button type="submit" class="w-full" :disabled="form.isSubmitting">
+      {{ form.isSubmitting ? pendingLabel : submitLabel }}
+    </Button>
+  </form>
+</template>
