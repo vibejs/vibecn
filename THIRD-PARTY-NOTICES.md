@@ -37,3 +37,5 @@ SOFTWARE.
 ## Dependency licenses
 
 The installed utility imports clsx (MIT) and tailwind-merge (MIT); their packages carry their own license texts. No React, Radix or Base UI source is bundled.
+
+`data-table`, `login-form` and `language-switcher` import `@usevibejs/table`, `@usevibejs/form` and `@usevibejs/i18n` at runtime. Those packages, and `@usevibejs/auth` for the login callback, are npm dependencies of the installed source. They are not copied into the registry. The language switcher is original MIT code and is installed with the same `vibecn.LICENSE` as every other component. `dropzone` enforces the vibe.js `files()` limits in the browser and does not import server internals.

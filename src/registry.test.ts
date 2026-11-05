@@ -11,6 +11,18 @@ describe('registry dependencies', () => {
     expect(resolveItems(registry.map((item) => item.name))).toHaveLength(registry.length);
     expect(resolveItems([])).toEqual([]);
     expect(registry.find((item) => item.name === 'card')?.files).toHaveLength(7);
+    expect(registry.find((item) => item.name === 'data-table')).toMatchObject({
+      dependencies: ['@usevibejs/table'],
+      registryDependencies: ['utils', 'table', 'button'],
+    });
+    expect(registry.find((item) => item.name === 'login-form')?.dependencies).toEqual([
+      '@usevibejs/form',
+      '@usevibejs/auth',
+    ]);
+    expect(
+      registry.find((item) => item.name === 'language-switcher')?.registryDependencies,
+    ).toEqual(['utils', 'combobox']);
+    expect(registry.find((item) => item.name === 'dropzone')?.dependencies).toEqual([]);
   });
   it('rejects unknown names before an installation starts', () => {
     expect(() => resolveItems(['button', '../../escape'])).toThrow('Unknown component');

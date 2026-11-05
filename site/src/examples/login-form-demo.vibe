@@ -1,0 +1,27 @@
+<script setup lang="ts">
+import { ref } from '@usevibejs/ui';
+import Card from '@/components/ui/Card.vibe';
+import CardContent from '@/components/ui/CardContent.vibe';
+import CardDescription from '@/components/ui/CardDescription.vibe';
+import CardHeader from '@/components/ui/CardHeader.vibe';
+import CardTitle from '@/components/ui/CardTitle.vibe';
+import LoginForm from '@/components/ui/LoginForm.vibe';
+
+const status = ref('Signed out');
+async function signIn(value: { email: string; password: string }): Promise<void> {
+  status.value = `Signed in as ${value.email}`;
+}
+</script>
+
+<template>
+  <Card class="w-full max-w-sm">
+    <CardHeader>
+      <CardTitle>Welcome back</CardTitle>
+      <CardDescription>Use the account email and password.</CardDescription>
+    </CardHeader>
+    <CardContent class="grid gap-4">
+      <LoginForm :submit="signIn" />
+      <p role="status" class="text-sm text-muted-foreground">{{ status }}</p>
+    </CardContent>
+  </Card>
+</template>

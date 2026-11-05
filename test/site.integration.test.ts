@@ -359,6 +359,72 @@ it('sorts, filters, selects and paginates the data table pattern', async () => {
   await page.keyboard.press('Escape');
 });
 
+it('sorts and pages the headless data table', async () => {
+  await page.goto(`${origin}/docs/components/data-table`);
+  const example = page.locator('[data-example="data-table-sorted"]');
+  await example.getByRole('cell', { name: 'casey@example.com' }).waitFor();
+  await example.getByRole('button', { name: 'Next page' }).click();
+  await example.getByRole('cell', { name: 'drew@example.com' }).waitFor();
+  await example.getByRole('button', { name: 'Previous page' }).click();
+  await example.getByRole('button', { name: 'Sort Email' }).click();
+  const sort = await example.getByRole('columnheader', { name: 'Email' }).getAttribute('aria-sort');
+  expect(sort === 'ascending' || sort === 'descending').toBe(true);
+  await example
+    .getByRole('cell', { name: sort === 'ascending' ? 'ada@example.com' : 'drew@example.com' })
+    .waitFor();
+});
+
+it('validates the login form and submits email and password', async () => {
+  await page.goto(`${origin}/docs/components/login-form`);
+  const example = page.locator('[data-example="login-form-demo"]');
+  await example.getByRole('button', { name: 'Sign in' }).click();
+  await example.getByText('Enter an email address.').waitFor();
+  await example.getByText('Enter a password.').waitFor();
+  await example.getByLabel('Email').fill('ada@example.com');
+  await example.getByLabel('Password').fill('secret');
+  await example.getByRole('button', { name: 'Sign in' }).click();
+  await example.getByText('Signed in as ada@example.com').waitFor();
+  expect(await example.getByRole('status').textContent()).toBe('Signed in as ada@example.com');
+});
+
+it('rejects a dropzone file and posts an accepted one as FormData', async () => {
+  await page.goto(`${origin}/docs/components/dropzone`);
+  const example = page.locator('[data-example="dropzone-demo"]');
+  const input = example.locator('input[type="file"]');
+  await input.setInputFiles({
+    name: 'photo.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('png'),
+  });
+  await example.getByText('photo.png is not an accepted type.').waitFor();
+  await example.getByText('No FormData', { exact: true }).waitFor();
+  await input.setInputFiles({
+    name: 'note.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('hello'),
+  });
+  await example.getByText('Uploaded note.txt').waitFor();
+  await example.getByText('FormData ready', { exact: true }).waitFor();
+  await input.setInputFiles([
+    { name: 'a.txt', mimeType: 'text/plain', buffer: Buffer.from('a') },
+    { name: 'b.txt', mimeType: 'text/plain', buffer: Buffer.from('b') },
+    { name: 'c.txt', mimeType: 'text/plain', buffer: Buffer.from('c') },
+  ]);
+  await example.getByText('Choose at most 2 files.').waitFor();
+  expect(await example.getByText('No FormData', { exact: true }).count()).toBe(1);
+});
+
+it('switches locale from the language switcher', async () => {
+  await page.goto(`${origin}/docs/components/language-switcher`);
+  const example = page.locator('[data-example="language-switcher-demo"]');
+  const language = example.getByRole('combobox', { name: 'Language' });
+  await language.click();
+  await language.press('ArrowDown');
+  await page.getByRole('option', { name: 'Türkçe' }).click();
+  await example.getByText('tr', { exact: true }).waitFor();
+  expect(await example.getByRole('status').textContent()).toBe('tr');
+});
+
 it('collapses the desktop sidebar and opens a modal Sheet on mobile', async () => {
   await page.goto(`${origin}/docs/components/sidebar`);
   const example = page.locator('[data-example="sidebar-demo"]');
